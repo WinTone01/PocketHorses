@@ -1,0 +1,98 @@
+###########################
+#       PocketHorses      #
+#    Configuration file   #
+###########################
+
+
+# What type of storage should the plugin use?
+#
+# Possible options:
+# - MySQL (remote database, requires connection information)
+# - SQLite (local database, requires no configuration)
+# - JSON (.json file, requires no configuration)
+#
+Storage:
+  Type: 'SQLite'
+  MySQL: # MySQL's connection information, ignore if storage type is not 'MySQL'
+    Host: 'localhost'
+    Port: 3306
+    Database: 'pockethorses'
+    Username: 'root'
+    Password: ''
+
+Options:
+  Shop-Enabled: true # If enabled, players will be able to purchase horses through the /horses shop command
+  Use-Shop-Permission: false # If enabled, players will need to have 'pockethorses.shop' permission to use the shop
+  More-Horses-At-Time: true # If enabled, players will be able to spawn more than one horse at a time
+  Play-Sound-When-Buy: true # If enabled, a sound will be played after purchasing a horse (see Horse-GUI section)
+  Allow-Player-Damage: false # If enabled, players will be able to damage horses
+  More-Than-Once-Same-Horse: false # If enabled, players will be able to own the same horse more than once
+
+# Customize the menu that is opened after the /horses command
+Horses-GUI:
+  Title: 'My horses' # The GUI title
+  Size:
+    Rows: 5 # The horizontal lines of the GUI, can be up to 6
+    Columns: 9 # The vertical columns of the GUI, there are normally 9
+  Horse-Item:
+    Name: '%displayName%' # The name of the item representing the horse in the GUI
+    Material: IRON_HORSE_ARMOR # The item type, see https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
+    Lore: # The item description
+      - '&7Speed: &f%speed% km/h'
+      - '&7Owner: &f%owner%'
+      - ''
+      - '&a&lClick to spawn!'
+
+# Customize the menu that is opened after you click on a horse
+Horse-GUI:
+  Title: 'Horse' # The GUI title
+  Size:
+    Rows: 5 # The horizontal lines of the GUI, can be up to 6
+    Columns: 9 # The vertical columns of the GUI, there are normally 9
+  Horse-Info:
+    Name: '&a%player%''s &fHorse'
+    Material: PAPER # The item type, see https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
+  Horse-Storage:
+    Name: '&6&lHorse Storage'
+    Material: CHEST
+  Change-Name:
+    Name: '&a&lChange the name'
+    Material: NAME_TAG
+  Make-Sit:
+    Name: '&e&lMake sit'
+    Material: SADDLE
+  Get-Up:
+    Name: '&e&lGet up'
+    Material: SADDLE
+  Set-Speed:
+    Name: '&b&lSet speed'
+    Material: IRON_HORSE_ARMOR
+  Remove:
+    Name: '&c&lRemove'
+    Material: BARRIER
+
+# Customize what is shown after the /pockethorses list command
+Horses-List:
+  Header: '&6List of loaded horses:' # The message preceding the list
+  Horse: '&8- &e%horse%' # The message representing a loaded horse
+
+Storage-GUI:
+  Title: 'Horse Storage' # The GUI title
+  Size:
+    Rows: 2 # The horizontal lines of the GUI, can be up to 6
+    Columns: 9 # The vertical columns of the GUI, there are normally 9
+
+Shop-GUI:
+  Title: 'Shop' # The GUI title
+  Buy-Sound: BLOCK_ANVIL_USE # The sound that is played when a horse is purchased (the Play-Sound-When-Buy option needs to be enabled), see https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html
+  Size:
+    Rows: 5
+    Columns: 9
+  Horse-Item:
+    Name: '%displayName%'
+    Material: DIAMOND_HORSE_ARMOR
+    Lore:
+      - '&7Speed: &f%speed% km/h'
+      - '&7Price: &f%price%$'
+      - ''
+      - '&a&lClick to buy!'

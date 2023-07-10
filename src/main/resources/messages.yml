@@ -1,0 +1,38 @@
+###########################
+#       PocketHorses      #
+#      Messages file      #
+###########################
+
+help-message:
+  - ''
+  - ' &6Pocket&lHorses &8• &7Commands'
+  - ' &8• &e/pockethorses give <player> <horse>'
+  - ' &8• &e/pockethorses reload'
+  - ''
+no-permission: '&cYou do not have permission to run this command!'
+wrong-parameters: '&cWrong parameters! Use &7/'
+only-by-players: '&cThis command can only be executed by a player'
+must-be-online: '&cThis player must be online'
+horse-not-existing: '&cThis horse does not exist'
+horse-given: '&aHorse given to %s'
+horse-spawned: '&aHorse spawned successfully!'
+reload: '&aPlugin reloaded successfully!'
+change-name: 'Change name'
+custom-name-set: '&aCustom name set successfully!'
+get-up: '&aYou got the horse up!'
+make-sit: '&aYou made the horse sit!'
+set-speed: 'Set speed (km/h)'
+invalid-number: '&cYou need to enter a valid number!'
+invalid-speed: '&cThe new speed cannot be greater than the maximum speed!'
+speed-set: '&aNew speed set successfully!'
+horse-removed: '&aYou sent the horse to the stable..'
+not-the-owner: '&cYou do not own this horse!'
+riding-horse: '&aYou got on the horse, use WASD to move. Current speed: %speed% KM/H'
+cannot-spawn: '&cYou can''t spawn the horse right now!'
+shop-not-enabled: '&cThe shop is not enabled!'
+not-enough-money: '&cYou can''t afford this horse!'
+purchase-completed: '&aPurchase completed successfully!'
+already-spawned: '&cYou have already spawned this horse!'
+already-owned: '&cYou already own this horse!'
+no-horses-spawned: '&cYou didn''t spawn any horses!'
+horses-recalled: '&aYou called back your horses!'

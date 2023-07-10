@@ -1,0 +1,20 @@
+package it.pika.pockethorses.storage;
+
+import it.pika.pockethorses.objects.ConfigHorse;
+import it.pika.pockethorses.objects.Horse;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
+public abstract class Storage {
+
+    public abstract void init();
+
+    public abstract void close();
+
+    public abstract void giveHorse(Player player, ConfigHorse horse);
+
+    public abstract void setCustomName(Horse horse, String name);
+
+    public abstract void setStoredItems(Horse horse, ItemStack[] items);
+
+}

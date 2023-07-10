@@ -1,0 +1,8 @@
+exampleHorse: # The name of the horse read by the plugin, to be used in the /pockethorses give command.
+  displayName: '&f&lExample Horse' # The displayed name of the horse
+  color: 'BLACK' # The color of the horse when it is spawned, see https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/Horse.Color.html
+  speed: 30.0 # The horse's walking speed, expressed in km/h
+  buyable: true # If enabled, the horse will be available for purchase in the shop
+  price: 1000.0 # The purchase price of the horse
+  permission: false # If enabled, players must have 'pockethorses.horse.<name>' permission to use the horse
+  storage: true # If enabled, the horse will have a chest in which players can put items (see Storage-GUI in config.yml)
