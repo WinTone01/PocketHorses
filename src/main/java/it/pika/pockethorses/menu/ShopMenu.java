@@ -10,6 +10,7 @@ import it.pika.pockethorses.PocketHorses;
 import it.pika.pockethorses.enums.Messages;
 import it.pika.pockethorses.objects.ConfigHorse;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -57,6 +58,9 @@ public class ShopMenu implements InventoryProvider {
                 PocketHorses.getStorage().giveHorse(player, horse);
 
                 success(player, Messages.PURCHASE_COMPLETED.get());
+                if (PocketHorses.getConfigFile().getBoolean("Options.Play-Sound-When-Buy"))
+                    player.playSound(player, Sound.valueOf(PocketHorses.
+                            getConfigFile().getString("Shop-GUI.Buy-Sound")), 1F, 1F);
             }));
         }
     }

@@ -10,6 +10,7 @@ import it.pika.pockethorses.api.events.HorsesInitializeEvent;
 import it.pika.pockethorses.commands.HorsesCmd;
 import it.pika.pockethorses.commands.MainCmd;
 import it.pika.pockethorses.listeners.HorseListener;
+import it.pika.pockethorses.listeners.JoinListener;
 import it.pika.pockethorses.objects.ConfigHorse;
 import it.pika.pockethorses.objects.Horse;
 import it.pika.pockethorses.objects.SpawnedHorse;
@@ -18,6 +19,7 @@ import it.pika.pockethorses.storage.StorageType;
 import it.pika.pockethorses.storage.impl.JSON;
 import it.pika.pockethorses.storage.impl.MySQL;
 import it.pika.pockethorses.storage.impl.SQLite;
+import it.pika.pockethorses.utils.UpdateChecker;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -67,6 +69,8 @@ public final class PocketHorses extends JavaPlugin {
     @Getter
     private static boolean shopEnabled;
 
+    public static final String VERSION = "1.0.1";
+
     @Override
     public void onEnable() {
         instance = this;
@@ -88,6 +92,7 @@ public final class PocketHorses extends JavaPlugin {
         registerCommands();
         loadHorses();
         setupInventories();
+        checkForUpdates();
 
         stopwatch.stop();
         Bukkit.getPluginManager().callEvent(new HorsesInitializeEvent(this));
@@ -156,6 +161,7 @@ public final class PocketHorses extends JavaPlugin {
     private void registerListeners() {
         var pm = Bukkit.getPluginManager();
         pm.registerEvents(new HorseListener(), this);
+        pm.registerEvents(new JoinListener(), this);
     }
 
     private void registerCommands() {
@@ -269,6 +275,13 @@ public final class PocketHorses extends JavaPlugin {
 
         economy = rsp.getProvider();
         return true;
+    }
+
+    private void checkForUpdates() {
+        new UpdateChecker(this, 111158).getVersion(version -> {
+            if (!version.equals(VERSION))
+                console.warning("A new update is available! Download it from the official SpigotMC page");
+        });
     }
 
 }

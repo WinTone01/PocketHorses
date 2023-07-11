@@ -27,6 +27,7 @@ Options:
   Play-Sound-When-Buy: true # If enabled, a sound will be played after purchasing a horse (see Horse-GUI section)
   Allow-Player-Damage: false # If enabled, players will be able to damage horses
   More-Than-Once-Same-Horse: false # If enabled, players will be able to own the same horse more than once
+  Update-Message-On-Join: true # If enabled, OP players will receive a message when a new update is available
 
 # Customize the menu that is opened after the /horses command
 Horses-GUI:
