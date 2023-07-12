@@ -23,6 +23,7 @@ import it.pika.pockethorses.utils.UpdateChecker;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
+import net.md_5.bungee.api.ChatColor;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -30,7 +31,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
@@ -69,7 +73,7 @@ public final class PocketHorses extends JavaPlugin {
     @Getter
     private static boolean shopEnabled;
 
-    public static final String VERSION = "1.0.1";
+    public static final String VERSION = "1.1.0";
 
     @Override
     public void onEnable() {
@@ -182,17 +186,43 @@ public final class PocketHorses extends JavaPlugin {
     }
 
     public static String parseColors(String s) {
-        return s.replaceAll("&", "§");
+        var parsed = new StringBuilder();
+        var colorHex = "";
+        if (s.contains("&")) {
+            for (String color : s.split("&")) {
+                if (color.length() < 1) continue;
+                if (color.substring(0, 1).matches("[A-Fa-f0-9]|k|l|m|n|o|r")) {
+                    String colorCode = color.substring(0, 1);
+                    parsed.append(ChatColor.getByChar(colorCode.charAt(0)));
+                    parsed.append(color.substring(1));
+                    continue;
+                }
+                if (color.length() < 7) continue;
+                if (color.substring(0, 7).matches("#[A-Fa-f0-9]{6}")) {
+                    if (color.substring(0, 7).matches("#[A-Fa-f0-9]{6}")) {
+                        colorHex = color.substring(0, 7);
+                        parsed.append(net.md_5.bungee.api.ChatColor.of(colorHex));
+                        parsed.append(color.substring(7));
+                        continue;
+                    }
+                }
+                parsed.append(color);
+            }
+        } else {
+            parsed.append(s);
+        }
+
+        return parsed.toString();
     }
 
     public static String parseMessage(String s, @Nullable Horse horse, @Nullable Player player) {
         var configHorse = horse == null ? null : ConfigHorse.of(horse.getName());
 
-        return parseColors(s).replaceAll("%displayName%", configHorse == null ? "null" :
+        return parseColors(s.replaceAll("%displayName%", configHorse == null ? "null" :
                         horse.getCustomName() == null ? configHorse.getDisplayName() : horse.getCustomName())
                 .replaceAll("%speed%", String.valueOf(horse instanceof SpawnedHorse ? ((SpawnedHorse) horse).getSpeed() : configHorse.getSpeed()))
                 .replaceAll("%owner%", horse == null ? "null" : horse.getOwner())
-                .replaceAll("%player%", player == null ? "null" : player.getName());
+                .replaceAll("%player%", player == null ? "null" : player.getName()));
     }
 
     public static List<String> parseMessage(List<String> list, Horse horse, Player player) {

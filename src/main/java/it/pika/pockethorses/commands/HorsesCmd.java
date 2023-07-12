@@ -1,8 +1,8 @@
 package it.pika.pockethorses.commands;
 
 import it.pika.libs.command.SubCommand;
-import it.pika.pockethorses.PocketHorses;
 import it.pika.pockethorses.Perms;
+import it.pika.pockethorses.PocketHorses;
 import it.pika.pockethorses.enums.Messages;
 import it.pika.pockethorses.menu.MyHorsesMenu;
 import it.pika.pockethorses.menu.ShopMenu;
@@ -23,6 +23,12 @@ public class HorsesCmd extends SubCommand {
     public void noArgs(CommandSender sender) {
         var player = Validator.getPlayerSender(sender);
 
+        if (PocketHorses.getConfigFile().getBoolean("Horses-GUI.Use-Permission") &&
+                !player.hasPermission(Perms.HORSES_GUI)) {
+            error(player, Messages.NO_PERMISSION.get());
+            return;
+        }
+
         new MyHorsesMenu().get().open(player);
     }
 
@@ -35,7 +41,8 @@ public class HorsesCmd extends SubCommand {
             return;
         }
 
-        if (PocketHorses.getConfigFile().getBoolean("Options.Use-Shop-Permission") && !player.hasPermission(Perms.SHOP)) {
+        if (PocketHorses.getConfigFile().getBoolean("Shop-GUI.Use-Permission")
+                && !player.hasPermission(Perms.SHOP_GUI)) {
             error(player, Messages.NO_PERMISSION.get());
             return;
         }

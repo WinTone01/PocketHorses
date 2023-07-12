@@ -18,6 +18,7 @@ public class HorsesAPI {
 
     /**
      * Gets an instance of the API.
+     *
      * @return the API instance
      */
     public static HorsesAPI getInstance() {
@@ -27,6 +28,7 @@ public class HorsesAPI {
 
     /**
      * Get all the horses loaded at the moment
+     *
      * @return a list with loaded horses
      */
     public List<ConfigHorse> getLoadedHorses() {
@@ -35,6 +37,7 @@ public class HorsesAPI {
 
     /**
      * Get all the horses owned by a player
+     *
      * @param player The player referred to
      * @return a list of horses owned by the player
      */
@@ -44,6 +47,7 @@ public class HorsesAPI {
 
     /**
      * Gets an instance of SpawnedHorse from an entity of Bukkit
+     *
      * @param entity The entity referred to
      * @return An instance of SpawnedHorse
      */
@@ -53,6 +57,7 @@ public class HorsesAPI {
 
     /**
      * Gets an instance of Horse from a UUID
+     *
      * @param uuid The UUID referred to
      * @return An instance of Horse
      */
@@ -62,6 +67,7 @@ public class HorsesAPI {
 
     /**
      * Gets an instance of ConfigHorse from a name
+     *
      * @param name The name referred to
      * @return An instance of ConfigHorse
      */

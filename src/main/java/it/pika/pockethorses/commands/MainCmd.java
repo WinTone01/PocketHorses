@@ -1,11 +1,10 @@
 package it.pika.pockethorses.commands;
 
 import it.pika.libs.command.SubCommand;
-import it.pika.pockethorses.PocketHorses;
 import it.pika.pockethorses.Perms;
+import it.pika.pockethorses.PocketHorses;
 import it.pika.pockethorses.enums.Messages;
 import it.pika.pockethorses.objects.ConfigHorse;
-import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -21,7 +20,7 @@ public class MainCmd extends SubCommand {
     @Override
     public void noArgs(CommandSender sender) {
         for (String s : PocketHorses.getMessagesFile().getStringList("help-message"))
-            sender.sendMessage(Component.text(PocketHorses.parseColors(s)));
+            sender.sendMessage(PocketHorses.parseColors(s));
     }
 
     @SubCommandName("give")
@@ -51,10 +50,10 @@ public class MainCmd extends SubCommand {
     @SubCommandName("list")
     @SubCommandPermission(Perms.LIST)
     public void list(CommandSender sender, String label, String[] args) {
-        sender.sendMessage(Component.text(PocketHorses.parseColors(PocketHorses.getConfigFile().getString("Horses-List.Header"))));
+        sender.sendMessage(PocketHorses.parseColors(PocketHorses.getConfigFile().getString("Horses-List.Header")));
         for (ConfigHorse horse : PocketHorses.getLoadedHorses())
-            sender.sendMessage(Component.text(PocketHorses.parseColors(PocketHorses.getConfigFile().getString("Horses-List.Horse")
-                    .replaceAll("%horse%", horse.getId()))));
+            sender.sendMessage(PocketHorses.parseColors(PocketHorses.getConfigFile().getString("Horses-List.Horse"))
+                    .replaceAll("%horse%", horse.getId()));
     }
 
     @SubCommandName("reload")

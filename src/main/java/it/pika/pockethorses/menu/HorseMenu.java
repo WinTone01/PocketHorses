@@ -12,7 +12,6 @@ import it.pika.pockethorses.enums.Messages;
 import it.pika.pockethorses.objects.ConfigHorse;
 import it.pika.pockethorses.objects.SpawnedHorse;
 import lombok.AllArgsConstructor;
-import net.kyori.adventure.text.Component;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -41,6 +40,30 @@ public class HorseMenu implements InventoryProvider {
 
     @Override
     public void init(Player player, InventoryContents contents) {
+        if (horse.isAutoRecall()) {
+            contents.set(SlotPos.of(1, 1), ClickableItem.of(new ItemBuilder()
+                    .material(Material.valueOf(PocketHorses.getConfigFile().getString("Horse-GUI.Auto-Recall.Material")))
+                    .name(PocketHorses.parseMessage(PocketHorses.getConfigFile().getString("Horse-GUI.Auto-Recall.Name"), horse, player))
+                    .lore(PocketHorses.parseMessage(PocketHorses.getConfigFile().getStringList("Horse-GUI.Auto-Recall.Enabled-Lore"), horse, player))
+                    .build(), e -> {
+                player.closeInventory();
+                horse.setAutoRecall(false);
+
+                success(player, Messages.AUTO_RECALL_DISABLED.get());
+            }));
+        } else {
+            contents.set(SlotPos.of(1, 1), ClickableItem.of(new ItemBuilder()
+                    .material(Material.valueOf(PocketHorses.getConfigFile().getString("Horse-GUI.Auto-Recall.Material")))
+                    .name(PocketHorses.parseMessage(PocketHorses.getConfigFile().getString("Horse-GUI.Auto-Recall.Name"), horse, player))
+                    .lore(PocketHorses.parseMessage(PocketHorses.getConfigFile().getStringList("Horse-GUI.Auto-Recall.Disabled-Lore"), horse, player))
+                    .build(), e -> {
+                player.closeInventory();
+                horse.setAutoRecall(true);
+
+                success(player, Messages.AUTO_RECALL_ENABLED.get());
+            }));
+        }
+
         if (ConfigHorse.of(horse.getName()).isStorage()) {
             contents.set(SlotPos.of(1, 4), ClickableItem.of(new ItemBuilder()
                     .material(Material.valueOf(PocketHorses.getConfigFile().getString("Horse-GUI.Horse-Storage.Material")))
@@ -61,7 +84,7 @@ public class HorseMenu implements InventoryProvider {
                         .itemLeft(changeName())
                         .onComplete((p, val) -> {
                             PocketHorses.getStorage().setCustomName(horse, val);
-                            horse.getEntity().customName(Component.text(PocketHorses.parseColors(val)));
+                            horse.getEntity().setCustomName(PocketHorses.parseColors(val));
                             success(player, Messages.CUSTOM_NAME_SET.get());
 
                             return AnvilGUI.Response.close();

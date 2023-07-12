@@ -1,8 +1,10 @@
 package it.pika.pockethorses.listeners;
 
+import it.pika.pockethorses.Perms;
 import it.pika.pockethorses.PocketHorses;
 import it.pika.pockethorses.enums.Messages;
 import it.pika.pockethorses.menu.HorseMenu;
+import it.pika.pockethorses.objects.SpawnedHorse;
 import it.pika.pockethorses.utils.Serializer;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Horse;
@@ -13,10 +15,14 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 
 import static it.pika.libs.chat.Chat.error;
+import static it.pika.libs.chat.Chat.success;
 
 public class HorseListener implements Listener {
+
+    private static final int AUTO_RECALL_RANGE = PocketHorses.getConfigFile().getInt("Options.Auto-Recall-Range");
 
     @EventHandler
     public void onClick(PlayerInteractEntityEvent event) {
@@ -37,6 +43,12 @@ public class HorseListener implements Listener {
         }
 
         if (player.isSneaking() || spawnedHorse.isSit() || horse.getPassengers().contains(player)) {
+            if (PocketHorses.getConfigFile().getBoolean("Horse-GUI.Use-Permission") &&
+                    !player.hasPermission(Perms.HORSE_GUI)) {
+                error(player, Messages.NO_PERMISSION.get());
+                return;
+            }
+
             new HorseMenu(spawnedHorse).get().open(player);
             return;
         }
@@ -88,6 +100,26 @@ public class HorseListener implements Listener {
 
         event.getDrops().clear();
         PocketHorses.getSpawnedHorses().get(spawnedHorse.getOwner()).remove(spawnedHorse);
+    }
+
+    @EventHandler
+    public void autoRecall(PlayerMoveEvent event) {
+        var player = event.getPlayer();
+
+        if (!PocketHorses.getSpawnedHorses().containsKey(player.getName()))
+            return;
+
+        for (SpawnedHorse spawnedHorse : PocketHorses.getSpawnedHorses().get(player.getName())) {
+            if (!spawnedHorse.isAutoRecall())
+                continue;
+
+            if (player.getNearbyEntities(AUTO_RECALL_RANGE, AUTO_RECALL_RANGE, AUTO_RECALL_RANGE)
+                    .contains(spawnedHorse.getEntity()))
+                continue;
+
+            spawnedHorse.getEntity().teleport(player);
+            success(player, Messages.AUTO_RECALLED.get());
+        }
     }
 
 }

@@ -11,7 +11,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class HorsesInitializeEvent extends Event {
 
-    @Getter private final Plugin plugin;
+    @Getter
+    private final Plugin plugin;
 
     public HorsesInitializeEvent(Plugin plugin) {
         this.plugin = plugin;

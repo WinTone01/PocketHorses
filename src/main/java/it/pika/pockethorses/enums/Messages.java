@@ -35,7 +35,10 @@ public enum Messages {
     ALREADY_OWNED("already-owned"),
     NO_HORSES_SPAWNED("no-horses-spawned"),
     HORSES_RECALLED("horses-recalled"),
-    NEW_UPDATE("new-update");
+    NEW_UPDATE("new-update"),
+    AUTO_RECALL_DISABLED("auto-recall-disabled"),
+    AUTO_RECALL_ENABLED("auto-recall-enabled"),
+    AUTO_RECALLED("auto-recalled");
 
     private final String path;
 

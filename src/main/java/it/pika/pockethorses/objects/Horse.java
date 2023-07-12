@@ -1,12 +1,13 @@
 package it.pika.pockethorses.objects;
 
 import com.google.common.collect.Lists;
+import it.pika.pockethorses.Perms;
 import it.pika.pockethorses.PocketHorses;
 import it.pika.pockethorses.api.events.HorseSpawnEvent;
+import it.pika.pockethorses.enums.Messages;
 import it.pika.pockethorses.utils.Serializer;
 import lombok.Getter;
 import lombok.Setter;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
@@ -14,6 +15,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.UUID;
+
+import static it.pika.libs.chat.Chat.error;
 
 @Getter
 @Setter
@@ -49,10 +52,10 @@ public class Horse {
             horse.getInventory().setSaddle(new ItemStack(Material.SADDLE));
 
             if (customName != null && !customName.equalsIgnoreCase("null")) {
-                horse.customName(Component.text(PocketHorses.parseColors(customName)));
+                horse.setCustomName(PocketHorses.parseColors(customName));
                 horse.setCustomNameVisible(true);
             } else {
-                horse.customName(Component.text(PocketHorses.parseColors(configHorse.getDisplayName())));
+                horse.setCustomName(PocketHorses.parseColors(configHorse.getDisplayName()));
             }
 
             horse.setTarget(player);
@@ -63,21 +66,30 @@ public class Horse {
 
             if (PocketHorses.getSpawnedHorses().containsKey(player.getName())) {
                 var list = PocketHorses.getSpawnedHorses().remove(player.getName());
-                list.add(new SpawnedHorse(uuid, name, owner, customName, storedItems, horse, configHorse.getSpeed(), false));
+                list.add(new SpawnedHorse(uuid, name, owner, customName, storedItems, horse, configHorse.getSpeed(),
+                        false, false));
 
                 PocketHorses.getSpawnedHorses().put(player.getName(), list);
                 return;
             }
 
             PocketHorses.getSpawnedHorses().put(player.getName(), Lists.newArrayList(new SpawnedHorse(uuid, name, owner,
-                    customName, storedItems, horse, configHorse.getSpeed(), false)));
+                    customName, storedItems, horse, configHorse.getSpeed(), false, false)));
         });
     }
 
     public void openStorage(Player player) {
+        player.closeInventory();
+
+        if (PocketHorses.getConfigFile().getBoolean("Storage-GUI.Use-Permission") &&
+                !player.hasPermission(Perms.STORAGE_GUI)) {
+            error(player, Messages.NO_PERMISSION.get());
+            return;
+        }
+
         var inventory = Bukkit.createInventory(null,
                 PocketHorses.getConfigFile().getInt("Storage-GUI.Size.Rows") * 9,
-                Component.text(PocketHorses.parseColors(PocketHorses.getConfigFile().getString("Storage-GUI.Title"))));
+                PocketHorses.parseColors(PocketHorses.getConfigFile().getString("Storage-GUI.Title")));
         inventory.setContents(storedItems == null ? new ItemStack[]{} : Serializer.deserialize(storedItems));
 
         player.openInventory(inventory);

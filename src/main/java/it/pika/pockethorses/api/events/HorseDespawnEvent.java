@@ -14,9 +14,13 @@ import org.jetbrains.annotations.NotNull;
  */
 public class HorseDespawnEvent extends Event implements Cancellable {
 
-    @Getter @Setter private boolean cancelled = false;
-    @Getter private final Player player;
-    @Getter private final Horse horse;
+    @Getter
+    @Setter
+    private boolean cancelled = false;
+    @Getter
+    private final Player player;
+    @Getter
+    private final Horse horse;
 
     public HorseDespawnEvent(Player player, Horse horse) {
         this.player = player;

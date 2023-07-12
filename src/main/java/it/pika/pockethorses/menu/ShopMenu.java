@@ -59,7 +59,7 @@ public class ShopMenu implements InventoryProvider {
 
                 success(player, Messages.PURCHASE_COMPLETED.get());
                 if (PocketHorses.getConfigFile().getBoolean("Options.Play-Sound-When-Buy"))
-                    player.playSound(player, Sound.valueOf(PocketHorses.
+                    player.playSound(player.getLocation(), Sound.valueOf(PocketHorses.
                             getConfigFile().getString("Shop-GUI.Buy-Sound")), 1F, 1F);
             }));
         }
@@ -70,9 +70,10 @@ public class ShopMenu implements InventoryProvider {
     }
 
     private String format(String s, ConfigHorse horse) {
-        return PocketHorses.parseColors(s.replaceAll("%displayName%", horse.getDisplayName())
+        return PocketHorses.parseColors(s)
+                .replaceAll("%displayName%", horse.getDisplayName())
                 .replaceAll("%speed%", String.valueOf(horse.getSpeed()))
-                .replaceAll("%price%", String.valueOf(horse.getPrice())));
+                .replaceAll("%price%", String.valueOf(horse.getPrice()));
     }
 
     private List<String> format(List<String> list, ConfigHorse horse) {
