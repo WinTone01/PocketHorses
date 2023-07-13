@@ -28,11 +28,13 @@ Options:
   More-Than-Once-Same-Horse: false # If enabled, players will be able to own the same horse more than once
   Update-Message-On-Join: true # If enabled, OP players will receive a message when a new update is available
   Auto-Recall-Range: 30 # The range of distance blocks beyond which the horse will teleport from the player if Auto-Recall is active
+  Action-Bar-While-Riding: true # If enabled, a message will be shown in action bar when the player rides a horse
+  Action-Bar-Message: '&a&l%speed% KM/H' # The message to show (works only if Action-Bar-While-Riding is true)
 
 # Customize the menu that is opened after the /horses command
 Horses-GUI:
   Title: 'My horses' # The GUI title
-  Use-Permission: false # # If enabled, players will need to have 'pockethorses.gui.horses' permission to use this GUI
+  Use-Permission: false # If enabled, players will need to have 'pockethorses.gui.horses' permission to use this GUI
   Size:
     Rows: 5 # The horizontal lines of the GUI, can be up to 6
     Columns: 9 # The vertical columns of the GUI, there are normally 9
@@ -48,7 +50,7 @@ Horses-GUI:
 # Customize the menu that is opened after you click on a horse
 Horse-GUI:
   Title: 'Horse' # The GUI title
-  Use-Permission: false # # If enabled, players will need to have 'pockethorses.gui.horse' permission to use this GUI
+  Use-Permission: false # If enabled, players will need to have 'pockethorses.gui.horse' permission to use this GUI
   Size:
     Rows: 5 # The horizontal lines of the GUI, can be up to 6
     Columns: 9 # The vertical columns of the GUI, there are normally 9
@@ -88,14 +90,14 @@ Horses-List:
 
 Storage-GUI:
   Title: 'Horse Storage' # The GUI title
-  Use-Permission: false # # If enabled, players will need to have 'pockethorses.gui.storage' permission to use this GUI
+  Use-Permission: false # If enabled, players will need to have 'pockethorses.gui.storage' permission to use this GUI
   Size:
     Rows: 2 # The horizontal lines of the GUI, can be up to 6
     Columns: 9 # The vertical columns of the GUI, there are normally 9
 
 Shop-GUI:
   Title: 'Shop' # The GUI title
-  Use-Permission: false # # If enabled, players will need to have 'pockethorses.gui.shop' permission to use this GUI
+  Use-Permission: false # If enabled, players will need to have 'pockethorses.gui.shop' permission to use this GUI
   Buy-Sound: BLOCK_ANVIL_USE # The sound that is played when a horse is purchased (the Play-Sound-When-Buy option needs to be enabled), see https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html
   Size:
     Rows: 5
@@ -108,3 +110,17 @@ Shop-GUI:
       - '&7Price: &f%price%$'
       - ''
       - '&a&lClick to buy!'
+
+Vouchers:
+  Opening:
+    Title: '&a&lOpening voucher..' # The title to send while opening a voucher
+    Sub-Title: '&a&k::::::::' # The subtitle to send while opening a voucher
+    Delay: 5 # The time in seconds to wait before revealing the voucher prize
+    Sound: BLOCK_CHEST_OPEN # The sound to be played when opening a voucher, see https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html
+  Reward:
+    Title: '&a&lVoucher opened!' # The title to be sent when the prize is revealed
+    Sub-Title: '&aYou won &r%reward%' # The subtitle to be sent when the prize is revealed
+    Sound: ENTITY_PLAYER_LEVELUP # The sound to be played when the prize is revealed, see https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html
+  List:
+    Header: '&6List of loaded vouchers:' # The message preceding the list
+    Voucher: '&8- &e%voucher%' # The message representing a loaded voucher

@@ -24,6 +24,10 @@ repositories {
         name = "jitpack.io"
         url = "https://jitpack.io"
     }
+    maven {
+        name = "CodeMC"
+        url = "https://repo.codemc.io/repository/maven-public/"
+    }
 }
 
 dependencies {
@@ -41,6 +45,10 @@ dependencies {
     }
 
     implementation('com.tchristofferson:ConfigUpdater:2.1-SNAPSHOT') {
+        transitive = false
+    }
+
+    implementation('de.tr7zw:item-nbt-api:2.11.3') {
         transitive = false
     }
 
@@ -84,4 +92,5 @@ shadowJar {
     relocate 'fr.minuskube.inv', 'it.pika.libs.smartinvs'
     relocate 'net.wesjd.anvilgui', 'it.pika.libs.anvilgui'
     relocate 'com.tchristofferson.configupdater', 'it.pika.libs.config.updater'
+    relocate 'de.tr7zw.changeme.nbtapi', 'it.pika.libs.nbt'
 }

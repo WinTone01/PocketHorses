@@ -38,7 +38,9 @@ public enum Messages {
     NEW_UPDATE("new-update"),
     AUTO_RECALL_DISABLED("auto-recall-disabled"),
     AUTO_RECALL_ENABLED("auto-recall-enabled"),
-    AUTO_RECALLED("auto-recalled");
+    AUTO_RECALLED("auto-recalled"),
+    VOUCHER_NOT_EXISTING("voucher-not-existing"),
+    VOUCHER_GIVEN("voucher-given");
 
     private final String path;
 

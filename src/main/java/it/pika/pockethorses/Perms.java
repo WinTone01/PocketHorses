@@ -9,10 +9,16 @@ public class Perms {
             STORAGE_GUI = "pockethorses.gui.storage",
             SHOP_GUI = "pockethorses.gui.shop",
             LIST = "pockethorses.list",
+            GIVE_VOUCHER = "pockethorses.give.voucher",
+            LIST_VOUCHERS = "pockethorses.list.vouchers",
             RELOAD = "pockethorses.reload";
 
     public static String getHorse(String name) {
         return "pockethorses.horse.%s".formatted(name);
+    }
+
+    public static String getVoucher(String name) {
+        return "pockethorses.voucher.%s".formatted(name);
     }
 
 

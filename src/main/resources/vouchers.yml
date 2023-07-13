@@ -1,0 +1,15 @@
+exampleVoucher: # The voucher id, recognized by the plugin for example in the commands
+  DisplayName: '&b&lExample Horse Voucher' # The displayed name of the voucher
+  Material: PAPER # The item type, see https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
+  Lore: # The description of the item representing the voucher
+    - '&7This voucher may contain one of the following horses:'
+    - '&f%rewards%'
+    - ''
+    - '&f&lRIGHT CLICK &7to open.'
+  Permission: false # If enabled, players must have the permission "pockethorses.voucher.<id>" to use this voucher
+  Rewards: # The list of horses that you can win in this voucher
+    - 'Thoroughbred'
+    - 'Arabian'
+    - 'QuarterHorse'
+    - 'Appaloosa'
+    - 'Hanoverian'

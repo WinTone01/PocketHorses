@@ -5,6 +5,7 @@ import it.pika.pockethorses.Perms;
 import it.pika.pockethorses.PocketHorses;
 import it.pika.pockethorses.enums.Messages;
 import it.pika.pockethorses.objects.ConfigHorse;
+import it.pika.pockethorses.objects.Voucher;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -56,12 +57,40 @@ public class MainCmd extends SubCommand {
                     .replaceAll("%horse%", horse.getId()));
     }
 
+    @SubCommandName("giveVoucher")
+    @SubCommandMinArgs(2)
+    @SubCommandUsage("<player> <voucher>")
+    @SubCommandPermission(Perms.GIVE_VOUCHER)
+    public void giveVoucher(CommandSender sender, String label, String[] args) {
+        var player = Validator.getPlayerSender(sender);
+        var target = Validator.getOnlinePlayer(args[0]);
+
+        var voucher = Voucher.of(args[1]);
+        if (voucher == null) {
+            error(player, Messages.VOUCHER_NOT_EXISTING.get());
+            return;
+        }
+
+        target.getInventory().addItem(voucher.getItem());
+        success(player, Messages.VOUCHER_GIVEN.get().formatted(target.getName()));
+    }
+
+    @SubCommandName("listVouchers")
+    @SubCommandPermission(Perms.LIST_VOUCHERS)
+    public void listVouchers(CommandSender sender, String label, String[] args) {
+        sender.sendMessage(PocketHorses.parseColors(PocketHorses.getConfigFile().getString("Vouchers.List.Header")));
+        for (String key : PocketHorses.getVouchersFile().getConfigurationSection("").getKeys(false))
+            sender.sendMessage(PocketHorses.parseColors(PocketHorses.getConfigFile().getString("Vouchers.List.Voucher"))
+                    .replaceAll("%voucher%", key));
+    }
+
     @SubCommandName("reload")
     @SubCommandPermission(Perms.RELOAD)
     public void reload(CommandSender sender, String label, String[] args) {
         PocketHorses.getConfigFile().reload();
         PocketHorses.getMessagesFile().reload();
         PocketHorses.getHorsesFile().reload();
+        PocketHorses.getVouchersFile().reload();
 
         PocketHorses.getLoadedHorses().clear();
         PocketHorses.getInstance().loadHorses();

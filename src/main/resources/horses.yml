@@ -1,8 +1,40 @@
-exampleHorse: # The name of the horse read by the plugin, to be used in the /pockethorses give command.
-  displayName: '&f&lExample Horse' # The displayed name of the horse
-  color: 'BLACK' # The color of the horse when it is spawned, see https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/Horse.Color.html
-  speed: 30.0 # The horse's walking speed, expressed in km/h
+Thoroughbred: # The name of the horse read by the plugin, to be used in the /pockethorses give command.
+  displayName: '&f&lThoroughbred' # The displayed name of the horse
+  color: 'BROWN' # The color of the horse when it is spawned, see https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/Horse.Color.html
+  speed: 50.0 # The horse's walking speed, expressed in km/h
   buyable: true # If enabled, the horse will be available for purchase in the shop
-  price: 1000.0 # The purchase price of the horse
+  price: 2000.0 # The purchase price of the horse
   permission: false # If enabled, players must have 'pockethorses.horse.<name>' permission to use the horse
   storage: true # If enabled, the horse will have a chest in which players can put items (see Storage-GUI in config.yml)
+Arabian:
+  displayName: '&f&lArabian'
+  color: 'GRAY'
+  speed: 45.0
+  buyable: true
+  price: 1700.0
+  permission: false
+  storage: true
+QuarterHorse:
+  displayName: '&f&lQuarter Horse'
+  color: 'CREAMY'
+  speed: 35.0
+  buyable: true
+  price: 1500.0
+  permission: false
+  storage: true
+Appaloosa:
+  displayName: '&f&lAppaloosa'
+  color: 'BLACK'
+  speed: 30.0
+  buyable: true
+  price: 1300.0
+  permission: false
+  storage: true
+Hanoverian:
+  displayName: '&f&lHanoverian'
+  color: 'BROWN'
+  speed: 25.0
+  buyable: true
+  price: 1000.0
+  permission: false
+  storage: true

@@ -11,6 +11,7 @@ import it.pika.pockethorses.commands.HorsesCmd;
 import it.pika.pockethorses.commands.MainCmd;
 import it.pika.pockethorses.listeners.HorseListener;
 import it.pika.pockethorses.listeners.JoinListener;
+import it.pika.pockethorses.listeners.VoucherListener;
 import it.pika.pockethorses.objects.ConfigHorse;
 import it.pika.pockethorses.objects.Horse;
 import it.pika.pockethorses.objects.SpawnedHorse;
@@ -58,6 +59,8 @@ public final class PocketHorses extends JavaPlugin {
     private static Config messagesFile = null;
     @Getter
     private static Config horsesFile = null;
+    @Getter
+    private static Config vouchersFile = null;
 
 
     @Getter
@@ -73,7 +76,7 @@ public final class PocketHorses extends JavaPlugin {
     @Getter
     private static boolean shopEnabled;
 
-    public static final String VERSION = "1.1.0";
+    public static final String VERSION = "1.2.0";
 
     @Override
     public void onEnable() {
@@ -118,14 +121,17 @@ public final class PocketHorses extends JavaPlugin {
         configFile = new Config(this, "config.yml");
         messagesFile = new Config(this, "messages.yml");
         horsesFile = new Config(this, "horses.yml");
+        vouchersFile = new Config(this, "vouchers.yml");
 
         ConfigUpdater.update(this, "config.yml", configFile.getFile());
         ConfigUpdater.update(this, "messages.yml", messagesFile.getFile());
         ConfigUpdater.update(this, "horses.yml", horsesFile.getFile());
+        ConfigUpdater.update(this, "vouchers.yml", vouchersFile.getFile());
 
         configFile.reload();
         messagesFile.reload();
         horsesFile.reload();
+        vouchersFile.reload();
 
         shopEnabled = configFile.getBoolean("Options.Shop-Enabled");
     }
@@ -166,6 +172,7 @@ public final class PocketHorses extends JavaPlugin {
         var pm = Bukkit.getPluginManager();
         pm.registerEvents(new HorseListener(), this);
         pm.registerEvents(new JoinListener(), this);
+        pm.registerEvents(new VoucherListener(), this);
     }
 
     private void registerCommands() {
@@ -174,7 +181,7 @@ public final class PocketHorses extends JavaPlugin {
     }
 
     public void loadHorses() {
-        for (String horse : horsesFile.getConfigurationSection("").getKeys(false)) {
+        for (String horse : Objects.requireNonNull(horsesFile.getConfigurationSection("")).getKeys(false)) {
             loadedHorses.add(ConfigHorse.of(horse));
             console.info("Loaded horse: %s".formatted(horse));
         }
@@ -185,7 +192,10 @@ public final class PocketHorses extends JavaPlugin {
         inventoryManager.init();
     }
 
-    public static String parseColors(String s) {
+    public static String parseColors(@Nullable String s) {
+        if (s == null)
+            return "null";
+
         var parsed = new StringBuilder();
         var colorHex = "";
         if (s.contains("&")) {
@@ -215,12 +225,22 @@ public final class PocketHorses extends JavaPlugin {
         return parsed.toString();
     }
 
+    public static List<String> parseColors(List<String> list) {
+        List<String> newList = Lists.newArrayList();
+
+        for (String s : list)
+            newList.add(parseColors(s));
+
+        return newList;
+    }
+
     public static String parseMessage(String s, @Nullable Horse horse, @Nullable Player player) {
         var configHorse = horse == null ? null : ConfigHorse.of(horse.getName());
 
         return parseColors(s.replaceAll("%displayName%", configHorse == null ? "null" :
                         horse.getCustomName() == null ? configHorse.getDisplayName() : horse.getCustomName())
-                .replaceAll("%speed%", String.valueOf(horse instanceof SpawnedHorse ? ((SpawnedHorse) horse).getSpeed() : configHorse.getSpeed()))
+                .replaceAll("%speed%", String.valueOf(horse instanceof SpawnedHorse ? ((SpawnedHorse) horse).getSpeed()
+                        : Objects.requireNonNull(configHorse).getSpeed()))
                 .replaceAll("%owner%", horse == null ? "null" : horse.getOwner())
                 .replaceAll("%player%", player == null ? "null" : player.getName()));
     }

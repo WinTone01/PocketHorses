@@ -122,4 +122,26 @@ public class HorseListener implements Listener {
         }
     }
 
+    @EventHandler
+    public void actionBar(PlayerMoveEvent event) {
+        var player = event.getPlayer();
+
+        if (player.getVehicle() == null)
+            return;
+
+        if (!(player.getVehicle() instanceof Horse horse))
+            return;
+
+        var spawnedHorse = PocketHorses.getSpawnedHorse(horse);
+        if (spawnedHorse == null)
+            return;
+
+        if (!PocketHorses.getConfigFile().getBoolean("Options.Action-Bar-While-Riding"))
+            return;
+
+        player.sendActionBar(Component.text(PocketHorses
+                .parseMessage(PocketHorses.getConfigFile().getString("Options.Action-Bar-Message"),
+                        spawnedHorse, player)));
+    }
+
 }
