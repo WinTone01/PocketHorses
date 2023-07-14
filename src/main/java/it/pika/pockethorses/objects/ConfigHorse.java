@@ -24,21 +24,25 @@ public class ConfigHorse {
     public static ConfigHorse of(String name) {
         var config = PocketHorses.getHorsesFile();
 
-        Horse.Color color;
         try {
-            color = Horse.Color.valueOf(config.getString("%s.color".formatted(name)));
-        } catch (IllegalArgumentException e) {
-            color = Horse.Color.BLACK;
-            PocketHorses.getConsole().warning("Color %s not recognized for horse %s, using 'BLACK' instead."
-                    .formatted(config.getString("%s.color".formatted(name)), name));
-        }
+            Horse.Color color;
+            try {
+                color = Horse.Color.valueOf(config.getString("%s.color".formatted(name)));
+            } catch (IllegalArgumentException e) {
+                color = Horse.Color.BLACK;
+                PocketHorses.getConsole().warning("Color %s not recognized for horse %s, using 'BLACK' instead."
+                        .formatted(config.getString("%s.color".formatted(name)), name));
+            }
 
-        return new ConfigHorse(name, config.getString("%s.displayName".formatted(name)), color,
-                config.getDouble("%s.speed".formatted(name)),
-                config.getBoolean("%s.buyable".formatted(name)),
-                config.getDouble("%s.price".formatted(name)),
-                config.getBoolean("%s.permission".formatted(name)),
-                config.getBoolean("%s.storage".formatted(name)));
+            return new ConfigHorse(name, config.getString("%s.displayName".formatted(name)), color,
+                    config.getDouble("%s.speed".formatted(name)),
+                    config.getBoolean("%s.buyable".formatted(name)),
+                    config.getDouble("%s.price".formatted(name)),
+                    config.getBoolean("%s.permission".formatted(name)),
+                    config.getBoolean("%s.storage".formatted(name)));
+        } catch (NullPointerException e) {
+            return null;
+        }
     }
 
 }

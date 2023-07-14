@@ -34,8 +34,9 @@ public class MyHorsesMenu implements InventoryProvider {
     @Override
     public void init(Player player, InventoryContents contents) {
         for (Horse horse : PocketHorses.getHorsesOf(player)) {
-            if (ConfigHorse.of(horse.getName()).isPermission()
-                    && !player.hasPermission(Perms.getHorse(horse.getName())))
+            if (ConfigHorse.of(horse.getName()) == null ||
+                    (ConfigHorse.of(horse.getName()).isPermission()
+                            && !player.hasPermission(Perms.getHorse(horse.getName()))))
                 continue;
 
             contents.add(ClickableItem.of(new ItemBuilder()
