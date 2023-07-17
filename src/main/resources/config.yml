@@ -3,7 +3,6 @@
 #    Configuration file   #
 ###########################
 
-
 # What type of storage should the plugin use?
 #
 # Possible options:
@@ -30,6 +29,9 @@ Options:
   Auto-Recall-Range: 30 # The range of distance blocks beyond which the horse will teleport from the player if Auto-Recall is active
   Action-Bar-While-Riding: true # If enabled, a message will be shown in action bar when the player rides a horse
   Action-Bar-Message: '&a&l%speed% KM/H' # The message to show (works only if Action-Bar-While-Riding is true)
+  Display-HP-In-Name: true # If enabled, health will be shown in the spawned horse's name
+  Display-HP: '&c%health% HP ❤' # The message that includes horse health
+  Horse-Cooldown: 0 # A time to wait between the spawn of two horses, in seconds (if set to 0 it is off)
 
 # Customize the menu that is opened after the /horses command
 Horses-GUI:

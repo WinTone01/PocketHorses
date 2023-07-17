@@ -28,6 +28,10 @@ repositories {
         name = "CodeMC"
         url = "https://repo.codemc.io/repository/maven-public/"
     }
+    maven {
+        name = "placeholderapi"
+        url = "https://repo.extendedclip.com/content/repositories/placeholderapi/"
+    }
 }
 
 dependencies {
@@ -53,6 +57,7 @@ dependencies {
     }
 
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
+    compileOnly 'me.clip:placeholderapi:2.11.3'
 }
 
 def targetJavaVersion = 17

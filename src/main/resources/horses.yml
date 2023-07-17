@@ -1,7 +1,10 @@
 Thoroughbred: # The name of the horse read by the plugin, to be used in the /pockethorses give command.
   displayName: '&f&lThoroughbred' # The displayed name of the horse
   color: 'BROWN' # The color of the horse when it is spawned, see https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/Horse.Color.html
+  style: 'BLACK_DOTS' # Horse style, see https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/Horse.Style.html for more information
   speed: 50.0 # The horse's walking speed, expressed in km/h
+  jumpStrength: 0.9 # Horse jump strength, by default is 0.7; due to Minecraft limitations, you can only enter values from 0 to 2
+  max-health: 22 # The maximum health of the horse
   buyable: true # If enabled, the horse will be available for purchase in the shop
   price: 2000.0 # The purchase price of the horse
   permission: false # If enabled, players must have 'pockethorses.horse.<name>' permission to use the horse
@@ -9,7 +12,10 @@ Thoroughbred: # The name of the horse read by the plugin, to be used in the /poc
 Arabian:
   displayName: '&f&lArabian'
   color: 'GRAY'
+  style: 'WHITE_DOTS'
   speed: 45.0
+  jumpStrength: 0.7
+  max-health: 25
   buyable: true
   price: 1700.0
   permission: false
@@ -17,7 +23,10 @@ Arabian:
 QuarterHorse:
   displayName: '&f&lQuarter Horse'
   color: 'CREAMY'
+  style: 'WHITE'
   speed: 35.0
+  jumpStrength: 0.8
+  max-health: 23
   buyable: true
   price: 1500.0
   permission: false
@@ -25,7 +34,10 @@ QuarterHorse:
 Appaloosa:
   displayName: '&f&lAppaloosa'
   color: 'BLACK'
+  style: 'WHITE_DOTS'
   speed: 30.0
+  jumpStrength: 0.7
+  max-health: 22
   buyable: true
   price: 1300.0
   permission: false
@@ -33,7 +45,10 @@ Appaloosa:
 Hanoverian:
   displayName: '&f&lHanoverian'
   color: 'BROWN'
+  style: 'WHITEFIELD'
   speed: 25.0
+  jumpStrength: 0.6
+  max-health: 18
   buyable: true
   price: 1000.0
   permission: false

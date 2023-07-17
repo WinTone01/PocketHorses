@@ -20,6 +20,8 @@ import it.pika.pockethorses.storage.StorageType;
 import it.pika.pockethorses.storage.impl.JSON;
 import it.pika.pockethorses.storage.impl.MySQL;
 import it.pika.pockethorses.storage.impl.SQLite;
+import it.pika.pockethorses.utils.Cooldowns;
+import it.pika.pockethorses.utils.Placeholders;
 import it.pika.pockethorses.utils.UpdateChecker;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,10 +34,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.annotation.Nullable;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
@@ -51,6 +50,8 @@ public final class PocketHorses extends JavaPlugin {
     private static InventoryManager inventoryManager = null;
     @Getter
     private static Economy economy = null;
+    @Getter
+    private static final Cooldowns cooldowns = new Cooldowns();
 
 
     @Getter
@@ -76,7 +77,7 @@ public final class PocketHorses extends JavaPlugin {
     @Getter
     private static boolean shopEnabled;
 
-    public static final String VERSION = "1.2.1";
+    public static final String VERSION = "1.3.0";
 
     @Override
     public void onEnable() {
@@ -94,6 +95,8 @@ public final class PocketHorses extends JavaPlugin {
             shopEnabled = false;
             console.warning("Vault not found, you will not be able to use the shop!");
         }
+        if (!setupPlaceholders())
+            console.warning("PlaceholderAPI not found, you will not be able to use placeholders!");
 
         registerListeners();
         registerCommands();
@@ -118,20 +121,16 @@ public final class PocketHorses extends JavaPlugin {
 
     @SneakyThrows
     private void setupFiles() {
-        configFile = new Config(this, "config.yml");
-        messagesFile = new Config(this, "messages.yml");
-        horsesFile = new Config(this, "horses.yml");
-        vouchersFile = new Config(this, "vouchers.yml");
+        configFile = new Config(this, "config.yml", 3);
+        messagesFile = new Config(this, "messages.yml", 3);
+        horsesFile = new Config(this, "horses.yml", 3);
+        vouchersFile = new Config(this, "vouchers.yml", 3);
 
         ConfigUpdater.update(this, "config.yml", configFile.getFile());
         ConfigUpdater.update(this, "messages.yml", messagesFile.getFile());
-        ConfigUpdater.update(this, "horses.yml", horsesFile.getFile());
-        ConfigUpdater.update(this, "vouchers.yml", vouchersFile.getFile());
 
         configFile.reload();
         messagesFile.reload();
-        horsesFile.reload();
-        vouchersFile.reload();
 
         shopEnabled = configFile.getBoolean("Options.Shop-Enabled");
     }
@@ -190,6 +189,33 @@ public final class PocketHorses extends JavaPlugin {
     private void setupInventories() {
         inventoryManager = new InventoryManager(this);
         inventoryManager.init();
+    }
+
+    private boolean setupEconomy() {
+        if (Bukkit.getPluginManager().getPlugin("Vault") == null)
+            return false;
+
+        var rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null)
+            return false;
+
+        economy = rsp.getProvider();
+        return true;
+    }
+
+    private boolean setupPlaceholders() {
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") == null)
+            return false;
+
+        new Placeholders().register();
+        return true;
+    }
+
+    private void checkForUpdates() {
+        new UpdateChecker(this, 111158).getVersion(version -> {
+            if (!version.equals(VERSION))
+                console.warning("A new update is available! Download it from the official SpigotMC page");
+        });
     }
 
     public static String parseColors(@Nullable String s) {
@@ -313,25 +339,6 @@ public final class PocketHorses extends JavaPlugin {
         }
 
         return false;
-    }
-
-    private boolean setupEconomy() {
-        if (Bukkit.getPluginManager().getPlugin("Vault") == null)
-            return false;
-
-        var rsp = getServer().getServicesManager().getRegistration(Economy.class);
-        if (rsp == null)
-            return false;
-
-        economy = rsp.getProvider();
-        return true;
-    }
-
-    private void checkForUpdates() {
-        new UpdateChecker(this, 111158).getVersion(version -> {
-            if (!version.equals(VERSION))
-                console.warning("A new update is available! Download it from the official SpigotMC page");
-        });
     }
 
 }

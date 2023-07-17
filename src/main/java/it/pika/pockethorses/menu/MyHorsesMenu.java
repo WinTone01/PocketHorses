@@ -58,6 +58,12 @@ public class MyHorsesMenu implements InventoryProvider {
                     return;
                 }
 
+                var cooldown = PocketHorses.getCooldowns().getRemainingCooldown(player.getUniqueId());
+                if (!cooldown.isZero() && !cooldown.isNegative()) {
+                    error(player, Messages.IN_COOLDOWN.get().formatted(cooldown.toSeconds()));
+                    return;
+                }
+
                 horse.spawn(player);
                 success(player, Messages.HORSE_SPAWNED.get());
             }));

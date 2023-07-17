@@ -14,6 +14,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.time.Duration;
 import java.util.UUID;
 
 import static it.pika.libs.chat.Chat.error;
@@ -37,6 +38,7 @@ public class Horse {
     }
 
     public void spawn(Player player) {
+        var config = PocketHorses.getConfigFile();
         var configHorse = ConfigHorse.of(name);
 
         var event = new HorseSpawnEvent(player, this);
@@ -51,18 +53,30 @@ public class Horse {
             horse.setOwner(player);
             horse.getInventory().setSaddle(new ItemStack(Material.SADDLE));
 
-            if (customName != null && !customName.equalsIgnoreCase("null")) {
-                horse.setCustomName(PocketHorses.parseColors(customName));
-                horse.setCustomNameVisible(true);
-            } else {
-                horse.setCustomName(PocketHorses.parseColors(configHorse.getDisplayName()));
-            }
-
             horse.setTarget(player);
             horse.setColor(configHorse.getColor());
 
             double speed = configHorse.getSpeed() / 3.6;
             horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(speed / 20);
+
+            horse.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(configHorse.getMaxHealth());
+            horse.setHealth(configHorse.getMaxHealth());
+
+            if (customName != null && !customName.equalsIgnoreCase("null")) {
+                horse.setCustomName(PocketHorses.parseColors(customName) +
+                        (config.getBoolean("Options.Display-HP-In-Name") ?
+                                " " + PocketHorses.parseColors(config.getString("Options.Display-HP")
+                                        .replaceAll("%health%", String.valueOf((int) horse.getHealth()))) : ""));
+                horse.setCustomNameVisible(true);
+            } else {
+                horse.setCustomName(PocketHorses.parseColors(configHorse.getDisplayName()) +
+                        (config.getBoolean("Options.Display-HP-In-Name") ?
+                                " " + PocketHorses.parseColors(config.getString("Options.Display-HP")
+                                        .replaceAll("%health%", String.valueOf((int) horse.getHealth()))) : ""));
+            }
+
+            horse.setJumpStrength(configHorse.getJumpStrength());
+            horse.setStyle(configHorse.getStyle());
 
             if (PocketHorses.getSpawnedHorses().containsKey(player.getName())) {
                 var list = PocketHorses.getSpawnedHorses().remove(player.getName());
@@ -75,6 +89,10 @@ public class Horse {
 
             PocketHorses.getSpawnedHorses().put(player.getName(), Lists.newArrayList(new SpawnedHorse(uuid, name, owner,
                     customName, storedItems, horse, configHorse.getSpeed(), false, false)));
+
+            var seconds = PocketHorses.getConfigFile().getInt("Options.Horse-Cooldown");
+            if (seconds > 0)
+                PocketHorses.getCooldowns().setCooldown(player.getUniqueId(), Duration.ofSeconds(seconds));
         });
     }
 

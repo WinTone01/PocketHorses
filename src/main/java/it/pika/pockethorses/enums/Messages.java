@@ -40,7 +40,8 @@ public enum Messages {
     AUTO_RECALL_ENABLED("auto-recall-enabled"),
     AUTO_RECALLED("auto-recalled"),
     VOUCHER_NOT_EXISTING("voucher-not-existing"),
-    VOUCHER_GIVEN("voucher-given");
+    VOUCHER_GIVEN("voucher-given"),
+    IN_COOLDOWN("in-cooldown");
 
     private final String path;
 

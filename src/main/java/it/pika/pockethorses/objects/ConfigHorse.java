@@ -15,7 +15,10 @@ public class ConfigHorse {
     private String id;
     private String displayName;
     private Horse.Color color;
+    private Horse.Style style;
     private double speed;
+    private double jumpStrength;
+    private int maxHealth;
     private boolean buyable;
     private double price;
     private boolean permission;
@@ -34,8 +37,17 @@ public class ConfigHorse {
                         .formatted(config.getString("%s.color".formatted(name)), name));
             }
 
-            return new ConfigHorse(name, config.getString("%s.displayName".formatted(name)), color,
+            Horse.Style style;
+            try {
+                style = Horse.Style.valueOf(config.getString("%s.style".formatted(name)));
+            } catch (NullPointerException | IllegalArgumentException e) {
+                style = Horse.Style.BLACK_DOTS;
+            }
+
+            return new ConfigHorse(name, config.getString("%s.displayName".formatted(name)), color, style,
                     config.getDouble("%s.speed".formatted(name)),
+                    config.getDouble("%s.jumpStrength".formatted(name)),
+                    config.getInt("%s.max-health".formatted(name)),
                     config.getBoolean("%s.buyable".formatted(name)),
                     config.getDouble("%s.price".formatted(name)),
                     config.getBoolean("%s.permission".formatted(name)),
