@@ -26,6 +26,7 @@ import it.pika.pockethorses.utils.UpdateChecker;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.ChatColor;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -76,8 +77,10 @@ public final class PocketHorses extends JavaPlugin {
 
     @Getter
     private static boolean shopEnabled;
+    @Getter
+    private static boolean placeholdersEnabled = false;
 
-    public static final String VERSION = "1.3.0";
+    public static final String VERSION = "1.4.1";
 
     @Override
     public void onEnable() {
@@ -208,6 +211,7 @@ public final class PocketHorses extends JavaPlugin {
             return false;
 
         new Placeholders().register();
+        placeholdersEnabled = true;
         return true;
     }
 
@@ -263,12 +267,26 @@ public final class PocketHorses extends JavaPlugin {
     public static String parseMessage(String s, @Nullable Horse horse, @Nullable Player player) {
         var configHorse = horse == null ? null : ConfigHorse.of(horse.getName());
 
-        return parseColors(s.replaceAll("%displayName%", configHorse == null ? "null" :
-                        horse.getCustomName() == null ? configHorse.getDisplayName() : horse.getCustomName())
-                .replaceAll("%speed%", String.valueOf(horse instanceof SpawnedHorse ? ((SpawnedHorse) horse).getSpeed()
-                        : Objects.requireNonNull(configHorse).getSpeed()))
-                .replaceAll("%owner%", horse == null ? "null" : horse.getOwner())
-                .replaceAll("%player%", player == null ? "null" : player.getName()));
+        if (placeholdersEnabled) {
+            return parseColors(PlaceholderAPI.setPlaceholders(player,
+                    s.replaceAll("%displayName%", configHorse == null ? "null" :
+                            horse.getCustomName() == null ? configHorse.getDisplayName() : horse.getCustomName())
+                    .replaceAll("%speed%", String.valueOf(horse instanceof SpawnedHorse ? ((SpawnedHorse) horse).getSpeed()
+                            : Objects.requireNonNull(configHorse).getSpeed()))
+                    .replaceAll("%owner%", horse.getOwner())
+                    .replaceAll("%jumpStrength%", configHorse == null ? "null"
+                            : String.valueOf(configHorse.getJumpStrength()))
+                    .replaceAll("%player%", player == null ? "null" : player.getName())));
+        } else {
+            return parseColors(s.replaceAll("%displayName%", configHorse == null ? "null" :
+                            horse.getCustomName() == null ? configHorse.getDisplayName() : horse.getCustomName())
+                    .replaceAll("%speed%", String.valueOf(horse instanceof SpawnedHorse ? ((SpawnedHorse) horse).getSpeed()
+                            : Objects.requireNonNull(configHorse).getSpeed()))
+                    .replaceAll("%owner%", horse.getOwner())
+                    .replaceAll("%jumpStrength%", configHorse == null ? "null"
+                            : String.valueOf(configHorse.getJumpStrength()))
+                    .replaceAll("%player%", player == null ? "null" : player.getName()));
+        }
     }
 
     public static List<String> parseMessage(List<String> list, Horse horse, Player player) {
