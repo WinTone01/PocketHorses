@@ -89,7 +89,6 @@ public class MainCmd extends SubCommand {
     public void reload(CommandSender sender, String label, String[] args) {
         PocketHorses.getConfigFile().reload();
         PocketHorses.getMessagesFile().reload();
-        PocketHorses.getHorsesFile().reload();
         PocketHorses.getVouchersFile().reload();
 
         PocketHorses.getLoadedHorses().clear();

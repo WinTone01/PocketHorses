@@ -54,6 +54,12 @@ public class HorsesCmd extends SubCommand {
     public void recall(CommandSender sender, String label, String[] args) {
         var player = Validator.getPlayerSender(sender);
 
+        if (PocketHorses.getConfigFile().getBoolean("Options.Use-Recall-Permission")
+                && !player.hasPermission(Perms.RECALL)) {
+            error(player, Messages.NO_PERMISSION.get());
+            return;
+        }
+
         if (!PocketHorses.getSpawnedHorses().containsKey(player.getName())) {
             error(player, Messages.NO_HORSES_SPAWNED.get());
             return;

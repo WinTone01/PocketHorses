@@ -21,6 +21,7 @@ import it.pika.pockethorses.storage.impl.JSON;
 import it.pika.pockethorses.storage.impl.MySQL;
 import it.pika.pockethorses.storage.impl.SQLite;
 import it.pika.pockethorses.utils.Cooldowns;
+import it.pika.pockethorses.utils.Metrics;
 import it.pika.pockethorses.utils.Placeholders;
 import it.pika.pockethorses.utils.UpdateChecker;
 import lombok.Getter;
@@ -35,6 +36,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.annotation.Nullable;
+import java.io.File;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
@@ -80,7 +82,7 @@ public final class PocketHorses extends JavaPlugin {
     @Getter
     private static boolean placeholdersEnabled = false;
 
-    public static final String VERSION = "1.4.1";
+    public static final String VERSION = "1.4.2";
 
     @Override
     public void onEnable() {
@@ -109,6 +111,8 @@ public final class PocketHorses extends JavaPlugin {
 
         stopwatch.stop();
         Bukkit.getPluginManager().callEvent(new HorsesInitializeEvent(this));
+        new Metrics(this, 19134);
+
         console.info("Plugin enabled in %s ms.".formatted(stopwatch.elapsed(TimeUnit.MILLISECONDS)));
     }
 
@@ -124,16 +128,52 @@ public final class PocketHorses extends JavaPlugin {
 
     @SneakyThrows
     private void setupFiles() {
-        configFile = new Config(this, "config.yml", 3);
-        messagesFile = new Config(this, "messages.yml", 3);
-        horsesFile = new Config(this, "horses.yml", 3);
-        vouchersFile = new Config(this, "vouchers.yml", 3);
+        configFile = new Config(this, "config.yml");
+        messagesFile = new Config(this, "messages.yml");
+        horsesFile = new Config(this, "horses.yml");
+        vouchersFile = new Config(this, "vouchers.yml");
 
         ConfigUpdater.update(this, "config.yml", configFile.getFile());
         ConfigUpdater.update(this, "messages.yml", messagesFile.getFile());
 
         configFile.reload();
         messagesFile.reload();
+
+        /*
+        Conversion system from the previous horse creation system.
+        To be removed.
+         */
+        if (horsesFile.getFile().exists()) {
+            var horsesFolder = new File(getDataFolder() + File.separator + "Horses");
+            if (!horsesFolder.exists())
+                horsesFolder.mkdir();
+
+            for (String key : horsesFile.getConfigurationSection("").getKeys(false)) {
+                var horse = ConfigHorse.ofOld(key);
+                if (horse == null)
+                    continue;
+
+                var horseFile = new File(getDataFolder() + File.separator +
+                        "Horses" + File.separator + "%s.yml".formatted(key));
+                if (!horseFile.exists())
+                    horseFile.createNewFile();
+
+                var config = new Config(this, horseFile);
+                config.set("Display-Name", horse.getDisplayName());
+                config.set("Color", horse.getColor().name());
+                config.set("Style", horse.getStyle().name());
+                config.set("Speed", horse.getSpeed());
+                config.set("Jump-Strength", horse.getJumpStrength());
+                config.set("Max-Health", horse.getMaxHealth());
+                config.set("Buyable", horse.isBuyable());
+                config.set("Price", horse.getPrice());
+                config.set("Permission", horse.isPermission());
+                config.set("Storage", horse.isStorage());
+                config.save();
+            }
+
+            horsesFile.getFile().delete();
+        }
 
         shopEnabled = configFile.getBoolean("Options.Shop-Enabled");
     }
@@ -183,9 +223,17 @@ public final class PocketHorses extends JavaPlugin {
     }
 
     public void loadHorses() {
-        for (String horse : Objects.requireNonNull(horsesFile.getConfigurationSection("")).getKeys(false)) {
-            loadedHorses.add(ConfigHorse.of(horse));
-            console.info("Loaded horse: %s".formatted(horse));
+        var horsesFolder = new File(getDataFolder() + File.separator + "Horses");
+        if (!horsesFolder.exists())
+            return;
+
+        for (File file : Objects.requireNonNull(horsesFolder.listFiles())) {
+            if (!file.getName().endsWith(".yml"))
+                continue;
+
+            var name = file.getName().replaceAll(".yml", "");
+            loadedHorses.add(ConfigHorse.of(name));
+            console.info("Loaded horse: %s".formatted(name));
         }
     }
 

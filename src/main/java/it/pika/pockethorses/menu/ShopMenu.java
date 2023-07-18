@@ -73,7 +73,8 @@ public class ShopMenu implements InventoryProvider {
         return PocketHorses.parseColors(s)
                 .replaceAll("%displayName%", horse.getDisplayName())
                 .replaceAll("%speed%", String.valueOf(horse.getSpeed()))
-                .replaceAll("%price%", String.valueOf(horse.getPrice()));
+                .replaceAll("%price%", String.valueOf(horse.getPrice()))
+                .replaceAll("%jumpStrength%", String.valueOf(horse.getJumpStrength()));
     }
 
     private List<String> format(List<String> list, ConfigHorse horse) {

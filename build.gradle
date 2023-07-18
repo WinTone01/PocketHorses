@@ -44,7 +44,7 @@ dependencies {
         transitive = false
     }
 
-    implementation('net.wesjd:anvilgui:1.5.3-SNAPSHOT') {
+    implementation('net.wesjd:anvilgui:1.7.0-SNAPSHOT') {
         transitive = false
     }
 

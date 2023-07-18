@@ -20,6 +20,8 @@ import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Collections;
+
 import static it.pika.libs.chat.Chat.error;
 import static it.pika.libs.chat.Chat.success;
 
@@ -82,12 +84,18 @@ public class HorseMenu implements InventoryProvider {
                         .title(Messages.CHANGE_NAME.get())
                         .text(Messages.CHANGE_NAME.get())
                         .itemLeft(changeName())
-                        .onComplete((p, val) -> {
-                            PocketHorses.getStorage().setCustomName(horse, val);
-                            horse.getEntity().setCustomName(PocketHorses.parseColors(val));
-                            success(player, Messages.CUSTOM_NAME_SET.get());
+                        .onClick((slot, stateSnapshot) -> {
+                            if (slot != AnvilGUI.Slot.OUTPUT)
+                                return Collections.emptyList();
 
-                            return AnvilGUI.Response.close();
+                            var config = PocketHorses.getConfigFile();
+                            horse.getEntity().setCustomName(PocketHorses.parseColors(stateSnapshot.getText()) +
+                                    (config.getBoolean("Options.Display-HP-In-Name") ?
+                                            " " + PocketHorses.parseColors(config.getString("Options.Display-HP")
+                                                    .replaceAll("%health%", String.valueOf((int)
+                                                            ((Horse) horse.getEntity()).getHealth()))) : ""));
+                            success(player, Messages.CUSTOM_NAME_SET.get());
+                            return Collections.singletonList(AnvilGUI.ResponseAction.close());
                         }).open(player)));
 
         if (horse.isSit()) {
@@ -121,16 +129,19 @@ public class HorseMenu implements InventoryProvider {
                         .title(Messages.SET_SPEED.get())
                         .text(Messages.SET_SPEED.get())
                         .itemLeft(setSpeed())
-                        .onComplete((p, val) -> {
-                            if (!isDouble(val)) {
+                        .onClick((slot, stateSnapshot) -> {
+                            if (slot != AnvilGUI.Slot.OUTPUT)
+                                return Collections.emptyList();
+
+                            if (!isDouble(stateSnapshot.getText())) {
                                 error(player, Messages.INVALID_NUMBER.get());
-                                return AnvilGUI.Response.close();
+                                return Collections.singletonList(AnvilGUI.ResponseAction.close());
                             }
 
-                            var speed = Double.parseDouble(val);
+                            var speed = Double.parseDouble(stateSnapshot.getText());
                             if (speed <= 0 || speed > ConfigHorse.of(horse.getName()).getSpeed()) {
                                 error(player, Messages.INVALID_SPEED.get());
-                                return AnvilGUI.Response.close();
+                                return Collections.singletonList(AnvilGUI.ResponseAction.close());
                             }
 
                             var speedModifier = speed / 3.6;
@@ -138,8 +149,7 @@ public class HorseMenu implements InventoryProvider {
                                     .setBaseValue(speedModifier / 20);
                             horse.setSpeed(speed);
                             success(player, Messages.SPEED_SET.get());
-
-                            return AnvilGUI.Response.close();
+                            return Collections.singletonList(AnvilGUI.ResponseAction.close());
                         }).open(player)));
 
         contents.set(SlotPos.of(3, 7), ClickableItem.of(new ItemBuilder()
