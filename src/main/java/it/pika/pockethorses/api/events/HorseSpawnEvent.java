@@ -1,6 +1,6 @@
 package it.pika.pockethorses.api.events;
 
-import it.pika.pockethorses.objects.Horse;
+import it.pika.pockethorses.objects.horses.Horse;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.entity.Player;

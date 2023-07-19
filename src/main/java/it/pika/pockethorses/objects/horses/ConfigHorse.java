@@ -1,4 +1,4 @@
-package it.pika.pockethorses.objects;
+package it.pika.pockethorses.objects.horses;
 
 import it.pika.libs.config.Config;
 import it.pika.pockethorses.PocketHorses;
@@ -15,6 +15,7 @@ import java.io.File;
 @Setter
 public class ConfigHorse {
 
+    private Config config;
     private String id;
     private String displayName;
     private Horse.Color color;
@@ -50,7 +51,7 @@ public class ConfigHorse {
                 style = Horse.Style.BLACK_DOTS;
             }
 
-            return new ConfigHorse(name, config.getString("Display-Name"), color, style,
+            return new ConfigHorse(config, name, config.getString("Display-Name"), color, style,
                     config.getDouble("Speed"), config.getDouble("Jump-Strength"),
                     config.getInt("Max-Health"), config.getBoolean("Buyable"),
                     config.getDouble("Price"), config.getBoolean("Permission"),
@@ -81,7 +82,7 @@ public class ConfigHorse {
                 style = Horse.Style.BLACK_DOTS;
             }
 
-            return new ConfigHorse(name, config.getString("%s.displayName".formatted(name)), color, style,
+            return new ConfigHorse(config, name, config.getString("%s.displayName".formatted(name)), color, style,
                     config.getDouble("%s.speed".formatted(name)),
                     config.getDouble("%s.jumpStrength".formatted(name)),
                     config.getInt("%s.max-health".formatted(name)),

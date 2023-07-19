@@ -8,9 +8,9 @@ import it.pika.libs.item.ItemBuilder;
 import it.pika.pockethorses.Perms;
 import it.pika.pockethorses.PocketHorses;
 import it.pika.pockethorses.enums.Messages;
-import it.pika.pockethorses.objects.ConfigHorse;
-import it.pika.pockethorses.objects.Horse;
-import it.pika.pockethorses.objects.SpawnedHorse;
+import it.pika.pockethorses.objects.horses.ConfigHorse;
+import it.pika.pockethorses.objects.horses.Horse;
+import it.pika.pockethorses.objects.horses.SpawnedHorse;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 

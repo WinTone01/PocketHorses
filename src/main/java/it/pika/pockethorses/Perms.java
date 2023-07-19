@@ -8,6 +8,8 @@ public class Perms {
             HORSE_GUI = "pockethorses.gui.horse",
             STORAGE_GUI = "pockethorses.gui.storage",
             SHOP_GUI = "pockethorses.gui.shop",
+            EDITOR = "pockethorses.editor",
+            CREATE = "pockethorses.create",
             LIST = "pockethorses.list",
             GIVE_VOUCHER = "pockethorses.give.voucher",
             LIST_VOUCHERS = "pockethorses.list.vouchers",

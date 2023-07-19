@@ -1,9 +1,9 @@
 package it.pika.pockethorses.api;
 
 import it.pika.pockethorses.PocketHorses;
-import it.pika.pockethorses.objects.ConfigHorse;
-import it.pika.pockethorses.objects.Horse;
-import it.pika.pockethorses.objects.SpawnedHorse;
+import it.pika.pockethorses.objects.horses.ConfigHorse;
+import it.pika.pockethorses.objects.horses.Horse;
+import it.pika.pockethorses.objects.horses.SpawnedHorse;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.bukkit.Bukkit;

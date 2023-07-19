@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import it.pika.libs.item.ItemBuilder;
 import it.pika.pockethorses.PocketHorses;
+import it.pika.pockethorses.objects.horses.ConfigHorse;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,7 +15,8 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Getter @Setter
+@Getter
+@Setter
 public class Voucher {
 
     private String name;

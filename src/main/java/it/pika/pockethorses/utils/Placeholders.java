@@ -1,7 +1,7 @@
 package it.pika.pockethorses.utils;
 
 import it.pika.pockethorses.PocketHorses;
-import it.pika.pockethorses.objects.ConfigHorse;
+import it.pika.pockethorses.objects.horses.ConfigHorse;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;

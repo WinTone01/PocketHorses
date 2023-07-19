@@ -8,7 +8,7 @@ import fr.minuskube.inv.content.InventoryProvider;
 import it.pika.libs.item.ItemBuilder;
 import it.pika.pockethorses.PocketHorses;
 import it.pika.pockethorses.enums.Messages;
-import it.pika.pockethorses.objects.ConfigHorse;
+import it.pika.pockethorses.objects.horses.ConfigHorse;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;

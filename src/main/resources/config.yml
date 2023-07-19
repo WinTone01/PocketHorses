@@ -114,6 +114,154 @@ Shop-GUI:
       - ''
       - '&a&lClick to buy!'
 
+Editor-GUI:
+  Main:
+    Title: 'Editor' # The GUI title
+    Size:
+      Rows: 6 # The horizontal lines of the GUI, can be up to 6
+      Columns: 9 # The vertical columns of the GUI, there are normally 9
+    Horse-Item:
+      Name: '&6&l%id%'
+      Material: GOLDEN_HORSE_ARMOR
+      Lore:
+        - '&7Display Name: &e%displayName%'
+        - '&7Color: &e%color%'
+        - '&7Style: &e%style%'
+        - '&7Speed: &e%speed%'
+        - '&7Jump Strength: &e%jumpStrength%'
+        - '&7Max Health: &e%maxHealth%'
+        - '&7Buyable: &e%buyable%'
+        - '&7Price: &e%price%'
+        - '&7Permission: &e%permission%'
+        - '&7Storage: &e%storage%'
+        - ''
+        - '&6&lClick to edit!'
+    New-Horse:
+      Name: '&6&lCreate horse'
+      Material: ANVIL
+      Lore: []
+    Previous-Page:
+      Name: '&ePrevious page'
+      Material: ARROW
+      Lore: []
+    Next-Page:
+      Name: '&eNext page'
+      Material: ARROW
+      Lore: []
+  Editing-GUI:
+    Title: 'Editing Horse: %id%'
+    Size:
+      Rows: 6
+      Columns: 9
+    Display-Name:
+      Name: '&f&lDisplay Name'
+      Material: NAME_TAG
+      Lore:
+        - '&7The displayed name of the horse.'
+        - '&7Current: &f%displayName%'
+        - ''
+        - '&6&lClick to set!'
+    Color:
+      Name: '&f&lColor'
+      Material: CYAN_DYE
+      Lore:
+        - '&7The color of the horse.'
+        - '&7Current: &f%color%'
+        - ''
+        - '&6&lClick to set!'
+    Style:
+      Name: '&f&lStyle'
+      Material: FIREWORK_STAR
+      Lore:
+        - '&7The style of the horse.'
+        - '&7Current: &f%style%'
+        - ''
+        - '&6&lClick to set!'
+    Speed:
+      Name: '&f&lSpeed'
+      Material: IRON_HORSE_ARMOR
+      Lore:
+        - '&7The movement speed of the horse (in km/h).'
+        - '&7Current: &f%speed%'
+        - ''
+        - '&6&lClick to set!'
+    Jump-Strength:
+      Name: '&f&lJump Strength'
+      Material: FIREWORK_ROCKET
+      Lore:
+        - '&7The jumping strength of the horse.'
+        - '&7Current: &f%jumpStrength%'
+        - ''
+        - '&6&lClick to set!'
+    Max-Health:
+      Name: '&f&lMax Health'
+      Material: REDSTONE_TORCH
+      Lore:
+        - '&7The maximum health of the horse.'
+        - '&7Current: &f%maxHealth%'
+        - ''
+        - '&6&lClick to set!'
+    Buyable:
+      Name: '&f&lIs buyable?'
+      Material: OAK_SIGN
+      Lore:
+        - '&7If enabled, the horse can be purchased.'
+        - '&7Current: &f%buyable%'
+        - ''
+        - '&6&lClick to set!'
+    Price:
+      Name: '&f&lPrice'
+      Material: EMERALD
+      Lore:
+        - '&7The purchase price of the horse.'
+        - '&7Current: &f%price%'
+        - ''
+        - '&6&lClick to set!'
+    Permission:
+      Name: '&f&lPermission'
+      Material: SUNFLOWER
+      Lore:
+        - '&7If enabled, the horse will require a permission to be used.'
+        - '&7Current: &f%permission%'
+        - ''
+        - '&6&lClick to set!'
+    Storage:
+      Name: '&f&lStorage'
+      Material: CHEST
+      Lore:
+        - '&7If enabled, the horse will have a storage.'
+        - '&7Current: &f%storage%'
+        - ''
+        - '&6&lClick to set!'
+    Back:
+      Name: '&c&lBack'
+      Material: ARROW
+      Lore: []
+    Confirm:
+      Name: '&a&lConfirm'
+      Material: NETHER_STAR
+      Lore: []
+  Color-GUI:
+    Title: 'Select color'
+    Size:
+      Rows: 4
+      Columns: 9
+    Color-Item:
+      Name: '&f&l%color%'
+      Material: PAPER
+      Lore:
+        - '&7Click to select this color.'
+  Style-GUI:
+    Title: 'Select style'
+    Size:
+      Rows: 4
+      Columns: 9
+    Style-Item:
+      Name: '&f&l%style%'
+      Material: PAPER
+      Lore:
+        - '&7Click to select this style.'
+
 Vouchers:
   Opening:
     Title: '&a&lOpening voucher..' # The title to send while opening a voucher

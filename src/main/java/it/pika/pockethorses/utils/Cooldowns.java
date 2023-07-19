@@ -11,7 +11,7 @@ public class Cooldowns {
 
     private final Map<UUID, Instant> cooldowns = Maps.newHashMap();
 
-    public void setCooldown(UUID key, Duration duration)  {
+    public void setCooldown(UUID key, Duration duration) {
         cooldowns.put(key, Instant.now().plus(duration));
     }
 

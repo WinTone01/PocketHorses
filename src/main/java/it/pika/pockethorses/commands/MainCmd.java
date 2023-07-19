@@ -4,8 +4,11 @@ import it.pika.libs.command.SubCommand;
 import it.pika.pockethorses.Perms;
 import it.pika.pockethorses.PocketHorses;
 import it.pika.pockethorses.enums.Messages;
-import it.pika.pockethorses.objects.ConfigHorse;
+import it.pika.pockethorses.menu.editor.EditingHorseMenu;
+import it.pika.pockethorses.menu.editor.EditorMainMenu;
 import it.pika.pockethorses.objects.Voucher;
+import it.pika.pockethorses.objects.horses.ConfigHorse;
+import it.pika.pockethorses.objects.horses.EditingHorse;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -46,6 +49,33 @@ public class MainCmd extends SubCommand {
 
         PocketHorses.getStorage().giveHorse(target, horse);
         success(player, Messages.HORSE_GIVEN.get().formatted(target.getName()));
+    }
+
+    @SubCommandName("editor")
+    @SubCommandPermission(Perms.EDITOR)
+    public void editor(CommandSender sender, String label, String[] args) {
+        var player = Validator.getPlayerSender(sender);
+
+        new EditorMainMenu().get().open(player);
+    }
+
+    @SubCommandName("create")
+    @SubCommandUsage("<name>")
+    @SubCommandMinArgs(1)
+    @SubCommandPermission(Perms.CREATE)
+    public void create(CommandSender sender, String label, String[] args) {
+        var player = Validator.getPlayerSender(sender);
+        var name = args[0];
+
+        if (PocketHorses.getLoadedHorse(name) != null) {
+            error(player, Messages.HORSE_ALREADY_EXISTS.get());
+            return;
+        }
+
+        var editingHorse = new EditingHorse();
+        editingHorse.setId(name);
+
+        new EditingHorseMenu(editingHorse, true).get().open(player);
     }
 
     @SubCommandName("list")

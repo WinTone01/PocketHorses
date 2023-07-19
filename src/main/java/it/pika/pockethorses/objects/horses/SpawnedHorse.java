@@ -1,4 +1,4 @@
-package it.pika.pockethorses.objects;
+package it.pika.pockethorses.objects.horses;
 
 import lombok.Getter;
 import lombok.Setter;

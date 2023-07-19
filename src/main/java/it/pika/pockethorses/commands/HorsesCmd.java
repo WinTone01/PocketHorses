@@ -6,7 +6,7 @@ import it.pika.pockethorses.PocketHorses;
 import it.pika.pockethorses.enums.Messages;
 import it.pika.pockethorses.menu.MyHorsesMenu;
 import it.pika.pockethorses.menu.ShopMenu;
-import it.pika.pockethorses.objects.SpawnedHorse;
+import it.pika.pockethorses.objects.horses.SpawnedHorse;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 

@@ -12,9 +12,9 @@ import it.pika.pockethorses.commands.MainCmd;
 import it.pika.pockethorses.listeners.HorseListener;
 import it.pika.pockethorses.listeners.JoinListener;
 import it.pika.pockethorses.listeners.VoucherListener;
-import it.pika.pockethorses.objects.ConfigHorse;
-import it.pika.pockethorses.objects.Horse;
-import it.pika.pockethorses.objects.SpawnedHorse;
+import it.pika.pockethorses.objects.horses.ConfigHorse;
+import it.pika.pockethorses.objects.horses.Horse;
+import it.pika.pockethorses.objects.horses.SpawnedHorse;
 import it.pika.pockethorses.storage.Storage;
 import it.pika.pockethorses.storage.StorageType;
 import it.pika.pockethorses.storage.impl.JSON;
@@ -37,7 +37,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.annotation.Nullable;
 import java.io.File;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
@@ -77,12 +80,13 @@ public final class PocketHorses extends JavaPlugin {
     @Getter
     private static final Map<String, Horse> inHorseStorage = Maps.newHashMap();
 
+
     @Getter
     private static boolean shopEnabled;
     @Getter
     private static boolean placeholdersEnabled = false;
 
-    public static final String VERSION = "1.4.2";
+    public static final String VERSION = "1.5.0";
 
     @Override
     public void onEnable() {
@@ -318,13 +322,13 @@ public final class PocketHorses extends JavaPlugin {
         if (placeholdersEnabled) {
             return parseColors(PlaceholderAPI.setPlaceholders(player,
                     s.replaceAll("%displayName%", configHorse == null ? "null" :
-                            horse.getCustomName() == null ? configHorse.getDisplayName() : horse.getCustomName())
-                    .replaceAll("%speed%", String.valueOf(horse instanceof SpawnedHorse ? ((SpawnedHorse) horse).getSpeed()
-                            : Objects.requireNonNull(configHorse).getSpeed()))
-                    .replaceAll("%owner%", horse.getOwner())
-                    .replaceAll("%jumpStrength%", configHorse == null ? "null"
-                            : String.valueOf(configHorse.getJumpStrength()))
-                    .replaceAll("%player%", player == null ? "null" : player.getName())));
+                                    horse.getCustomName() == null ? configHorse.getDisplayName() : horse.getCustomName())
+                            .replaceAll("%speed%", String.valueOf(horse instanceof SpawnedHorse ? ((SpawnedHorse) horse).getSpeed()
+                                    : Objects.requireNonNull(configHorse).getSpeed()))
+                            .replaceAll("%owner%", horse.getOwner())
+                            .replaceAll("%jumpStrength%", configHorse == null ? "null"
+                                    : String.valueOf(configHorse.getJumpStrength()))
+                            .replaceAll("%player%", player == null ? "null" : player.getName())));
         } else {
             return parseColors(s.replaceAll("%displayName%", configHorse == null ? "null" :
                             horse.getCustomName() == null ? configHorse.getDisplayName() : horse.getCustomName())

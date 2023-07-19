@@ -41,7 +41,14 @@ public enum Messages {
     AUTO_RECALLED("auto-recalled"),
     VOUCHER_NOT_EXISTING("voucher-not-existing"),
     VOUCHER_GIVEN("voucher-given"),
-    IN_COOLDOWN("in-cooldown");
+    IN_COOLDOWN("in-cooldown"),
+    ENABLED("enabled"),
+    DISABLED("disabled"),
+    UNDEFINED("undefined"),
+    HORSE_EDITED("horse-edited"),
+    HORSE_CREATED("horse-created"),
+    SET_ALL_SETTINGS("set-all-settings"),
+    HORSE_ALREADY_EXISTS("horse-already-exists");
 
     private final String path;
 

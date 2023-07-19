@@ -1,7 +1,7 @@
 package it.pika.pockethorses.storage;
 
-import it.pika.pockethorses.objects.ConfigHorse;
-import it.pika.pockethorses.objects.Horse;
+import it.pika.pockethorses.objects.horses.ConfigHorse;
+import it.pika.pockethorses.objects.horses.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 

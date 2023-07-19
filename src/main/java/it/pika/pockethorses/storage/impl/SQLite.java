@@ -2,8 +2,8 @@ package it.pika.pockethorses.storage.impl;
 
 import it.pika.libs.sql.sqlite.Connection;
 import it.pika.pockethorses.PocketHorses;
-import it.pika.pockethorses.objects.ConfigHorse;
-import it.pika.pockethorses.objects.Horse;
+import it.pika.pockethorses.objects.horses.ConfigHorse;
+import it.pika.pockethorses.objects.horses.Horse;
 import it.pika.pockethorses.storage.Storage;
 import it.pika.pockethorses.utils.Serializer;
 import lombok.Getter;

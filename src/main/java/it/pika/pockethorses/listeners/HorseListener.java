@@ -4,14 +4,17 @@ import it.pika.pockethorses.Perms;
 import it.pika.pockethorses.PocketHorses;
 import it.pika.pockethorses.enums.Messages;
 import it.pika.pockethorses.menu.HorseMenu;
-import it.pika.pockethorses.objects.SpawnedHorse;
+import it.pika.pockethorses.objects.horses.ConfigHorse;
+import it.pika.pockethorses.objects.horses.SpawnedHorse;
 import it.pika.pockethorses.utils.Serializer;
 import net.kyori.adventure.text.Component;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -142,6 +145,32 @@ public class HorseListener implements Listener {
         player.sendActionBar(Component.text(PocketHorses
                 .parseMessage(PocketHorses.getConfigFile().getString("Options.Action-Bar-Message"),
                         spawnedHorse, player)));
+    }
+
+    @EventHandler
+    public void onDamage(EntityDamageEvent event) {
+        if (event.getEntityType() != EntityType.HORSE)
+            return;
+
+        var entity = (Horse) event.getEntity();
+
+        var horse = PocketHorses.getSpawnedHorse(entity);
+        if (horse == null)
+            return;
+
+        var configHorse = ConfigHorse.of(horse.getName());
+        if (horse.getCustomName() != null && !horse.getCustomName().equalsIgnoreCase("null")) {
+            entity.setCustomName(PocketHorses.parseColors(horse.getCustomName()) +
+                    (PocketHorses.getConfigFile().getBoolean("Options.Display-HP-In-Name") ?
+                            " " + PocketHorses.parseColors(PocketHorses.getConfigFile().getString("Options.Display-HP")
+                                    .replaceAll("%health%", String.valueOf((int) entity.getHealth()))) : ""));
+            entity.setCustomNameVisible(true);
+        } else {
+            entity.setCustomName(PocketHorses.parseColors(configHorse.getDisplayName()) +
+                    (PocketHorses.getConfigFile().getBoolean("Options.Display-HP-In-Name") ?
+                            " " + PocketHorses.parseColors(PocketHorses.getConfigFile().getString("Options.Display-HP")
+                                    .replaceAll("%health%", String.valueOf((int) entity.getHealth()))) : ""));
+        }
     }
 
 }

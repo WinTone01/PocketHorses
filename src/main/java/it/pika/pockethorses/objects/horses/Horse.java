@@ -1,4 +1,4 @@
-package it.pika.pockethorses.objects;
+package it.pika.pockethorses.objects.horses;
 
 import com.google.common.collect.Lists;
 import it.pika.pockethorses.Perms;
