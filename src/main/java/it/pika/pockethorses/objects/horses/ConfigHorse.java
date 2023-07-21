@@ -61,35 +61,30 @@ public class ConfigHorse {
         }
     }
 
-    // To be removed
-    public static ConfigHorse ofOld(String name) {
-        var config = PocketHorses.getHorsesFile();
+    public static ConfigHorse of(File file) {
+        var config = new Config(PocketHorses.getInstance(), file);
 
         try {
             Horse.Color color;
             try {
-                color = Horse.Color.valueOf(config.getString("%s.color".formatted(name)));
+                color = Horse.Color.valueOf(config.getString("Color"));
             } catch (IllegalArgumentException e) {
                 color = Horse.Color.BLACK;
-                PocketHorses.getConsole().warning("Color %s not recognized for horse %s, using 'BLACK' instead."
-                        .formatted(config.getString("%s.color".formatted(name)), name));
             }
 
             Horse.Style style;
             try {
-                style = Horse.Style.valueOf(config.getString("%s.style".formatted(name)));
+                style = Horse.Style.valueOf(config.getString("Style"));
             } catch (NullPointerException | IllegalArgumentException e) {
                 style = Horse.Style.BLACK_DOTS;
             }
 
-            return new ConfigHorse(config, name, config.getString("%s.displayName".formatted(name)), color, style,
-                    config.getDouble("%s.speed".formatted(name)),
-                    config.getDouble("%s.jumpStrength".formatted(name)),
-                    config.getInt("%s.max-health".formatted(name)),
-                    config.getBoolean("%s.buyable".formatted(name)),
-                    config.getDouble("%s.price".formatted(name)),
-                    config.getBoolean("%s.permission".formatted(name)),
-                    config.getBoolean("%s.storage".formatted(name)));
+            return new ConfigHorse(config, file.getName().replaceAll(".yml", ""),
+                    config.getString("Display-Name"), color, style,
+                    config.getDouble("Speed"), config.getDouble("Jump-Strength"),
+                    config.getInt("Max-Health"), config.getBoolean("Buyable"),
+                    config.getDouble("Price"), config.getBoolean("Permission"),
+                    config.getBoolean("Storage"));
         } catch (NullPointerException e) {
             return null;
         }

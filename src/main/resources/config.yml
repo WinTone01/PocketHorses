@@ -135,7 +135,8 @@ Editor-GUI:
         - '&7Permission: &e%permission%'
         - '&7Storage: &e%storage%'
         - ''
-        - '&6&lClick to edit!'
+        - '&6&lLeft click to edit!'
+        - '&6&lRight click to delete!'
     New-Horse:
       Name: '&6&lCreate horse'
       Material: ANVIL

@@ -17,8 +17,11 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static it.pika.libs.chat.Chat.error;
 
@@ -37,7 +40,8 @@ public class EditorMainMenu implements InventoryProvider {
     @Override
     public void init(Player player, InventoryContents contents) {
         var pagination = contents.pagination();
-        var horses = PocketHorses.getLoadedHorses();
+        var horses = Lists.newArrayList(PocketHorses.getLoadedHorses());
+        horses.removeIf(Objects::isNull);
 
         ClickableItem[] items = new ClickableItem[horses.size()];
 
@@ -49,12 +53,26 @@ public class EditorMainMenu implements InventoryProvider {
                     .name(parse(PocketHorses.getConfigFile().getString("Editor-GUI.Main.Horse-Item.Name"), horse))
                     .lore(parse(PocketHorses.getConfigFile().getStringList("Editor-GUI.Main.Horse-Item.Lore"), horse))
                     .build(), e -> {
-                player.closeInventory();
+                if (e.isLeftClick()) {
+                    player.closeInventory();
 
-                new EditingHorseMenu(new EditingHorse(horse.getId(), horse.getDisplayName(), horse.getColor(),
-                        horse.getStyle(), horse.getSpeed(), horse.getJumpStrength(), horse.getMaxHealth(),
-                        horse.isBuyable(), horse.getPrice(), horse.isPermission(), horse.isStorage()), false)
-                        .get().open(player);
+                    new EditingHorseMenu(new EditingHorse(horse.getId(), horse.getDisplayName(), horse.getColor(),
+                            horse.getStyle(), horse.getSpeed(), horse.getJumpStrength(), horse.getMaxHealth(),
+                            horse.isBuyable(), horse.getPrice(), horse.isPermission(), horse.isStorage()), false)
+                            .get().open(player);
+                }
+
+                if (e.isRightClick()) {
+                    player.closeInventory();
+                    try {
+                        Files.delete(horse.getConfig().getFile().toPath());
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+
+                    reloadHorses();
+                    get().open(player);
+                }
             });
         }
 
@@ -132,6 +150,12 @@ public class EditorMainMenu implements InventoryProvider {
             newList.add(parse(s, horse));
 
         return newList;
+    }
+
+    private void reloadHorses() {
+        PocketHorses.getConsole().info("Reloading horses...");
+        PocketHorses.getLoadedHorses().clear();
+        PocketHorses.getInstance().loadHorses();
     }
 
 }

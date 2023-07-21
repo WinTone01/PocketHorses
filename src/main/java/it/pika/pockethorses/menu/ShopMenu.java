@@ -33,7 +33,7 @@ public class ShopMenu implements InventoryProvider {
     @Override
     public void init(Player player, InventoryContents contents) {
         for (ConfigHorse horse : PocketHorses.getLoadedHorses()) {
-            if (!horse.isBuyable())
+            if (horse == null || !horse.isBuyable())
                 continue;
 
             contents.add(ClickableItem.of(new ItemBuilder()

@@ -321,6 +321,7 @@ public class EditingHorseMenu implements InventoryProvider {
     }
 
     private void reloadHorses() {
+        PocketHorses.getConsole().info("Reloading horses...");
         PocketHorses.getLoadedHorses().clear();
         PocketHorses.getInstance().loadHorses();
     }

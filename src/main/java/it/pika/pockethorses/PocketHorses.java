@@ -65,8 +65,6 @@ public final class PocketHorses extends JavaPlugin {
     @Getter
     private static Config messagesFile = null;
     @Getter
-    private static Config horsesFile = null;
-    @Getter
     private static Config vouchersFile = null;
 
 
@@ -86,7 +84,7 @@ public final class PocketHorses extends JavaPlugin {
     @Getter
     private static boolean placeholdersEnabled = false;
 
-    public static final String VERSION = "1.5.0";
+    public static final String VERSION = "1.5.1";
 
     @Override
     public void onEnable() {
@@ -134,7 +132,6 @@ public final class PocketHorses extends JavaPlugin {
     private void setupFiles() {
         configFile = new Config(this, "config.yml");
         messagesFile = new Config(this, "messages.yml");
-        horsesFile = new Config(this, "horses.yml");
         vouchersFile = new Config(this, "vouchers.yml");
 
         ConfigUpdater.update(this, "config.yml", configFile.getFile());
@@ -142,42 +139,6 @@ public final class PocketHorses extends JavaPlugin {
 
         configFile.reload();
         messagesFile.reload();
-
-        /*
-        Conversion system from the previous horse creation system.
-        To be removed.
-         */
-        if (horsesFile.getFile().exists()) {
-            var horsesFolder = new File(getDataFolder() + File.separator + "Horses");
-            if (!horsesFolder.exists())
-                horsesFolder.mkdir();
-
-            for (String key : horsesFile.getConfigurationSection("").getKeys(false)) {
-                var horse = ConfigHorse.ofOld(key);
-                if (horse == null)
-                    continue;
-
-                var horseFile = new File(getDataFolder() + File.separator +
-                        "Horses" + File.separator + "%s.yml".formatted(key));
-                if (!horseFile.exists())
-                    horseFile.createNewFile();
-
-                var config = new Config(this, horseFile);
-                config.set("Display-Name", horse.getDisplayName());
-                config.set("Color", horse.getColor().name());
-                config.set("Style", horse.getStyle().name());
-                config.set("Speed", horse.getSpeed());
-                config.set("Jump-Strength", horse.getJumpStrength());
-                config.set("Max-Health", horse.getMaxHealth());
-                config.set("Buyable", horse.isBuyable());
-                config.set("Price", horse.getPrice());
-                config.set("Permission", horse.isPermission());
-                config.set("Storage", horse.isStorage());
-                config.save();
-            }
-
-            horsesFile.getFile().delete();
-        }
 
         shopEnabled = configFile.getBoolean("Options.Shop-Enabled");
     }
@@ -235,9 +196,8 @@ public final class PocketHorses extends JavaPlugin {
             if (!file.getName().endsWith(".yml"))
                 continue;
 
-            var name = file.getName().replaceAll(".yml", "");
-            loadedHorses.add(ConfigHorse.of(name));
-            console.info("Loaded horse: %s".formatted(name));
+            loadedHorses.add(ConfigHorse.of(file));
+            console.info("Loaded horse: %s".formatted(file.getName().replaceAll(".yml", "")));
         }
     }
 
