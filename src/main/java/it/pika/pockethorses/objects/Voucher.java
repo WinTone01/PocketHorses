@@ -38,7 +38,11 @@ public class Voucher {
             List<ConfigHorse> rewards = Lists.newArrayList();
             List<String> rewardNames = Lists.newArrayList();
             for (String s : config.getStringList("%s.Rewards".formatted(name))) {
-                rewards.add(ConfigHorse.of(s));
+                var configHorse = ConfigHorse.of(s);
+                if (configHorse == null)
+                    continue;
+
+                rewards.add(configHorse);
                 rewardNames.add(s);
             }
 

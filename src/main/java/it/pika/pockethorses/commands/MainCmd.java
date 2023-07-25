@@ -1,6 +1,7 @@
 package it.pika.pockethorses.commands;
 
 import it.pika.libs.command.SubCommand;
+import it.pika.libs.config.Config;
 import it.pika.pockethorses.Perms;
 import it.pika.pockethorses.PocketHorses;
 import it.pika.pockethorses.enums.Messages;
@@ -11,6 +12,8 @@ import it.pika.pockethorses.objects.horses.ConfigHorse;
 import it.pika.pockethorses.objects.horses.EditingHorse;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.File;
 
 import static it.pika.libs.chat.Chat.error;
 import static it.pika.libs.chat.Chat.success;
@@ -117,14 +120,46 @@ public class MainCmd extends SubCommand {
     @SubCommandName("reload")
     @SubCommandPermission(Perms.RELOAD)
     public void reload(CommandSender sender, String label, String[] args) {
-        PocketHorses.getConfigFile().reload();
-        PocketHorses.getMessagesFile().reload();
-        PocketHorses.getVouchersFile().reload();
+        if (args.length == 0) {
+            PocketHorses.getConfigFile().reload();
+            PocketHorses.getMessagesFile().reload();
+            PocketHorses.getVouchersFile().reload();
 
-        PocketHorses.getLoadedHorses().clear();
-        PocketHorses.getInstance().loadHorses();
+            PocketHorses.getLoadedHorses().clear();
+            PocketHorses.getInstance().loadHorses();
 
-        success(sender, Messages.RELOAD.get());
+            success(sender, Messages.RELOAD.get());
+            return;
+        }
+
+        var fileName = args[0];
+        var parts = fileName.split("/");
+
+        StringBuilder path = new StringBuilder();
+        for (int i = 0; i < parts.length; i++) {
+            path.append(parts[i]);
+
+            if (i != parts.length - 1)
+                path.append(File.separator);
+        }
+
+        var file = new File(PocketHorses.getInstance().getDataFolder(), path.toString());
+        if (!file.exists() || !file.getName().endsWith(".yml")) {
+            error(sender, Messages.INVALID_FILE.get());
+            return;
+        }
+
+        switch (file.getName()) {
+            case "config.yml" -> PocketHorses.getConfigFile().reload();
+            case "messages.yml" -> PocketHorses.getMessagesFile().reload();
+            case "vouchers.yml" -> PocketHorses.getVouchersFile().reload();
+            default -> {
+                var config = new Config(PocketHorses.getInstance(), file);
+                config.reload();
+            }
+        }
+
+        success(sender, Messages.FILE_RELOADED.get().formatted(file.getName()));
     }
 
 }

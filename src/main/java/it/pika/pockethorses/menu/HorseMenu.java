@@ -66,7 +66,11 @@ public class HorseMenu implements InventoryProvider {
             }));
         }
 
-        if (ConfigHorse.of(horse.getName()).isStorage()) {
+        var configHorse = ConfigHorse.of(horse.getName());
+        if (configHorse == null)
+            return;
+
+        if (configHorse.isStorage()) {
             contents.set(SlotPos.of(1, 4), ClickableItem.of(new ItemBuilder()
                     .material(Material.valueOf(PocketHorses.getConfigFile().getString("Horse-GUI.Horse-Storage.Material")))
                     .name(PocketHorses.parseMessage(PocketHorses.getConfigFile().getString("Horse-GUI.Horse-Storage.Name"), horse, player))
@@ -139,7 +143,7 @@ public class HorseMenu implements InventoryProvider {
                             }
 
                             var speed = Double.parseDouble(stateSnapshot.getText());
-                            if (speed <= 0 || speed > ConfigHorse.of(horse.getName()).getSpeed()) {
+                            if (speed <= 0 || speed > configHorse.getSpeed()) {
                                 error(player, Messages.INVALID_SPEED.get());
                                 return Collections.singletonList(AnvilGUI.ResponseAction.close());
                             }

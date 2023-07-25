@@ -48,7 +48,9 @@ public enum Messages {
     HORSE_EDITED("horse-edited"),
     HORSE_CREATED("horse-created"),
     SET_ALL_SETTINGS("set-all-settings"),
-    HORSE_ALREADY_EXISTS("horse-already-exists");
+    HORSE_ALREADY_EXISTS("horse-already-exists"),
+    INVALID_FILE("invalid-file"),
+    FILE_RELOADED("file-reloaded");
 
     private final String path;
 

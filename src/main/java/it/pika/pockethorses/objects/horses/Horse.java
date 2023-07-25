@@ -39,7 +39,10 @@ public class Horse {
 
     public void spawn(Player player) {
         var config = PocketHorses.getConfigFile();
+
         var configHorse = ConfigHorse.of(name);
+        if (configHorse == null)
+            return;
 
         var event = new HorseSpawnEvent(player, this);
         Bukkit.getPluginManager().callEvent(event);

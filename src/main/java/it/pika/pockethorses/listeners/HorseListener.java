@@ -159,6 +159,9 @@ public class HorseListener implements Listener {
             return;
 
         var configHorse = ConfigHorse.of(horse.getName());
+        if (configHorse == null)
+            return;
+
         if (horse.getCustomName() != null && !horse.getCustomName().equalsIgnoreCase("null")) {
             entity.setCustomName(PocketHorses.parseColors(horse.getCustomName()) +
                     (PocketHorses.getConfigFile().getBoolean("Options.Display-HP-In-Name") ?
