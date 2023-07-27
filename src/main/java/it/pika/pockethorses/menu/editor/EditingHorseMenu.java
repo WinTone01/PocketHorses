@@ -114,6 +114,15 @@ public class EditingHorseMenu implements InventoryProvider {
             get().open(player);
         }));
 
+        contents.set(SlotPos.of(2, 4), ClickableItem.of(new ItemBuilder()
+                .material(Material.valueOf(config.getString("Editor-GUI.Editing-GUI.Recyclable.Material")))
+                .name(parse(config.getString("Editor-GUI.Editing-GUI.Recyclable.Name")))
+                .lore(parse(config.getStringList("Editor-GUI.Editing-GUI.Recyclable.Lore")))
+                .build(), e -> {
+            horse.setRecyclable(!horse.isRecyclable());
+            get().open(player);
+        }));
+
         contents.set(SlotPos.of(2, 6), ClickableItem.of(new ItemBuilder()
                 .material(Material.valueOf(config.getString("Editor-GUI.Editing-GUI.Storage.Material")))
                 .name(parse(config.getString("Editor-GUI.Editing-GUI.Storage.Name")))
@@ -201,6 +210,29 @@ public class EditingHorseMenu implements InventoryProvider {
                 })
                 .open(player)));
 
+        contents.set(SlotPos.of(4, 4), ClickableItem.of(new ItemBuilder()
+                .material(Material.valueOf(config.getString("Editor-GUI.Editing-GUI.Recycle-Price.Material")))
+                .name(parse(config.getString("Editor-GUI.Editing-GUI.Recycle-Price.Name")))
+                .lore(parse(config.getStringList("Editor-GUI.Editing-GUI.Recycle-Price.Lore")))
+                .build(), e -> new AnvilGUI.Builder()
+                .plugin(PocketHorses.getInstance())
+                .title("Set value")
+                .text("Set value")
+                .itemLeft(new ItemStack(Material.PAPER))
+                .onClick((slot, stateSnapshot) -> {
+                    if (slot != AnvilGUI.Slot.OUTPUT)
+                        return Collections.emptyList();
+
+                    if (!isDouble(stateSnapshot.getText())) {
+                        error(player, Messages.INVALID_NUMBER.get());
+                        return List.of(AnvilGUI.ResponseAction.close(), AnvilGUI.ResponseAction.run(() -> get().open(player)));
+                    }
+
+                    horse.setRecyclePrice(Double.parseDouble(stateSnapshot.getText()));
+                    return List.of(AnvilGUI.ResponseAction.close(), AnvilGUI.ResponseAction.run(() -> get().open(player)));
+                })
+                .open(player)));
+
         contents.set(SlotPos.of(5, 0), ClickableItem.of(new ItemBuilder()
                 .material(Material.valueOf(config.getString("Editor-GUI.Editing-GUI.Back.Material")))
                 .name(parse(config.getString("Editor-GUI.Editing-GUI.Back.Name")))
@@ -242,6 +274,8 @@ public class EditingHorseMenu implements InventoryProvider {
                 horseConfig.set("Price", horse.getPrice());
                 horseConfig.set("Permission", horse.isPermission());
                 horseConfig.set("Storage", horse.isStorage());
+                horseConfig.set("Recyclable", horse.isRecyclable());
+                horseConfig.set("Recycle-Price", horse.getRecyclePrice());
                 horseConfig.save();
 
                 reloadHorses();
@@ -266,6 +300,8 @@ public class EditingHorseMenu implements InventoryProvider {
             horseConfig.set("Price", horse.getPrice());
             horseConfig.set("Permission", horse.isPermission());
             horseConfig.set("Storage", horse.isStorage());
+            horseConfig.set("Recyclable", horse.isRecyclable());
+            horseConfig.set("Recycle-Price", horse.getRecyclePrice());
             horseConfig.save();
 
             reloadHorses();
@@ -290,7 +326,9 @@ public class EditingHorseMenu implements InventoryProvider {
                 .replaceAll("%buyable%", horse.isBuyable() ? Messages.ENABLED.get() : Messages.DISABLED.get())
                 .replaceAll("%price%", horse.getPrice() != 0 ? String.valueOf(horse.getPrice()) : Messages.UNDEFINED.get())
                 .replaceAll("%permission%", horse.isPermission() ? Messages.ENABLED.get() : Messages.DISABLED.get())
-                .replaceAll("%storage%", horse.isStorage() ? Messages.ENABLED.get() : Messages.DISABLED.get());
+                .replaceAll("%storage%", horse.isStorage() ? Messages.ENABLED.get() : Messages.DISABLED.get())
+                .replaceAll("%recyclable%", horse.isRecyclable() ? Messages.ENABLED.get() : Messages.DISABLED.get())
+                .replaceAll("%recyclePrice%", horse.getRecyclePrice() != 0 ? String.valueOf(horse.getRecyclePrice()) : Messages.UNDEFINED.get());
     }
 
     private List<String> parse(List<String> list) {

@@ -10,12 +10,14 @@ import it.pika.pockethorses.objects.horses.SpawnedHorse;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.List;
+
 import static it.pika.libs.chat.Chat.error;
 import static it.pika.libs.chat.Chat.success;
 
 public class HorsesCmd extends SubCommand {
 
-    public HorsesCmd(JavaPlugin plugin, String label, String... aliases) {
+    public HorsesCmd(JavaPlugin plugin, String label, List<String> aliases) {
         super(plugin, label, aliases);
     }
 
@@ -71,5 +73,11 @@ public class HorsesCmd extends SubCommand {
         success(player, Messages.HORSES_RECALLED.get());
     }
 
+    @SubCommandName("help")
+    @SubCommandPermission(Perms.HELP_HORSES)
+    public void help(CommandSender sender, String label, String[] args) {
+        for (String s : PocketHorses.getMessagesFile().getStringList("horses-help-message"))
+            sender.sendMessage(PocketHorses.parseColors(s));
+    }
 
 }

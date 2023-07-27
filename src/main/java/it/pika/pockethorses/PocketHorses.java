@@ -84,7 +84,7 @@ public final class PocketHorses extends JavaPlugin {
     @Getter
     private static boolean placeholdersEnabled = false;
 
-    public static final String VERSION = "1.5.2";
+    public static final String VERSION = "1.6.0";
 
     @Override
     public void onEnable() {
@@ -183,8 +183,8 @@ public final class PocketHorses extends JavaPlugin {
     }
 
     private void registerCommands() {
-        new MainCmd(this, "pockethorses");
-        new HorsesCmd(this, "horses", "horse");
+        new MainCmd(this, "pockethorses", configFile.getStringList("Commands.PocketHorses.Aliases"));
+        new HorsesCmd(this, "horses", configFile.getStringList("Commands.Horses.Aliases"));
     }
 
     public void loadHorses() {

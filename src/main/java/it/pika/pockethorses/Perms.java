@@ -14,7 +14,9 @@ public class Perms {
             GIVE_VOUCHER = "pockethorses.give.voucher",
             LIST_VOUCHERS = "pockethorses.list.vouchers",
             RECALL = "pockethorses.recall",
-            RELOAD = "pockethorses.reload";
+            RELOAD = "pockethorses.reload",
+            HELP_MAIN = "pockethorses.help.main",
+            HELP_HORSES = "pockethorses.help.horses";
 
     public static String getHorse(String name) {
         return "pockethorses.horse.%s".formatted(name);

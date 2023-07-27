@@ -1,5 +1,6 @@
 package it.pika.pockethorses.objects.horses;
 
+import it.pika.pockethorses.enums.HorseColor;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +15,7 @@ public class EditingHorse {
 
     private String id;
     private String displayName;
-    private org.bukkit.entity.Horse.Color color;
+    private HorseColor color;
     private Horse.Style style;
     private double speed;
     private double jumpStrength;
@@ -23,5 +24,7 @@ public class EditingHorse {
     private double price;
     private boolean permission;
     private boolean storage;
+    private boolean recyclable;
+    private double recyclePrice;
 
 }

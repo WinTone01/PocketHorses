@@ -7,10 +7,10 @@ import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.SlotPos;
 import it.pika.libs.item.ItemBuilder;
 import it.pika.pockethorses.PocketHorses;
+import it.pika.pockethorses.enums.HorseColor;
 import it.pika.pockethorses.objects.horses.EditingHorse;
 import lombok.AllArgsConstructor;
 import org.bukkit.Material;
-import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 
 @AllArgsConstructor
@@ -31,7 +31,7 @@ public class ColorSelectorMenu implements InventoryProvider {
 
     @Override
     public void init(Player player, InventoryContents contents) {
-        for (Horse.Color value : Horse.Color.values())
+        for (HorseColor value : HorseColor.values())
             contents.add(ClickableItem.of(new ItemBuilder()
                     .material(Material.valueOf(PocketHorses.getConfigFile().getString("Editor-GUI.Color-GUI.Color-Item.Material")))
                     .name(PocketHorses.getConfigFile().getString("Editor-GUI.Color-GUI.Color-Item.Name")

@@ -1,5 +1,6 @@
 package it.pika.pockethorses.menu;
 
+import com.google.common.collect.Lists;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
@@ -14,7 +15,7 @@ import it.pika.pockethorses.objects.horses.SpawnedHorse;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-import java.util.Objects;
+import java.util.List;
 
 import static it.pika.libs.chat.Chat.error;
 import static it.pika.libs.chat.Chat.success;
@@ -43,31 +44,48 @@ public class MyHorsesMenu implements InventoryProvider {
 
             contents.add(ClickableItem.of(new ItemBuilder()
                     .material(Material.valueOf(PocketHorses.getConfigFile().getString("Horses-GUI.Horse-Item.Material")))
-                    .name(PocketHorses.parseMessage(Objects.requireNonNull(PocketHorses.getConfigFile()
-                            .getString("Horses-GUI.Horse-Item.Name")), horse, player))
+                    .name(PocketHorses.parseMessage(PocketHorses.getConfigFile()
+                            .getString("Horses-GUI.Horse-Item.Name"), horse, player))
                     .lore(PocketHorses.parseMessage(PocketHorses.getConfigFile().getStringList("Horses-GUI.Horse-Item.Lore"), horse, player))
                     .build(), e -> {
                 player.closeInventory();
 
-                if (alreadySpawned(player, horse)) {
-                    error(player, Messages.ALREADY_SPAWNED.get());
+                if (e.isLeftClick()) {
+                    if (alreadySpawned(player, horse)) {
+                        error(player, Messages.ALREADY_SPAWNED.get());
+                        return;
+                    }
+
+                    if (!PocketHorses.getConfigFile().getBoolean("Options.More-Horses-At-Time")
+                            && PocketHorses.getSpawnedHorses().containsKey(player.getName())) {
+                        error(player, Messages.CANNOT_SPAWN.get());
+                        return;
+                    }
+
+                    var cooldown = PocketHorses.getCooldowns().getRemainingCooldown(player.getUniqueId());
+                    if (!cooldown.isZero() && !cooldown.isNegative()) {
+                        error(player, Messages.IN_COOLDOWN.get().formatted(cooldown.toSeconds()));
+                        return;
+                    }
+
+                    horse.spawn(player);
+                    success(player, Messages.HORSE_SPAWNED.get());
                     return;
                 }
 
-                if (!PocketHorses.getConfigFile().getBoolean("Options.More-Horses-At-Time")
-                        && PocketHorses.getSpawnedHorses().containsKey(player.getName())) {
-                    error(player, Messages.CANNOT_SPAWN.get());
-                    return;
-                }
+                if (e.isRightClick()) {
+                    if (!configHorse.isRecyclable() || !PocketHorses.isShopEnabled())
+                        return;
 
-                var cooldown = PocketHorses.getCooldowns().getRemainingCooldown(player.getUniqueId());
-                if (!cooldown.isZero() && !cooldown.isNegative()) {
-                    error(player, Messages.IN_COOLDOWN.get().formatted(cooldown.toSeconds()));
-                    return;
-                }
+                    new ConfirmMenu(() -> {
+                        player.closeInventory();
 
-                horse.spawn(player);
-                success(player, Messages.HORSE_SPAWNED.get());
+                        PocketHorses.getStorage().takeHorse(player, horse);
+                        PocketHorses.getEconomy().depositPlayer(player, configHorse.getRecyclePrice());
+
+                        success(player, Messages.HORSE_RECYCLED.get());
+                    }, player::closeInventory).get().open(player);
+                }
             }));
         }
     }
@@ -88,6 +106,15 @@ public class MyHorsesMenu implements InventoryProvider {
         }
 
         return false;
+    }
+
+    private List<String> parse(List<String> list, Player player) {
+        List<String> newList = Lists.newArrayList();
+
+        for (String s : list)
+            newList.add(s.replaceAll("%owner%", player.getName()));
+
+        return newList;
     }
 
 }

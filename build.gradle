@@ -92,7 +92,7 @@ tasks.withType(JavaCompile).configureEach {
 shadowJar {
     archiveBaseName.set('PocketHorses')
     archiveClassifier.set('')
-    archiveVersion.set('')
+    archiveVersion.set('1.6.0')
 
     relocate 'fr.minuskube.inv', 'it.pika.libs.smartinvs'
     relocate 'net.wesjd.anvilgui', 'it.pika.libs.anvilgui'

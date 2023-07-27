@@ -56,8 +56,9 @@ public class JSON extends Storage {
     }
 
     @Override
-    public void setCustomName(Horse horse, String name) {
-        PocketHorses.getCache().get(PocketHorses.getCache().lastIndexOf(PocketHorses.getHorse(horse.getUuid()))).setCustomName(name);
+    @SneakyThrows
+    public void takeHorse(Player player, Horse horse) {
+        PocketHorses.getCache().remove(horse);
     }
 
     @Override

@@ -74,11 +74,10 @@ public class SQLite extends Storage {
 
     @Override
     @SneakyThrows
-    public void setCustomName(Horse horse, String name) {
-        PocketHorses.getCache().get(PocketHorses.getCache().lastIndexOf(PocketHorses.getHorse(horse.getUuid()))).setCustomName(name);
+    public void takeHorse(Player player, Horse horse) {
+        PocketHorses.getCache().remove(horse);
 
-        connection.preparedUpdate("UPDATE horses SET customName = ? WHERE uuid = ?", name,
-                horse.getUuid().toString());
+        connection.preparedUpdate("DELETE FROM horses WHERE uuid = ?", horse.getUuid().toString());
     }
 
     @Override

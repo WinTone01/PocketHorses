@@ -10,6 +10,7 @@ import fr.minuskube.inv.content.SlotPos;
 import it.pika.libs.item.ItemBuilder;
 import it.pika.pockethorses.PocketHorses;
 import it.pika.pockethorses.enums.Messages;
+import it.pika.pockethorses.menu.ConfirmMenu;
 import it.pika.pockethorses.objects.horses.ConfigHorse;
 import it.pika.pockethorses.objects.horses.EditingHorse;
 import net.wesjd.anvilgui.AnvilGUI;
@@ -58,20 +59,23 @@ public class EditorMainMenu implements InventoryProvider {
 
                     new EditingHorseMenu(new EditingHorse(horse.getId(), horse.getDisplayName(), horse.getColor(),
                             horse.getStyle(), horse.getSpeed(), horse.getJumpStrength(), horse.getMaxHealth(),
-                            horse.isBuyable(), horse.getPrice(), horse.isPermission(), horse.isStorage()), false)
+                            horse.isBuyable(), horse.getPrice(), horse.isPermission(), horse.isStorage(),
+                            horse.isRecyclable(), horse.getRecyclePrice()), false)
                             .get().open(player);
                 }
 
                 if (e.isRightClick()) {
-                    player.closeInventory();
-                    try {
-                        Files.delete(horse.getConfig().getFile().toPath());
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
-                    }
+                    new ConfirmMenu(() -> {
+                        player.closeInventory();
+                        try {
+                            Files.delete(horse.getConfig().getFile().toPath());
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
 
-                    reloadHorses();
-                    get().open(player);
+                        reloadHorses();
+                        get().open(player);
+                    }, () -> get().open(player)).get().open(player);
                 }
             });
         }

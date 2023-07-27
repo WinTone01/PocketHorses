@@ -14,13 +14,14 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.util.List;
 
 import static it.pika.libs.chat.Chat.error;
 import static it.pika.libs.chat.Chat.success;
 
 public class MainCmd extends SubCommand {
 
-    public MainCmd(JavaPlugin plugin, String label, String... aliases) {
+    public MainCmd(JavaPlugin plugin, String label, List<String> aliases) {
         super(plugin, label, aliases);
     }
 
@@ -160,6 +161,13 @@ public class MainCmd extends SubCommand {
         }
 
         success(sender, Messages.FILE_RELOADED.get().formatted(file.getName()));
+    }
+
+    @SubCommandName("help")
+    @SubCommandPermission(Perms.HELP_MAIN)
+    public void help(CommandSender sender, String label, String[] args) {
+        for (String s : PocketHorses.getMessagesFile().getStringList("help-message"))
+            sender.sendMessage(PocketHorses.parseColors(s));
     }
 
 }

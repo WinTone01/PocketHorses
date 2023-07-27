@@ -50,7 +50,9 @@ public enum Messages {
     SET_ALL_SETTINGS("set-all-settings"),
     HORSE_ALREADY_EXISTS("horse-already-exists"),
     INVALID_FILE("invalid-file"),
-    FILE_RELOADED("file-reloaded");
+    FILE_RELOADED("file-reloaded"),
+    HORSE_RECYCLED("horse-recycled"),
+    COMMAND_DOESNT_EXIST("command-doesnt-exist");
 
     private final String path;
 

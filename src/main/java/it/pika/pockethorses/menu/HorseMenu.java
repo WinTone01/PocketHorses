@@ -16,7 +16,7 @@ import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.Horse;
+import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -97,7 +97,7 @@ public class HorseMenu implements InventoryProvider {
                                     (config.getBoolean("Options.Display-HP-In-Name") ?
                                             " " + PocketHorses.parseColors(config.getString("Options.Display-HP")
                                                     .replaceAll("%health%", String.valueOf((int)
-                                                            ((Horse) horse.getEntity()).getHealth()))) : ""));
+                                                            ((AbstractHorse) horse.getEntity()).getHealth()))) : ""));
                             success(player, Messages.CUSTOM_NAME_SET.get());
                             return Collections.singletonList(AnvilGUI.ResponseAction.close());
                         }).open(player)));
@@ -109,8 +109,8 @@ public class HorseMenu implements InventoryProvider {
                     .build(), e -> {
                 player.closeInventory();
                 horse.setSit(false);
-                ((Horse) horse.getEntity()).setAI(true);
-                ((Horse) horse.getEntity()).setTarget(player);
+                ((AbstractHorse) horse.getEntity()).setAI(true);
+                ((AbstractHorse) horse.getEntity()).setTarget(player);
 
                 success(player, Messages.GET_UP.get());
             }));
@@ -121,7 +121,7 @@ public class HorseMenu implements InventoryProvider {
                     .build(), e -> {
                 player.closeInventory();
                 horse.setSit(true);
-                ((Horse) horse.getEntity()).setAI(false);
+                ((AbstractHorse) horse.getEntity()).setAI(false);
 
                 success(player, Messages.MAKE_SIT.get());
             }));
@@ -149,7 +149,7 @@ public class HorseMenu implements InventoryProvider {
                             }
 
                             var speedModifier = speed / 3.6;
-                            ((Horse) horse.getEntity()).getAttribute(Attribute.GENERIC_MOVEMENT_SPEED)
+                            ((AbstractHorse) horse.getEntity()).getAttribute(Attribute.GENERIC_MOVEMENT_SPEED)
                                     .setBaseValue(speedModifier / 20);
                             horse.setSpeed(speed);
                             success(player, Messages.SPEED_SET.get());

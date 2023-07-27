@@ -34,6 +34,16 @@ Options:
   Horse-Cooldown: 0 # A time to wait between the spawn of two horses, in seconds (if set to 0 it is off)
   Use-Recall-Permission: false # If enabled, players will need to have 'pockethorses.recall' permission to recall horses
 
+# Customize aliases of plugin commands
+Commands:
+  PocketHorses:
+    Aliases:
+      - 'ph'
+      - 'horsesadmin'
+  Horses:
+    Aliases:
+      - 'horse'
+
 # Customize the menu that is opened after the /horses command
 Horses-GUI:
   Title: 'My horses' # The GUI title
@@ -48,7 +58,8 @@ Horses-GUI:
       - '&7Speed: &f%speed% km/h'
       - '&7Owner: &f%owner%'
       - ''
-      - '&a&lClick to spawn!'
+      - '&a&lLeft-Click to spawn!'
+      - '&a&lRight-Click to recycle!'
 
 # Customize the menu that is opened after you click on a horse
 Horse-GUI:
@@ -234,6 +245,22 @@ Editor-GUI:
         - '&7Current: &f%storage%'
         - ''
         - '&6&lClick to set!'
+    Recyclable:
+      Name: '&f&lIs recyclable?'
+      Material: BRICK
+      Lore:
+        - '&7If enabled, the horse can be recycled.'
+        - '&7Current: &f%recyclable%'
+        - ''
+        - '&6&lClick to set!'
+    Recycle-Price:
+      Name: '&f&lRecycle Price'
+      Material: EGG
+      Lore:
+        - '&7The money given to the player after recycling this horse.'
+        - '&7Current: &f%recyclePrice%'
+        - ''
+        - '&6&lClick to set!'
     Back:
       Name: '&c&lBack'
       Material: ARROW
@@ -262,6 +289,24 @@ Editor-GUI:
       Material: PAPER
       Lore:
         - '&7Click to select this style.'
+
+Confirm-GUI:
+  Title: 'Confirm' # The GUI title
+  Size:
+    Rows: 5 # The horizontal lines of the GUI, can be up to 6
+    Columns: 9 # The vertical columns of the GUI, there are normally 9
+  Are-You-Sure:
+    Name: '&6&lAre you sure?'
+    Material: PAPER
+    Lore: []
+  Confirm:
+    Name: '&a&lConfirm'
+    Material: LIME_STAINED_GLASS_PANE
+    Lore: []
+  Cancel:
+    Name: '&c&lCancel'
+    Material: RED_STAINED_GLASS_PANE
+    Lore: []
 
 Vouchers:
   Opening:

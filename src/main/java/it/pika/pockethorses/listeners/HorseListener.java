@@ -8,9 +8,7 @@ import it.pika.pockethorses.objects.horses.ConfigHorse;
 import it.pika.pockethorses.objects.horses.SpawnedHorse;
 import it.pika.pockethorses.utils.Serializer;
 import net.kyori.adventure.text.Component;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Horse;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -31,7 +29,7 @@ public class HorseListener implements Listener {
     public void onClick(PlayerInteractEntityEvent event) {
         var player = event.getPlayer();
 
-        if (!(event.getRightClicked() instanceof Horse horse))
+        if (!(event.getRightClicked() instanceof AbstractHorse horse))
             return;
 
         var spawnedHorse = PocketHorses.getSpawnedHorse(horse);
@@ -82,7 +80,7 @@ public class HorseListener implements Listener {
         if (!(event.getDamager() instanceof Player))
             return;
 
-        if (!(event.getEntity() instanceof Horse entity))
+        if (!(event.getEntity() instanceof AbstractHorse entity))
             return;
 
         var spawnedHorse = PocketHorses.getSpawnedHorse(entity);
@@ -94,7 +92,7 @@ public class HorseListener implements Listener {
 
     @EventHandler
     public void onDeath(EntityDeathEvent event) {
-        if (!(event.getEntity() instanceof Horse entity))
+        if (!(event.getEntity() instanceof AbstractHorse entity))
             return;
 
         var spawnedHorse = PocketHorses.getSpawnedHorse(entity);
@@ -132,7 +130,7 @@ public class HorseListener implements Listener {
         if (player.getVehicle() == null)
             return;
 
-        if (!(player.getVehicle() instanceof Horse horse))
+        if (!(player.getVehicle() instanceof AbstractHorse horse))
             return;
 
         var spawnedHorse = PocketHorses.getSpawnedHorse(horse);
@@ -149,10 +147,11 @@ public class HorseListener implements Listener {
 
     @EventHandler
     public void onDamage(EntityDamageEvent event) {
-        if (event.getEntityType() != EntityType.HORSE)
+        if (event.getEntityType() != EntityType.HORSE && event.getEntityType() != EntityType.ZOMBIE_HORSE
+                && event.getEntityType() != EntityType.SKELETON_HORSE)
             return;
 
-        var entity = (Horse) event.getEntity();
+        var entity = (AbstractHorse) event.getEntity();
 
         var horse = PocketHorses.getSpawnedHorse(entity);
         if (horse == null)
