@@ -87,8 +87,9 @@ public class MyHorsesMenu implements InventoryProvider {
                         return;
                     }
 
-                    horse.spawn(player);
-                    success(player, Messages.HORSE_SPAWNED.get());
+                    if (horse.spawn(player))
+                        success(player, Messages.HORSE_SPAWNED.get());
+
                     return;
                 }
 

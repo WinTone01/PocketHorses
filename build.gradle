@@ -71,6 +71,7 @@ dependencies {
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
     compileOnly 'me.clip:placeholderapi:2.11.3'
     compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.5'
+    compileOnly files('lib/Model-Engine.jar')
 }
 
 def targetJavaVersion = 17
@@ -105,7 +106,7 @@ tasks.withType(JavaCompile).configureEach {
 shadowJar {
     archiveBaseName.set('PocketHorses')
     archiveClassifier.set('')
-    archiveVersion.set('1.7.0')
+    archiveVersion.set('1.7.1')
 
     relocate 'fr.minuskube.inv', 'it.pika.libs.smartinvs'
     relocate 'net.wesjd.anvilgui', 'it.pika.libs.anvilgui'

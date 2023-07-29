@@ -174,6 +174,8 @@ public class HorseMenu implements InventoryProvider {
                 PocketHorses.getSpawnedHorses().get(player.getName()).remove(horse);
 
             horse.getEntity().remove();
+            if (horse.getModeledEntity() != null)
+                horse.getModeledEntity().destroy();
 
             success(player, Messages.HORSE_REMOVED.get());
         }));

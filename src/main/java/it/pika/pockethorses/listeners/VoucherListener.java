@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
@@ -22,7 +23,7 @@ public class VoucherListener implements Listener {
         if (event.getHand() == EquipmentSlot.OFF_HAND)
             return;
 
-        if (!event.getAction().isRightClick())
+        if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK)
             return;
 
         var item = player.getInventory().getItemInMainHand();

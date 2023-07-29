@@ -97,9 +97,11 @@ public final class PocketHorses extends JavaPlugin {
     private static boolean placeholdersEnabled = false;
     @Getter
     private static boolean worldGuardEnabled = false;
+    @Getter
+    private static boolean modelEngineEnabled = false;
 
 
-    public static final String VERSION = "1.7.0";
+    public static final String VERSION = "1.7.1";
 
     @Override
     public void onLoad() {
@@ -129,6 +131,7 @@ public final class PocketHorses extends JavaPlugin {
         registerCommands();
         loadHorses();
         setupInventories();
+        setupModelEngine();
         checkForUpdates();
 
         stopwatch.stop();
@@ -269,6 +272,14 @@ public final class PocketHorses extends JavaPlugin {
         var registry = WorldGuard.getInstance().getFlagRegistry();
         var flag = new StateFlag("allow-horses", true);
         registry.register(flag);
+    }
+
+    private void setupModelEngine() {
+        var plugin = Bukkit.getPluginManager().getPlugin("ModelEngine");
+        if (plugin == null || !plugin.isEnabled())
+            return;
+
+        modelEngineEnabled = true;
     }
 
     private void checkForUpdates() {

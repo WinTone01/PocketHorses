@@ -30,6 +30,7 @@ public class ConfigHorse {
     private boolean storage;
     private boolean recyclable;
     private double recyclePrice;
+    private String model;
 
     public static ConfigHorse of(String name) {
         var file = new File(PocketHorses.getInstance().getDataFolder()
@@ -62,13 +63,20 @@ public class ConfigHorse {
                 style = Horse.Style.BLACK_DOTS;
             }
 
+            String model;
+            try {
+                model = config.getString("Model");
+            } catch (NullPointerException e) {
+                model = null;
+            }
+
             return new ConfigHorse(config, config.getFile().getName().replaceAll(".yml", ""),
                     config.getString("Display-Name"), color, style,
                     config.getDouble("Speed"), config.getDouble("Jump-Strength"),
                     config.getInt("Max-Health"), config.getBoolean("Buyable"),
                     config.getDouble("Price"), config.getBoolean("Permission"),
                     config.getBoolean("Storage"), config.getBoolean("Recyclable"),
-                    config.getDouble("Recycle-Price"));
+                    config.getDouble("Recycle-Price"), model);
         } catch (NullPointerException e) {
             return null;
         }
