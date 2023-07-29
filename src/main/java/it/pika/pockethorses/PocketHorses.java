@@ -13,6 +13,7 @@ import it.pika.libs.config.Config;
 import it.pika.pockethorses.api.events.HorsesInitializeEvent;
 import it.pika.pockethorses.commands.HorsesCmd;
 import it.pika.pockethorses.commands.MainCmd;
+import it.pika.pockethorses.hooks.ModelEngineHook;
 import it.pika.pockethorses.listeners.HorseListener;
 import it.pika.pockethorses.listeners.JoinListener;
 import it.pika.pockethorses.listeners.VoucherListener;
@@ -66,6 +67,8 @@ public final class PocketHorses extends JavaPlugin {
     private static final Cooldowns cooldowns = new Cooldowns();
     @Getter
     private static WorldGuardPlugin worldGuard = null;
+    @Getter
+    private static ModelEngineHook modelEngineHook = null;
 
 
     @Getter
@@ -101,7 +104,7 @@ public final class PocketHorses extends JavaPlugin {
     private static boolean modelEngineEnabled = false;
 
 
-    public static final String VERSION = "1.7.1";
+    public static final String VERSION = "1.7.1.1";
 
     @Override
     public void onLoad() {
@@ -280,6 +283,7 @@ public final class PocketHorses extends JavaPlugin {
             return;
 
         modelEngineEnabled = true;
+        modelEngineHook = new ModelEngineHook();
     }
 
     private void checkForUpdates() {
