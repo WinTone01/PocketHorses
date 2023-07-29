@@ -52,7 +52,12 @@ public enum Messages {
     INVALID_FILE("invalid-file"),
     FILE_RELOADED("file-reloaded"),
     HORSE_RECYCLED("horse-recycled"),
-    COMMAND_DOESNT_EXIST("command-doesnt-exist");
+    COMMAND_DOESNT_EXIST("command-doesnt-exist"),
+    ITEM_NOT_EXISTING("item-not-existing"),
+    ITEM_GIVEN("item-given"),
+    ITEM_TYPE_NOT_EXISTING("item-type-not-existing"),
+    ITEM_USED("item-used"),
+    SUPPLEMENT_EXPIRED("supplement-expired");
 
     private final String path;
 

@@ -32,6 +32,14 @@ repositories {
         name = "placeholderapi"
         url = "https://repo.extendedclip.com/content/repositories/placeholderapi/"
     }
+    maven {
+        name = "papermc"
+        url = "https://papermc.io/repo/repository/maven-public/"
+    }
+    maven {
+        name = "enginehub-maven"
+        url = "https://maven.enginehub.org/repo/"
+    }
 }
 
 dependencies {
@@ -56,8 +64,13 @@ dependencies {
         transitive = false
     }
 
+    implementation('io.papermc:paperlib:1.0.7') {
+        transitive = false
+    }
+
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
     compileOnly 'me.clip:placeholderapi:2.11.3'
+    compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.5'
 }
 
 def targetJavaVersion = 17
@@ -92,10 +105,11 @@ tasks.withType(JavaCompile).configureEach {
 shadowJar {
     archiveBaseName.set('PocketHorses')
     archiveClassifier.set('')
-    archiveVersion.set('1.6.0')
+    archiveVersion.set('1.7.0')
 
     relocate 'fr.minuskube.inv', 'it.pika.libs.smartinvs'
     relocate 'net.wesjd.anvilgui', 'it.pika.libs.anvilgui'
     relocate 'com.tchristofferson.configupdater', 'it.pika.libs.config.updater'
     relocate 'de.tr7zw.changeme.nbtapi', 'it.pika.libs.nbt'
+    relocate 'io.papermc.lib', "it.pika.libs.paper"
 }

@@ -1,0 +1,31 @@
+ExampleSupplement:
+  Type: SUPPLEMENT # The type of item, can be 'SUPPLEMENT' or 'CARE'
+  Extra-Speed: 10.0 # The extra speed that is given to the horse after taking the supplement
+  Extra-Jump: 0.2 # The extra jump that is given to the horse after taking the supplement
+  Duration: 300 # The time (in seconds) after which the effects of the supplement wear off
+  Item: # Customize the displayed item of the supplement
+    Name: '&a&lExample Supplement'
+    Material: STICK
+    Model-Data: 0
+    Lore:
+      - '&7An example supplement for your horse.'
+      - ''
+      - '&7Effects:'
+      - '&8- &f+10.0 km/h speed'
+      - '&8- &f+0.2 jump'
+      - ''
+      - '&f&lRIGHT CLICK &7on the horse to use it.'
+ExampleCare:
+  Type: CARE
+  Restore-Health: 15.0
+  Item:
+    Name: '&c&lExample Med-kit'
+    Material: STICK
+    Model-Data: 0
+    Lore:
+      - '&7An example med-kit for your horse.'
+      - ''
+      - '&7Effects:'
+      - '&8- &f+15.0 health'
+      - ''
+      - '&f&lRIGHT CLICK &7on the horse to use it.'

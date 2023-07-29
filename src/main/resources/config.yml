@@ -321,3 +321,7 @@ Vouchers:
   List:
     Header: '&6List of loaded vouchers:' # The message preceding the list
     Voucher: '&8- &e%voucher%' # The message representing a loaded voucher
+
+Items-List:
+  Header: '&6List of loaded items:' # The message preceding the list
+  Item: '&8- &e%item% &8| §e%type%' # The message representing a loaded item

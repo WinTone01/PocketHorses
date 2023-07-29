@@ -1,6 +1,9 @@
 package it.pika.pockethorses.menu;
 
-import com.google.common.collect.Lists;
+import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.flags.Flag;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
@@ -15,7 +18,8 @@ import it.pika.pockethorses.objects.horses.SpawnedHorse;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static it.pika.libs.chat.Chat.error;
 import static it.pika.libs.chat.Chat.success;
@@ -60,6 +64,21 @@ public class MyHorsesMenu implements InventoryProvider {
                             && PocketHorses.getSpawnedHorses().containsKey(player.getName())) {
                         error(player, Messages.CANNOT_SPAWN.get());
                         return;
+                    }
+
+                    if (PocketHorses.isWorldGuardEnabled() && !player.hasPermission(Perms.BYPASS_REGION)) {
+                        for (ProtectedRegion region : getRegions(player)) {
+                            for (Map.Entry<Flag<?>, Object> entry : region.getFlags().entrySet()) {
+                                if (!entry.getKey().getName().equalsIgnoreCase("allow-horses"))
+                                    continue;
+
+                                if (!entry.getValue().toString().equalsIgnoreCase("DENY"))
+                                    continue;
+
+                                error(player, Messages.CANNOT_SPAWN.get());
+                                return;
+                            }
+                        }
                     }
 
                     var cooldown = PocketHorses.getCooldowns().getRemainingCooldown(player.getUniqueId());
@@ -108,13 +127,10 @@ public class MyHorsesMenu implements InventoryProvider {
         return false;
     }
 
-    private List<String> parse(List<String> list, Player player) {
-        List<String> newList = Lists.newArrayList();
-
-        for (String s : list)
-            newList.add(s.replaceAll("%owner%", player.getName()));
-
-        return newList;
+    public static Set<ProtectedRegion> getRegions(Player player) {
+        var container = WorldGuard.getInstance().getPlatform().getRegionContainer();
+        return container.createQuery().getApplicableRegions(WorldGuardPlugin.inst().wrapPlayer(player)
+                .getLocation()).getRegions();
     }
 
 }

@@ -68,7 +68,7 @@ public class HorsesCmd extends SubCommand {
         }
 
         for (SpawnedHorse horse : PocketHorses.getSpawnedHorses().get(player.getName()))
-            horse.getEntity().teleport(player.getLocation());
+            PocketHorses.teleport(horse.getEntity(), player.getLocation());
 
         success(player, Messages.HORSES_RECALLED.get());
     }

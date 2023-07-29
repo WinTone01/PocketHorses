@@ -3,8 +3,12 @@ package it.pika.pockethorses;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.tchristofferson.configupdater.ConfigUpdater;
 import fr.minuskube.inv.InventoryManager;
+import io.papermc.lib.PaperLib;
 import it.pika.libs.config.Config;
 import it.pika.pockethorses.api.events.HorsesInitializeEvent;
 import it.pika.pockethorses.commands.HorsesCmd;
@@ -15,6 +19,7 @@ import it.pika.pockethorses.listeners.VoucherListener;
 import it.pika.pockethorses.objects.horses.ConfigHorse;
 import it.pika.pockethorses.objects.horses.Horse;
 import it.pika.pockethorses.objects.horses.SpawnedHorse;
+import it.pika.pockethorses.objects.items.Supplement;
 import it.pika.pockethorses.storage.Storage;
 import it.pika.pockethorses.storage.StorageType;
 import it.pika.pockethorses.storage.impl.JSON;
@@ -31,6 +36,7 @@ import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.ChatColor;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -58,6 +64,8 @@ public final class PocketHorses extends JavaPlugin {
     private static Economy economy = null;
     @Getter
     private static final Cooldowns cooldowns = new Cooldowns();
+    @Getter
+    private static WorldGuardPlugin worldGuard = null;
 
 
     @Getter
@@ -66,6 +74,8 @@ public final class PocketHorses extends JavaPlugin {
     private static Config messagesFile = null;
     @Getter
     private static Config vouchersFile = null;
+    @Getter
+    private static Config itemsFile = null;
 
 
     @Getter
@@ -77,14 +87,24 @@ public final class PocketHorses extends JavaPlugin {
     private static final Map<String, List<SpawnedHorse>> spawnedHorses = Maps.newHashMap();
     @Getter
     private static final Map<String, Horse> inHorseStorage = Maps.newHashMap();
+    @Getter
+    private static final Map<UUID, Supplement> activeSupplements = Maps.newHashMap();
 
 
     @Getter
     private static boolean shopEnabled;
     @Getter
     private static boolean placeholdersEnabled = false;
+    @Getter
+    private static boolean worldGuardEnabled = false;
 
-    public static final String VERSION = "1.6.0";
+
+    public static final String VERSION = "1.7.0";
+
+    @Override
+    public void onLoad() {
+        setupWorldGuard();
+    }
 
     @Override
     public void onEnable() {
@@ -115,6 +135,7 @@ public final class PocketHorses extends JavaPlugin {
         Bukkit.getPluginManager().callEvent(new HorsesInitializeEvent(this));
         new Metrics(this, 19134);
 
+        PaperLib.suggestPaper(this);
         console.info("Plugin enabled in %s ms.".formatted(stopwatch.elapsed(TimeUnit.MILLISECONDS)));
     }
 
@@ -133,6 +154,7 @@ public final class PocketHorses extends JavaPlugin {
         configFile = new Config(this, "config.yml");
         messagesFile = new Config(this, "messages.yml");
         vouchersFile = new Config(this, "vouchers.yml");
+        itemsFile = new Config(this, "items.yml");
 
         ConfigUpdater.update(this, "config.yml", configFile.getFile());
         ConfigUpdater.update(this, "messages.yml", messagesFile.getFile());
@@ -141,6 +163,10 @@ public final class PocketHorses extends JavaPlugin {
         messagesFile.reload();
 
         shopEnabled = configFile.getBoolean("Options.Shop-Enabled");
+
+        var horsesFolder = new File(getDataFolder() + File.separator + "Horses");
+        if (!horsesFolder.exists())
+            horsesFolder.mkdir();
     }
 
     private boolean setupStorage() {
@@ -229,6 +255,20 @@ public final class PocketHorses extends JavaPlugin {
         new Placeholders().register();
         placeholdersEnabled = true;
         return true;
+    }
+
+    private void setupWorldGuard() {
+        var plugin = Bukkit.getPluginManager().getPlugin("WorldGuard");
+
+        if (!(plugin instanceof WorldGuardPlugin))
+            return;
+
+        worldGuard = (WorldGuardPlugin) plugin;
+        worldGuardEnabled = true;
+
+        var registry = WorldGuard.getInstance().getFlagRegistry();
+        var flag = new StateFlag("allow-horses", true);
+        registry.register(flag);
     }
 
     private void checkForUpdates() {
@@ -373,6 +413,13 @@ public final class PocketHorses extends JavaPlugin {
         }
 
         return false;
+    }
+
+    public static void teleport(Entity entity, Location location) {
+        PaperLib.teleportAsync(entity, location).thenAccept(result -> {
+            if (!result)
+                entity.teleport(location);
+        });
     }
 
 }

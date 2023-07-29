@@ -1,14 +1,20 @@
 package it.pika.pockethorses.listeners;
 
+import de.tr7zw.changeme.nbtapi.NBTItem;
 import it.pika.pockethorses.Perms;
 import it.pika.pockethorses.PocketHorses;
 import it.pika.pockethorses.enums.Messages;
 import it.pika.pockethorses.menu.HorseMenu;
 import it.pika.pockethorses.objects.horses.ConfigHorse;
 import it.pika.pockethorses.objects.horses.SpawnedHorse;
+import it.pika.pockethorses.objects.items.Care;
+import it.pika.pockethorses.objects.items.Supplement;
 import it.pika.pockethorses.utils.Serializer;
-import net.kyori.adventure.text.Component;
-import org.bukkit.entity.*;
+import org.bukkit.Bukkit;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.entity.AbstractHorse;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -43,6 +49,75 @@ public class HorseListener implements Listener {
             return;
         }
 
+        var item = player.getInventory().getItemInMainHand();
+        if (!item.getType().isAir()) {
+            var nbt = new NBTItem(item);
+
+            if (nbt.hasTag("supplement")) {
+                var supplement = Supplement.of(nbt.getString("supplement"));
+
+                if (supplement != null) {
+                    var configHorse = ConfigHorse.of(spawnedHorse.getName());
+                    if (configHorse == null)
+                        return;
+
+                    spawnedHorse.setSpeed(spawnedHorse.getSpeed() + supplement.getExtraSpeed());
+
+                    double speed = spawnedHorse.getSpeed() / 3.6;
+                    horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(speed / 20);
+
+                    var newJumpStrength = horse.getJumpStrength() + supplement.getExtraJump();
+                    horse.setJumpStrength(Math.min(newJumpStrength, 2.0));
+
+                    item.setAmount(item.getAmount() - 1);
+                    PocketHorses.getActiveSupplements().put(spawnedHorse.getUuid(), supplement);
+
+                    success(player, Messages.ITEM_USED.get());
+
+                    Bukkit.getScheduler().runTaskLaterAsynchronously(PocketHorses.getInstance(), () -> {
+                        spawnedHorse.setSpeed(configHorse.getSpeed());
+
+                        double newSpeed = configHorse.getSpeed() / 3.6;
+                        horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(newSpeed / 20);
+
+                        horse.setJumpStrength(configHorse.getJumpStrength());
+                        PocketHorses.getActiveSupplements().remove(spawnedHorse.getUuid());
+
+                        success(player, Messages.SUPPLEMENT_EXPIRED.get());
+                    }, 20 * supplement.getDuration());
+                }
+            } else if (nbt.hasTag("care")) {
+                var care = Care.of(nbt.getString("care"));
+
+                if (care != null) {
+                    var configHorse = ConfigHorse.of(spawnedHorse.getName());
+                    if (configHorse == null)
+                        return;
+
+                    var newHealth = horse.getHealth() + care.getRestoreHealth();
+                    horse.setHealth(Math.min(newHealth, configHorse.getMaxHealth()));
+
+                    if (spawnedHorse.getCustomName() != null
+                            && !spawnedHorse.getCustomName().equalsIgnoreCase("null")) {
+                        horse.setCustomName(PocketHorses.parseColors(horse.getCustomName()) +
+                                (PocketHorses.getConfigFile().getBoolean("Options.Display-HP-In-Name") ?
+                                        " " + PocketHorses.parseColors(PocketHorses.getConfigFile().getString("Options.Display-HP")
+                                                .replaceAll("%health%", String.valueOf((int) horse.getHealth()))) : ""));
+                        horse.setCustomNameVisible(true);
+                    } else {
+                        horse.setCustomName(PocketHorses.parseColors(configHorse.getDisplayName()) +
+                                (PocketHorses.getConfigFile().getBoolean("Options.Display-HP-In-Name") ?
+                                        " " + PocketHorses.parseColors(PocketHorses.getConfigFile().getString("Options.Display-HP")
+                                                .replaceAll("%health%", String.valueOf((int) horse.getHealth()))) : ""));
+                    }
+
+                    item.setAmount(item.getAmount() - 1);
+                    success(player, Messages.ITEM_USED.get());
+                }
+            }
+            return;
+        }
+
         if (player.isSneaking() || spawnedHorse.isSit() || horse.getPassengers().contains(player)) {
             if (PocketHorses.getConfigFile().getBoolean("Horse-GUI.Use-Permission") &&
                     !player.hasPermission(Perms.HORSE_GUI)) {
@@ -55,7 +130,7 @@ public class HorseListener implements Listener {
         }
 
         spawnedHorse.getEntity().addPassenger(player);
-        player.sendMessage(Component.text(PocketHorses.parseMessage(Messages.RIDING_HORSE.get(), spawnedHorse, player)));
+        player.sendMessage(PocketHorses.parseMessage(Messages.RIDING_HORSE.get(), spawnedHorse, player));
     }
 
     @EventHandler
@@ -118,7 +193,7 @@ public class HorseListener implements Listener {
                     .contains(spawnedHorse.getEntity()))
                 continue;
 
-            spawnedHorse.getEntity().teleport(player);
+            PocketHorses.teleport(spawnedHorse.getEntity(), player.getLocation());
             success(player, Messages.AUTO_RECALLED.get());
         }
     }
@@ -140,9 +215,9 @@ public class HorseListener implements Listener {
         if (!PocketHorses.getConfigFile().getBoolean("Options.Action-Bar-While-Riding"))
             return;
 
-        player.sendActionBar(Component.text(PocketHorses
+        player.sendActionBar(PocketHorses
                 .parseMessage(PocketHorses.getConfigFile().getString("Options.Action-Bar-Message"),
-                        spawnedHorse, player)));
+                        spawnedHorse, player));
     }
 
     @EventHandler

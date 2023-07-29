@@ -10,6 +10,8 @@ import it.pika.pockethorses.menu.editor.EditorMainMenu;
 import it.pika.pockethorses.objects.Voucher;
 import it.pika.pockethorses.objects.horses.ConfigHorse;
 import it.pika.pockethorses.objects.horses.EditingHorse;
+import it.pika.pockethorses.objects.items.Care;
+import it.pika.pockethorses.objects.items.Supplement;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -125,6 +127,7 @@ public class MainCmd extends SubCommand {
             PocketHorses.getConfigFile().reload();
             PocketHorses.getMessagesFile().reload();
             PocketHorses.getVouchersFile().reload();
+            PocketHorses.getItemsFile().reload();
 
             PocketHorses.getLoadedHorses().clear();
             PocketHorses.getInstance().loadHorses();
@@ -154,6 +157,7 @@ public class MainCmd extends SubCommand {
             case "config.yml" -> PocketHorses.getConfigFile().reload();
             case "messages.yml" -> PocketHorses.getMessagesFile().reload();
             case "vouchers.yml" -> PocketHorses.getVouchersFile().reload();
+            case "items.yml" -> PocketHorses.getItemsFile().reload();
             default -> {
                 var config = new Config(PocketHorses.getInstance(), file);
                 config.reload();
@@ -168,6 +172,50 @@ public class MainCmd extends SubCommand {
     public void help(CommandSender sender, String label, String[] args) {
         for (String s : PocketHorses.getMessagesFile().getStringList("help-message"))
             sender.sendMessage(PocketHorses.parseColors(s));
+    }
+
+    @SubCommandName("giveItem")
+    @SubCommandUsage("<type> <player> <item>")
+    @SubCommandMinArgs(3)
+    @SubCommandPermission(Perms.GIVE_ITEM)
+    public void giveItem(CommandSender sender, String label, String[] args) {
+        var player = Validator.getPlayerSender(sender);
+
+        var type = args[0];
+        var target = Validator.getOnlinePlayer(args[1]);
+        var name = args[2];
+
+        if (type.equalsIgnoreCase("SUPPLEMENT")) {
+            var supplement = Supplement.of(name);
+            if (supplement == null) {
+                error(player, Messages.ITEM_NOT_EXISTING.get());
+                return;
+            }
+
+            target.getInventory().addItem(supplement.getItem());
+            success(player, Messages.ITEM_GIVEN.get());
+        } else if (type.equalsIgnoreCase("CARE")) {
+            var care = Care.of(name);
+            if (care == null) {
+                error(player, Messages.ITEM_NOT_EXISTING.get());
+                return;
+            }
+
+            target.getInventory().addItem(care.getItem());
+            success(player, Messages.ITEM_GIVEN.get());
+        } else {
+            error(player, Messages.ITEM_TYPE_NOT_EXISTING.get());
+        }
+    }
+
+    @SubCommandName("listItems")
+    @SubCommandPermission(Perms.LIST_ITEMS)
+    public void listItems(CommandSender sender, String label, String[] args) {
+        sender.sendMessage(PocketHorses.parseColors(PocketHorses.getConfigFile().getString("Items-List.Header")));
+        for (String key : PocketHorses.getItemsFile().getConfigurationSection("").getKeys(false))
+            sender.sendMessage(PocketHorses.parseColors(PocketHorses.getConfigFile().getString("Items-List.Item"))
+                    .replaceAll("%item%", key)
+                    .replaceAll("%type%", PocketHorses.getItemsFile().getString("%s.Type".formatted(key))));
     }
 
 }

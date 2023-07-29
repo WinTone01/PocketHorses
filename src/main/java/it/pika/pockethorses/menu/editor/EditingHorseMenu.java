@@ -247,6 +247,12 @@ public class EditingHorseMenu implements InventoryProvider {
             player.closeInventory();
 
             if (creating) {
+                if (horse.getDisplayName() == null || horse.getColor() == null || horse.getStyle() == null
+                        || horse.getJumpStrength() == 0 || horse.getMaxHealth() == 0 || horse.getPrice() == 0) {
+                    error(player, Messages.SET_ALL_SETTINGS.get());
+                    return;
+                }
+
                 var file = new File(PocketHorses.getInstance().getDataFolder()
                         + File.separator + "Horses" + File.separator + "%s.yml".formatted(horse.getId()));
                 if (!file.exists()) {
@@ -255,12 +261,6 @@ public class EditingHorseMenu implements InventoryProvider {
                     } catch (IOException ex) {
                         ex.printStackTrace();
                     }
-                }
-
-                if (horse.getDisplayName() == null || horse.getColor() == null || horse.getStyle() == null
-                        || horse.getJumpStrength() == 0 || horse.getMaxHealth() == 0 || horse.getPrice() == 0) {
-                    error(player, Messages.SET_ALL_SETTINGS.get());
-                    return;
                 }
 
                 var horseConfig = new Config(PocketHorses.getInstance(), file);

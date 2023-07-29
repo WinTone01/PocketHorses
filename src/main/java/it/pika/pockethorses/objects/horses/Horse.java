@@ -61,8 +61,20 @@ public class Horse {
                         horse.setTarget(player);
                         horse.setColor(configHorse.getColor().getBukkitColor());
 
-                        double speed = configHorse.getSpeed() / 3.6;
-                        horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(speed / 20);
+                        if (PocketHorses.getActiveSupplements().containsKey(uuid)) {
+                            var supplement = PocketHorses.getActiveSupplements().get(uuid);
+
+                            var speed = (configHorse.getSpeed() + supplement.getExtraSpeed()) / 3.6;
+                            horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(speed / 20);
+
+                            var jumpStrength = configHorse.getJumpStrength() + supplement.getExtraJump();
+                            horse.setJumpStrength(Math.min(jumpStrength, 2.0));
+                        } else {
+                            double speed = configHorse.getSpeed() / 3.6;
+                            horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(speed / 20);
+
+                            horse.setJumpStrength(configHorse.getJumpStrength());
+                        }
 
                         horse.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(configHorse.getMaxHealth());
                         horse.setHealth(configHorse.getMaxHealth());
@@ -80,7 +92,6 @@ public class Horse {
                                                     .replaceAll("%health%", String.valueOf((int) horse.getHealth()))) : ""));
                         }
 
-                        horse.setJumpStrength(configHorse.getJumpStrength());
                         horse.setStyle(configHorse.getStyle());
 
                         if (PocketHorses.getSpawnedHorses().containsKey(player.getName())) {
@@ -94,7 +105,7 @@ public class Horse {
 
                         PocketHorses.getSpawnedHorses().put(player.getName(), Lists.newArrayList(
                                 new SpawnedHorse(uuid, name, owner, customName, storedItems,
-                                horse, configHorse.getSpeed(), false, false)));
+                                        horse, configHorse.getSpeed(), false, false)));
 
                         var seconds = PocketHorses.getConfigFile().getInt("Options.Horse-Cooldown");
                         if (seconds > 0)
@@ -108,8 +119,20 @@ public class Horse {
 
                 horse.setTarget(player);
 
-                double speed = configHorse.getSpeed() / 3.6;
-                horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(speed / 20);
+                if (PocketHorses.getActiveSupplements().containsKey(uuid)) {
+                    var supplement = PocketHorses.getActiveSupplements().get(uuid);
+
+                    var speed = (configHorse.getSpeed() + supplement.getExtraSpeed()) / 3.6;
+                    horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(speed / 20);
+
+                    var jumpStrength = configHorse.getJumpStrength() + supplement.getExtraJump();
+                    horse.setJumpStrength(Math.min(jumpStrength, 2.0));
+                } else {
+                    double speed = configHorse.getSpeed() / 3.6;
+                    horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(speed / 20);
+
+                    horse.setJumpStrength(configHorse.getJumpStrength());
+                }
 
                 horse.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(configHorse.getMaxHealth());
                 horse.setHealth(configHorse.getMaxHealth());
@@ -126,8 +149,6 @@ public class Horse {
                                     " " + PocketHorses.parseColors(config.getString("Options.Display-HP")
                                             .replaceAll("%health%", String.valueOf((int) horse.getHealth()))) : ""));
                 }
-
-                horse.setJumpStrength(configHorse.getJumpStrength());
 
                 if (PocketHorses.getSpawnedHorses().containsKey(player.getName())) {
                     var list = PocketHorses.getSpawnedHorses().remove(player.getName());
@@ -146,52 +167,63 @@ public class Horse {
                 if (seconds > 0)
                     PocketHorses.getCooldowns().setCooldown(player.getUniqueId(), Duration.ofSeconds(seconds));
             });
-            case SKELETON -> player.getWorld().spawn(player.getLocation(), org.bukkit.entity.SkeletonHorse.class, horse -> {
-                horse.setAdult();
-                horse.setTamed(true);
-                horse.setOwner(player);
-                horse.getInventory().setSaddle(new ItemStack(Material.SADDLE));
+            case SKELETON ->
+                    player.getWorld().spawn(player.getLocation(), org.bukkit.entity.SkeletonHorse.class, horse -> {
+                        horse.setAdult();
+                        horse.setTamed(true);
+                        horse.setOwner(player);
+                        horse.getInventory().setSaddle(new ItemStack(Material.SADDLE));
 
-                horse.setTarget(player);
+                        horse.setTarget(player);
 
-                double speed = configHorse.getSpeed() / 3.6;
-                horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(speed / 20);
+                        if (PocketHorses.getActiveSupplements().containsKey(uuid)) {
+                            var supplement = PocketHorses.getActiveSupplements().get(uuid);
 
-                horse.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(configHorse.getMaxHealth());
-                horse.setHealth(configHorse.getMaxHealth());
+                            var speed = (configHorse.getSpeed() + supplement.getExtraSpeed()) / 3.6;
+                            horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(speed / 20);
 
-                if (customName != null && !customName.equalsIgnoreCase("null")) {
-                    horse.setCustomName(PocketHorses.parseColors(customName) +
-                            (config.getBoolean("Options.Display-HP-In-Name") ?
-                                    " " + PocketHorses.parseColors(config.getString("Options.Display-HP")
-                                            .replaceAll("%health%", String.valueOf((int) horse.getHealth()))) : ""));
-                    horse.setCustomNameVisible(true);
-                } else {
-                    horse.setCustomName(PocketHorses.parseColors(configHorse.getDisplayName()) +
-                            (config.getBoolean("Options.Display-HP-In-Name") ?
-                                    " " + PocketHorses.parseColors(config.getString("Options.Display-HP")
-                                            .replaceAll("%health%", String.valueOf((int) horse.getHealth()))) : ""));
-                }
+                            var jumpStrength = configHorse.getJumpStrength() + supplement.getExtraJump();
+                            horse.setJumpStrength(Math.min(jumpStrength, 2.0));
+                        } else {
+                            double speed = configHorse.getSpeed() / 3.6;
+                            horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(speed / 20);
 
-                horse.setJumpStrength(configHorse.getJumpStrength());
+                            horse.setJumpStrength(configHorse.getJumpStrength());
+                        }
 
-                if (PocketHorses.getSpawnedHorses().containsKey(player.getName())) {
-                    var list = PocketHorses.getSpawnedHorses().remove(player.getName());
-                    list.add(new SpawnedHorse(uuid, name, owner, customName, storedItems,
-                            horse, configHorse.getSpeed(), false, false));
+                        horse.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(configHorse.getMaxHealth());
+                        horse.setHealth(configHorse.getMaxHealth());
 
-                    PocketHorses.getSpawnedHorses().put(player.getName(), list);
-                    return;
-                }
+                        if (customName != null && !customName.equalsIgnoreCase("null")) {
+                            horse.setCustomName(PocketHorses.parseColors(customName) +
+                                    (config.getBoolean("Options.Display-HP-In-Name") ?
+                                            " " + PocketHorses.parseColors(config.getString("Options.Display-HP")
+                                                    .replaceAll("%health%", String.valueOf((int) horse.getHealth()))) : ""));
+                            horse.setCustomNameVisible(true);
+                        } else {
+                            horse.setCustomName(PocketHorses.parseColors(configHorse.getDisplayName()) +
+                                    (config.getBoolean("Options.Display-HP-In-Name") ?
+                                            " " + PocketHorses.parseColors(config.getString("Options.Display-HP")
+                                                    .replaceAll("%health%", String.valueOf((int) horse.getHealth()))) : ""));
+                        }
 
-                PocketHorses.getSpawnedHorses().put(player.getName(), Lists.newArrayList(
-                        new SpawnedHorse(uuid, name, owner, customName, storedItems,
-                                horse, configHorse.getSpeed(), false, false)));
+                        if (PocketHorses.getSpawnedHorses().containsKey(player.getName())) {
+                            var list = PocketHorses.getSpawnedHorses().remove(player.getName());
+                            list.add(new SpawnedHorse(uuid, name, owner, customName, storedItems,
+                                    horse, configHorse.getSpeed(), false, false));
 
-                var seconds = PocketHorses.getConfigFile().getInt("Options.Horse-Cooldown");
-                if (seconds > 0)
-                    PocketHorses.getCooldowns().setCooldown(player.getUniqueId(), Duration.ofSeconds(seconds));
-            });
+                            PocketHorses.getSpawnedHorses().put(player.getName(), list);
+                            return;
+                        }
+
+                        PocketHorses.getSpawnedHorses().put(player.getName(), Lists.newArrayList(
+                                new SpawnedHorse(uuid, name, owner, customName, storedItems,
+                                        horse, configHorse.getSpeed(), false, false)));
+
+                        var seconds = PocketHorses.getConfigFile().getInt("Options.Horse-Cooldown");
+                        if (seconds > 0)
+                            PocketHorses.getCooldowns().setCooldown(player.getUniqueId(), Duration.ofSeconds(seconds));
+                    });
         }
     }
 
