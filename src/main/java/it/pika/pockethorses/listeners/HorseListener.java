@@ -10,6 +10,8 @@ import it.pika.pockethorses.objects.horses.SpawnedHorse;
 import it.pika.pockethorses.objects.items.Care;
 import it.pika.pockethorses.objects.items.Supplement;
 import it.pika.pockethorses.utils.Serializer;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.AbstractHorse;
@@ -215,9 +217,9 @@ public class HorseListener implements Listener {
         if (!PocketHorses.getConfigFile().getBoolean("Options.Action-Bar-While-Riding"))
             return;
 
-        player.sendActionBar(PocketHorses
+        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(PocketHorses
                 .parseMessage(PocketHorses.getConfigFile().getString("Options.Action-Bar-Message"),
-                        spawnedHorse, player));
+                        spawnedHorse, player)));
     }
 
     @EventHandler

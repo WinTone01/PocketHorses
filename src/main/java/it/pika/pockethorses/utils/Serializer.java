@@ -25,12 +25,8 @@ public class Serializer {
 
             dataOutput.writeInt(items.length);
 
-            for (ItemStack item : items) {
-                if (item != null) {
-                    dataOutput.writeObject(item.serializeAsBytes());
-                } else {
-                    dataOutput.writeObject(null);
-                }
+            for (int i = 0; i < items.length; i++) {
+                dataOutput.writeObject(items[i]);
             }
 
             dataOutput.close();
@@ -47,15 +43,8 @@ public class Serializer {
             BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream);
             ItemStack[] items = new ItemStack[dataInput.readInt()];
 
-            for (int Index = 0; Index < items.length; Index++) {
-                byte[] stack = (byte[]) dataInput.readObject();
-
-                if (stack != null) {
-                    items[Index] = ItemStack.deserializeBytes(stack);
-                } else {
-                    items[Index] = null;
-                }
-            }
+            for (int i = 0; i < items.length; i++)
+                items[i] = (ItemStack) dataInput.readObject();
 
             dataInput.close();
             return items;

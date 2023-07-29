@@ -104,7 +104,7 @@ public final class PocketHorses extends JavaPlugin {
     private static boolean modelEngineEnabled = false;
 
 
-    public static final String VERSION = "1.7.1.1";
+    public static final String VERSION = "1.7.1.2";
 
     @Override
     public void onLoad() {
@@ -251,6 +251,8 @@ public final class PocketHorses extends JavaPlugin {
             return false;
 
         economy = rsp.getProvider();
+
+        console.info("Hooked into Vault!");
         return true;
     }
 
@@ -260,6 +262,8 @@ public final class PocketHorses extends JavaPlugin {
 
         new Placeholders().register();
         placeholdersEnabled = true;
+
+        console.info("Hooked into PlaceholderAPI!");
         return true;
     }
 
@@ -275,6 +279,8 @@ public final class PocketHorses extends JavaPlugin {
         var registry = WorldGuard.getInstance().getFlagRegistry();
         var flag = new StateFlag("allow-horses", true);
         registry.register(flag);
+
+        console.info("Hooked into WorldGuard!");
     }
 
     private void setupModelEngine() {
@@ -284,6 +290,8 @@ public final class PocketHorses extends JavaPlugin {
 
         modelEngineEnabled = true;
         modelEngineHook = new ModelEngineHook();
+
+        console.info("Hooked into ModelEngine!");
     }
 
     private void checkForUpdates() {
