@@ -98,6 +98,8 @@ public class HorseMenu implements InventoryProvider {
                                             " " + PocketHorses.parseColors(config.getString("Options.Display-HP")
                                                     .replaceAll("%health%", String.valueOf((int)
                                                             ((AbstractHorse) horse.getEntity()).getHealth()))) : ""));
+                            PocketHorses.getStorage().setCustomName(horse, stateSnapshot.getText());
+
                             success(player, Messages.CUSTOM_NAME_SET.get());
                             return Collections.singletonList(AnvilGUI.ResponseAction.close());
                         }).open(player)));

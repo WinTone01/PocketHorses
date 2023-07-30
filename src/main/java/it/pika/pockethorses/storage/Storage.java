@@ -14,6 +14,7 @@ public abstract class Storage {
     public abstract void giveHorse(Player player, ConfigHorse horse);
 
     public abstract void takeHorse(Player player, Horse horse);
+    public abstract void setCustomName(Horse horse, String name);
 
     public abstract void setStoredItems(Horse horse, ItemStack[] items);
 

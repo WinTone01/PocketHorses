@@ -41,7 +41,7 @@ public class SQLite extends Storage {
                             "`name` VARCHAR(255) NOT NULL," +
                             "`owner` VARCHAR(255) NOT NULL," +
                             "`customName` VARCHAR(255) NULL," +
-                            "`storedItems` VARCHAR(255) NULL);");
+                            "`storedItems` TEXT NULL);");
 
                     var result = connection.query("SELECT * FROM horses");
                     while (result.next()) {
@@ -94,6 +94,20 @@ public class SQLite extends Storage {
 
             try {
                 connection.preparedUpdate("DELETE FROM horses WHERE uuid = ?", horse.getUuid().toString());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    @Override
+    public void setCustomName(Horse horse, String name) {
+        Bukkit.getScheduler().runTaskAsynchronously(PocketHorses.getInstance(), () -> {
+            PocketHorses.getCache().get(PocketHorses.getCache().lastIndexOf(PocketHorses.getHorse(horse.getUuid()))).setCustomName(name);
+
+            try {
+                connection.preparedUpdate("UPDATE horses SET customName = ? WHERE uuid = ?", name,
+                        horse.getUuid().toString());
             } catch (SQLException e) {
                 e.printStackTrace();
             }

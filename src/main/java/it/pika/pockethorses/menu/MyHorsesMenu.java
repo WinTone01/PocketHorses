@@ -18,6 +18,7 @@ import it.pika.pockethorses.objects.horses.SpawnedHorse;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -102,6 +103,17 @@ public class MyHorsesMenu implements InventoryProvider {
 
                         PocketHorses.getStorage().takeHorse(player, horse);
                         PocketHorses.getEconomy().depositPlayer(player, configHorse.getRecyclePrice());
+
+                        for (List<SpawnedHorse> value : PocketHorses.getSpawnedHorses().values()) {
+                            for (SpawnedHorse spawnedHorse : value) {
+                                if (spawnedHorse.getUuid() != horse.getUuid())
+                                    continue;
+
+                                spawnedHorse.getEntity().remove();
+                                if (PocketHorses.getModelEngineHook() != null)
+                                    PocketHorses.getModelEngineHook().remove(spawnedHorse);
+                            }
+                        }
 
                         success(player, Messages.HORSE_RECYCLED.get());
                     }, player::closeInventory).get().open(player);

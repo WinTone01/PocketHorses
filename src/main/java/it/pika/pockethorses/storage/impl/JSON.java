@@ -62,6 +62,11 @@ public class JSON extends Storage {
     }
 
     @Override
+    public void setCustomName(Horse horse, String name) {
+        PocketHorses.getCache().get(PocketHorses.getCache().lastIndexOf(PocketHorses.getHorse(horse.getUuid()))).setCustomName(name);
+    }
+
+    @Override
     public void setStoredItems(Horse horse, ItemStack[] items) {
         PocketHorses.getCache().get(PocketHorses.getCache().lastIndexOf(PocketHorses.getHorse(horse.getUuid())))
                 .setStoredItems(Serializer.serialize(items));

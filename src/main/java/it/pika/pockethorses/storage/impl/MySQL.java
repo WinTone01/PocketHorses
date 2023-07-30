@@ -49,6 +49,8 @@ public class MySQL extends Storage {
                             "`storedItems` VARCHAR(255) NULL," +
                             "PRIMARY KEY (`uuid`));");
 
+                    connection.update("ALTER TABLE `horses` MODIFY COLUMN storedItems TEXT");
+
                     var result = connection.query("SELECT * FROM horses");
                     while (result.next()) {
                         var horse = new Horse(UUID.fromString(result.getString("uuid")),
@@ -98,6 +100,20 @@ public class MySQL extends Storage {
 
             try {
                 connection.preparedUpdate("DELETE FROM horses WHERE uuid = ?", horse.getUuid().toString());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    @Override
+    public void setCustomName(Horse horse, String name) {
+        Bukkit.getScheduler().runTaskAsynchronously(PocketHorses.getInstance(), () -> {
+            PocketHorses.getCache().get(PocketHorses.getCache().lastIndexOf(PocketHorses.getHorse(horse.getUuid()))).setCustomName(name);
+
+            try {
+                connection.preparedUpdate("UPDATE horses SET customName = ? WHERE uuid = ?", name,
+                        horse.getUuid().toString());
             } catch (SQLException e) {
                 e.printStackTrace();
             }
