@@ -9,6 +9,8 @@ import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Objects;
+
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 public class Care {
@@ -21,7 +23,8 @@ public class Care {
         var config = PocketHorses.getItemsFile();
 
         try {
-            if (!config.getString("%s.Type".formatted(name)).equalsIgnoreCase("CARE")) {
+            if (!Objects.requireNonNull(config.getString("%s.Type".formatted(name)))
+                    .equalsIgnoreCase("CARE")) {
                 PocketHorses.getConsole().warning("%s is not a valid care!".formatted(name));
                 return null;
             }

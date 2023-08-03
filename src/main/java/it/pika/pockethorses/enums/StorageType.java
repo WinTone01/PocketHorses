@@ -1,4 +1,4 @@
-package it.pika.pockethorses.storage;
+package it.pika.pockethorses.enums;
 
 public enum StorageType {
 

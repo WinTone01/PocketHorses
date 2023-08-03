@@ -110,7 +110,7 @@ public class Horse {
 
                             var seconds = PocketHorses.getConfigFile().getInt("Options.Horse-Cooldown");
                             if (seconds > 0)
-                                PocketHorses.getCooldowns().setCooldown(player.getUniqueId(), Duration.ofSeconds(seconds));
+                                PocketHorses.getCooldownManager().setCooldown(player.getUniqueId(), Duration.ofSeconds(seconds));
                         });
                 case ZOMBIE -> player.getWorld().spawn(player.getLocation(), org.bukkit.entity.ZombieHorse.class, horse -> {
                     horse.setAdult();
@@ -166,7 +166,7 @@ public class Horse {
 
                     var seconds = PocketHorses.getConfigFile().getInt("Options.Horse-Cooldown");
                     if (seconds > 0)
-                        PocketHorses.getCooldowns().setCooldown(player.getUniqueId(), Duration.ofSeconds(seconds));
+                        PocketHorses.getCooldownManager().setCooldown(player.getUniqueId(), Duration.ofSeconds(seconds));
                 });
                 case SKELETON ->
                         player.getWorld().spawn(player.getLocation(), org.bukkit.entity.SkeletonHorse.class, horse -> {
@@ -223,7 +223,7 @@ public class Horse {
 
                             var seconds = PocketHorses.getConfigFile().getInt("Options.Horse-Cooldown");
                             if (seconds > 0)
-                                PocketHorses.getCooldowns().setCooldown(player.getUniqueId(), Duration.ofSeconds(seconds));
+                                PocketHorses.getCooldownManager().setCooldown(player.getUniqueId(), Duration.ofSeconds(seconds));
                         });
             }
         } else {

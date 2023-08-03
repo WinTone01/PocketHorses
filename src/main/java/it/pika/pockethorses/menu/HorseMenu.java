@@ -21,6 +21,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Collections;
+import java.util.Objects;
 
 import static it.pika.libs.chat.Chat.error;
 import static it.pika.libs.chat.Chat.success;
@@ -95,7 +96,8 @@ public class HorseMenu implements InventoryProvider {
                             var config = PocketHorses.getConfigFile();
                             horse.getEntity().setCustomName(PocketHorses.parseColors(stateSnapshot.getText()) +
                                     (config.getBoolean("Options.Display-HP-In-Name") ?
-                                            " " + PocketHorses.parseColors(config.getString("Options.Display-HP")
+                                            " " + PocketHorses.parseColors(
+                                                    Objects.requireNonNull(config.getString("Options.Display-HP"))
                                                     .replaceAll("%health%", String.valueOf((int)
                                                             ((AbstractHorse) horse.getEntity()).getHealth()))) : ""));
                             PocketHorses.getStorage().setCustomName(horse, stateSnapshot.getText());
@@ -151,8 +153,8 @@ public class HorseMenu implements InventoryProvider {
                             }
 
                             var speedModifier = speed / 3.6;
-                            ((AbstractHorse) horse.getEntity()).getAttribute(Attribute.GENERIC_MOVEMENT_SPEED)
-                                    .setBaseValue(speedModifier / 20);
+                            Objects.requireNonNull(((AbstractHorse) horse.getEntity())
+                                            .getAttribute(Attribute.GENERIC_MOVEMENT_SPEED)).setBaseValue(speedModifier / 20);
                             horse.setSpeed(speed);
                             success(player, Messages.SPEED_SET.get());
                             return Collections.singletonList(AnvilGUI.ResponseAction.close());

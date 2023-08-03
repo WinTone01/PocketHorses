@@ -57,7 +57,9 @@ public enum Messages {
     ITEM_GIVEN("item-given"),
     ITEM_TYPE_NOT_EXISTING("item-type-not-existing"),
     ITEM_USED("item-used"),
-    SUPPLEMENT_EXPIRED("supplement-expired");
+    SUPPLEMENT_EXPIRED("supplement-expired"),
+    LIMIT_REACHED("limit-reached"),
+    REMOVED_HORSES("removed-horses");
 
     private final String path;
 

@@ -13,6 +13,8 @@ import lombok.AllArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
+import java.util.Objects;
+
 @AllArgsConstructor
 public class ColorSelectorMenu implements InventoryProvider {
 
@@ -34,7 +36,8 @@ public class ColorSelectorMenu implements InventoryProvider {
         for (HorseColor value : HorseColor.values())
             contents.add(ClickableItem.of(new ItemBuilder()
                     .material(Material.valueOf(PocketHorses.getConfigFile().getString("Editor-GUI.Color-GUI.Color-Item.Material")))
-                    .name(PocketHorses.getConfigFile().getString("Editor-GUI.Color-GUI.Color-Item.Name")
+                    .name(Objects.requireNonNull(PocketHorses.getConfigFile()
+                                    .getString("Editor-GUI.Color-GUI.Color-Item.Name"))
                             .replaceAll("%color%", value.name()))
                     .lore(PocketHorses.getConfigFile().getStringList("Editor-GUI.Color-GUI.Color-Item.Lore"))
                     .build(), e -> {

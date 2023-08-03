@@ -3,6 +3,7 @@ package it.pika.pockethorses.storage.impl;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import it.pika.pockethorses.PocketHorses;
+import it.pika.pockethorses.enums.StorageType;
 import it.pika.pockethorses.objects.horses.ConfigHorse;
 import it.pika.pockethorses.objects.horses.Horse;
 import it.pika.pockethorses.storage.Storage;
@@ -29,7 +30,8 @@ public class JSON extends Storage {
     public void init() {
         file = new File(PocketHorses.getInstance().getDataFolder(), "storage.json");
         if (!file.exists())
-            file.createNewFile();
+            if (!file.createNewFile())
+                PocketHorses.getConsole().warning("An error occurred");
 
         var reader = new FileReader(file);
         var horses = gson.fromJson(reader, Horse[].class);
@@ -70,6 +72,11 @@ public class JSON extends Storage {
     public void setStoredItems(Horse horse, ItemStack[] items) {
         PocketHorses.getCache().get(PocketHorses.getCache().lastIndexOf(PocketHorses.getHorse(horse.getUuid())))
                 .setStoredItems(Serializer.serialize(items));
+    }
+
+    @Override
+    public StorageType getType() {
+        return StorageType.JSON;
     }
 
 }

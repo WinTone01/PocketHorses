@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.time.Duration;
+import java.util.Objects;
 
 import static it.pika.libs.chat.Chat.error;
 
@@ -41,18 +42,19 @@ public class ModelEngineHook {
                 var supplement = PocketHorses.getActiveSupplements().get(horse.getUuid());
 
                 var speed = (configHorse.getSpeed() + supplement.getExtraSpeed()) / 3.6;
-                horseEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(speed / 20);
+                Objects.requireNonNull(horseEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED)).setBaseValue(speed / 20);
 
                 var jumpStrength = configHorse.getJumpStrength() + supplement.getExtraJump();
                 horseEntity.setJumpStrength(Math.min(jumpStrength, 2.0));
             } else {
                 double speed = configHorse.getSpeed() / 3.6;
-                horseEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(speed / 20);
+                Objects.requireNonNull(horseEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED)).setBaseValue(speed / 20);
 
                 horseEntity.setJumpStrength(configHorse.getJumpStrength());
             }
 
-            horseEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(configHorse.getMaxHealth());
+            Objects.requireNonNull(horseEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH))
+                    .setBaseValue(configHorse.getMaxHealth());
             horseEntity.setHealth(configHorse.getMaxHealth());
 
             if (horse.getCustomName() != null && !horse.getCustomName().equalsIgnoreCase("null")) {
@@ -70,7 +72,7 @@ public class ModelEngineHook {
 
             var seconds = PocketHorses.getConfigFile().getInt("Options.Horse-Cooldown");
             if (seconds > 0)
-                PocketHorses.getCooldowns().setCooldown(player.getUniqueId(), Duration.ofSeconds(seconds));
+                PocketHorses.getCooldownManager().setCooldown(player.getUniqueId(), Duration.ofSeconds(seconds));
         });
 
         var blueprint = com.ticxo.modelengine.api.ModelEngineAPI.getBlueprint(configHorse.getModel());

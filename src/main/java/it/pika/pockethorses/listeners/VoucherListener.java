@@ -3,6 +3,7 @@ package it.pika.pockethorses.listeners;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import it.pika.pockethorses.Perms;
 import it.pika.pockethorses.PocketHorses;
+import it.pika.pockethorses.enums.Messages;
 import it.pika.pockethorses.objects.Voucher;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
@@ -12,7 +13,10 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
+import java.util.Objects;
 import java.util.Random;
+
+import static it.pika.libs.chat.Chat.error;
 
 public class VoucherListener implements Listener {
 
@@ -46,6 +50,11 @@ public class VoucherListener implements Listener {
         if (voucher.isPermission() && !player.hasPermission(Perms.getVoucher(voucher.getName())))
             return;
 
+        if (!PocketHorses.respectsLimit(player)) {
+            error(player, Messages.LIMIT_REACHED.get());
+            return;
+        }
+
         item.setAmount(item.getAmount() - 1);
         player.sendTitle(PocketHorses.parseColors(PocketHorses.getConfigFile().getString("Vouchers.Opening.Title")),
                 PocketHorses.parseColors(PocketHorses.getConfigFile().getString("Vouchers.Opening.Sub-Title")),
@@ -58,7 +67,8 @@ public class VoucherListener implements Listener {
 
             PocketHorses.getStorage().giveHorse(player, reward);
             player.sendTitle(PocketHorses.parseColors(PocketHorses.getConfigFile().getString("Vouchers.Reward.Title")),
-                    PocketHorses.parseColors(PocketHorses.getConfigFile().getString("Vouchers.Reward.Sub-Title")
+                    PocketHorses.parseColors(Objects.requireNonNull(PocketHorses.getConfigFile()
+                                    .getString("Vouchers.Reward.Sub-Title"))
                             .replaceAll("%reward%", reward.getDisplayName())), 0, 40, 0);
             player.playSound(player.getLocation(),
                     Sound.valueOf(PocketHorses.getConfigFile().getString("Vouchers.Reward.Sound")), 1F, 1F);

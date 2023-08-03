@@ -15,7 +15,7 @@ public class Placeholders extends PlaceholderExpansion {
 
     @Override
     public @NotNull String getAuthor() {
-        return "zPikaa";
+        return "Pika";
     }
 
     @Override
@@ -31,10 +31,10 @@ public class Placeholders extends PlaceholderExpansion {
     @Override
     public String onRequest(OfflinePlayer player, String params) {
         if (params.equalsIgnoreCase("cooldown")) {
-            if (!PocketHorses.getCooldowns().hasCooldown(player.getUniqueId()))
+            if (!PocketHorses.getCooldownManager().hasCooldown(player.getUniqueId()))
                 return "No cooldown";
 
-            return String.valueOf(PocketHorses.getCooldowns().getRemainingCooldown(player.getUniqueId()).toSeconds());
+            return String.valueOf(PocketHorses.getCooldownManager().getRemainingCooldown(player.getUniqueId()).toSeconds());
         }
 
         var parts = params.split("_");

@@ -20,6 +20,7 @@ Storage:
     Password: ''
 
 Options:
+  Economy-Type: 'Vault' # The plugin used to manage the plugin economy, can be 'Vault' or 'PlayerPoints'
   Shop-Enabled: true # If enabled, players will be able to purchase horses through the /horses shop command
   More-Horses-At-Time: true # If enabled, players will be able to spawn more than one horse at a time
   Play-Sound-When-Buy: true # If enabled, a sound will be played after purchasing a horse (see Horse-GUI section)
@@ -33,6 +34,7 @@ Options:
   Display-HP: '&c%health% HP ❤' # The message that includes horse health
   Horse-Cooldown: 0 # A time to wait between the spawn of two horses, in seconds (if set to 0 it is off)
   Use-Recall-Permission: false # If enabled, players will need to have 'pockethorses.recall' permission to recall horses
+  Horse-Limit: 100 # The maximum number of horses a player can have. It can be chosen for each player with the permission pockethorses.max.<limit>.
 
 # Customize aliases of plugin commands
 Commands:

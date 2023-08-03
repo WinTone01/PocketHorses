@@ -49,12 +49,17 @@ public class ShopMenu implements InventoryProvider {
                     return;
                 }
 
+                if (!PocketHorses.respectsLimit(player)) {
+                    error(player, Messages.LIMIT_REACHED.get());
+                    return;
+                }
+
                 if (!PocketHorses.getEconomy().has(player, horse.getPrice())) {
                     error(player, Messages.NOT_ENOUGH_MONEY.get());
                     return;
                 }
 
-                PocketHorses.getEconomy().withdrawPlayer(player, horse.getPrice());
+                PocketHorses.getEconomy().withdraw(player, horse.getPrice());
                 PocketHorses.getStorage().giveHorse(player, horse);
 
                 success(player, Messages.PURCHASE_COMPLETED.get());

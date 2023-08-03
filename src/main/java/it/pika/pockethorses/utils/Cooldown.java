@@ -7,25 +7,25 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.UUID;
 
-public class Cooldowns {
+public class Cooldown {
 
-    private final Map<UUID, Instant> cooldowns = Maps.newHashMap();
+    private final Map<UUID, Instant> cooldownMap = Maps.newHashMap();
 
     public void setCooldown(UUID key, Duration duration) {
-        cooldowns.put(key, Instant.now().plus(duration));
+        cooldownMap.put(key, Instant.now().plus(duration));
     }
 
     public boolean hasCooldown(UUID key) {
-        var cooldown = cooldowns.get(key);
+        var cooldown = cooldownMap.get(key);
         return cooldown != null && Instant.now().isBefore(cooldown);
     }
 
     public void removeCooldown(UUID key) {
-        cooldowns.remove(key);
+        cooldownMap.remove(key);
     }
 
     public Duration getRemainingCooldown(UUID key) {
-        var cooldown = cooldowns.get(key);
+        var cooldown = cooldownMap.get(key);
         var now = Instant.now();
 
         if (cooldown != null && now.isBefore(cooldown)) {

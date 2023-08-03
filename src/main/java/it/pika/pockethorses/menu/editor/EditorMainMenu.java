@@ -51,7 +51,8 @@ public class EditorMainMenu implements InventoryProvider {
 
             items[i] = ClickableItem.of(new ItemBuilder()
                     .material(Material.valueOf(PocketHorses.getConfigFile().getString("Editor-GUI.Main.Horse-Item.Material")))
-                    .name(parse(PocketHorses.getConfigFile().getString("Editor-GUI.Main.Horse-Item.Name"), horse))
+                    .name(parse(Objects.requireNonNull(PocketHorses.getConfigFile()
+                            .getString("Editor-GUI.Main.Horse-Item.Name")), horse))
                     .lore(parse(PocketHorses.getConfigFile().getStringList("Editor-GUI.Main.Horse-Item.Lore"), horse))
                     .build(), e -> {
                 if (e.isLeftClick()) {

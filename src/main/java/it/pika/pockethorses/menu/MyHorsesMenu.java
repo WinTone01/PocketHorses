@@ -82,7 +82,7 @@ public class MyHorsesMenu implements InventoryProvider {
                         }
                     }
 
-                    var cooldown = PocketHorses.getCooldowns().getRemainingCooldown(player.getUniqueId());
+                    var cooldown = PocketHorses.getCooldownManager().getRemainingCooldown(player.getUniqueId());
                     if (!cooldown.isZero() && !cooldown.isNegative()) {
                         error(player, Messages.IN_COOLDOWN.get().formatted(cooldown.toSeconds()));
                         return;
@@ -102,7 +102,7 @@ public class MyHorsesMenu implements InventoryProvider {
                         player.closeInventory();
 
                         PocketHorses.getStorage().takeHorse(player, horse);
-                        PocketHorses.getEconomy().depositPlayer(player, configHorse.getRecyclePrice());
+                        PocketHorses.getEconomy().deposit(player, configHorse.getRecyclePrice());
 
                         for (List<SpawnedHorse> value : PocketHorses.getSpawnedHorses().values()) {
                             for (SpawnedHorse spawnedHorse : value) {

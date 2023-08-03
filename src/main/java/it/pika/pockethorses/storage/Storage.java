@@ -1,5 +1,6 @@
 package it.pika.pockethorses.storage;
 
+import it.pika.pockethorses.enums.StorageType;
 import it.pika.pockethorses.objects.horses.ConfigHorse;
 import it.pika.pockethorses.objects.horses.Horse;
 import org.bukkit.entity.Player;
@@ -17,5 +18,6 @@ public abstract class Storage {
     public abstract void setCustomName(Horse horse, String name);
 
     public abstract void setStoredItems(Horse horse, ItemStack[] items);
+    public abstract StorageType getType();
 
 }

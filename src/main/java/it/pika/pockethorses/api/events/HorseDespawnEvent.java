@@ -10,7 +10,7 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * The event is triggered when despawing a horse through the GUI
+ * The event is triggered when despawning a horse through the GUI
  */
 public class HorseDespawnEvent extends Event implements Cancellable {
 

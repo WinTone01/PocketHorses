@@ -10,6 +10,8 @@ import lombok.Setter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Objects;
+
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter @Setter
 public class Supplement {
@@ -24,7 +26,8 @@ public class Supplement {
         var config = PocketHorses.getItemsFile();
 
         try {
-            if (!config.getString("%s.Type".formatted(name)).equalsIgnoreCase("SUPPLEMENT")) {
+            if (!Objects.requireNonNull(config.getString("%s.Type".formatted(name)))
+                    .equalsIgnoreCase("SUPPLEMENT")) {
                 PocketHorses.getConsole().warning("%s is not a valid supplement!".formatted(name));
                 return null;
             }

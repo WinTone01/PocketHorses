@@ -2,6 +2,7 @@ package it.pika.pockethorses.commands;
 
 import it.pika.libs.command.SubCommand;
 import it.pika.libs.config.Config;
+import it.pika.libs.reflection.Reflections;
 import it.pika.pockethorses.Perms;
 import it.pika.pockethorses.PocketHorses;
 import it.pika.pockethorses.enums.Messages;
@@ -13,10 +14,12 @@ import it.pika.pockethorses.objects.horses.EditingHorse;
 import it.pika.pockethorses.objects.items.Care;
 import it.pika.pockethorses.objects.items.Supplement;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.util.List;
+import java.util.Objects;
 
 import static it.pika.libs.chat.Chat.error;
 import static it.pika.libs.chat.Chat.success;
@@ -50,6 +53,11 @@ public class MainCmd extends SubCommand {
         if (PocketHorses.has(player, horse.getId()) &&
                 !PocketHorses.getConfigFile().getBoolean("Options.More-Than-Once-Same-Horse")) {
             error(player, Messages.ALREADY_OWNED.get());
+            return;
+        }
+
+        if (!PocketHorses.respectsLimit(player)) {
+            error(player, Messages.LIMIT_REACHED.get());
             return;
         }
 
@@ -115,7 +123,7 @@ public class MainCmd extends SubCommand {
     @SubCommandPermission(Perms.LIST_VOUCHERS)
     public void listVouchers(CommandSender sender, String label, String[] args) {
         sender.sendMessage(PocketHorses.parseColors(PocketHorses.getConfigFile().getString("Vouchers.List.Header")));
-        for (String key : PocketHorses.getVouchersFile().getConfigurationSection("").getKeys(false))
+        for (String key : Objects.requireNonNull(PocketHorses.getVouchersFile().getConfigurationSection("")).getKeys(false))
             sender.sendMessage(PocketHorses.parseColors(PocketHorses.getConfigFile().getString("Vouchers.List.Voucher"))
                     .replaceAll("%voucher%", key));
     }
@@ -212,10 +220,74 @@ public class MainCmd extends SubCommand {
     @SubCommandPermission(Perms.LIST_ITEMS)
     public void listItems(CommandSender sender, String label, String[] args) {
         sender.sendMessage(PocketHorses.parseColors(PocketHorses.getConfigFile().getString("Items-List.Header")));
-        for (String key : PocketHorses.getItemsFile().getConfigurationSection("").getKeys(false))
+        for (String key : Objects.requireNonNull(PocketHorses.getItemsFile().getConfigurationSection("")).getKeys(false))
             sender.sendMessage(PocketHorses.parseColors(PocketHorses.getConfigFile().getString("Items-List.Item"))
                     .replaceAll("%item%", key)
-                    .replaceAll("%type%", PocketHorses.getItemsFile().getString("%s.Type".formatted(key))));
+                    .replaceAll("%type%",
+                            Objects.requireNonNull(PocketHorses.getItemsFile().getString("%s.Type".formatted(key)))));
+    }
+
+    @SubCommandName("debug")
+    @SubCommandPermission(Perms.DEBUG)
+    public void debug(CommandSender sender, String label, String[] args) {
+        sender.sendMessage(PocketHorses.parseColors("&6------------------------------------"));
+        sender.sendMessage(PocketHorses.parseColors("&eStorage type: &f%s".formatted(PocketHorses.getStorage().getType())));
+        sender.sendMessage(PocketHorses.parseColors("&eEconomy type: &f%s")
+                .formatted(PocketHorses.getEconomy() == null ? "//" : PocketHorses.getEconomy().getType()));
+        sender.sendMessage(PocketHorses.parseColors("&ePlugin version: &f%s".formatted(PocketHorses.VERSION)));
+        sender.sendMessage(PocketHorses.parseColors("&eServer version: &f%s".formatted(Reflections.getVersion())));
+        sender.sendMessage(PocketHorses.parseColors("&eCache size: &f%s".formatted(PocketHorses.getCache().size())));
+        sender.sendMessage(PocketHorses.parseColors("&eSpawned horses: &f%s".formatted(PocketHorses.getSpawnedHorses().size())));
+        sender.sendMessage(PocketHorses.parseColors("&eShop enabled: &f%s".formatted(PocketHorses.isShopEnabled())));
+        sender.sendMessage(PocketHorses.parseColors("&ePlaceholderAPI Hook: &f%s".formatted(PocketHorses.isPlaceholdersEnabled())));
+        sender.sendMessage(PocketHorses.parseColors("&eWorldGuard Hook: &f%s".formatted(PocketHorses.isWorldGuardEnabled())));
+        sender.sendMessage(PocketHorses.parseColors("&eModelEngine Hook: &f%s".formatted(PocketHorses.isModelEngineEnabled())));
+        sender.sendMessage(PocketHorses.parseColors("&6------------------------------------"));
+    }
+
+    @SubCommandName("remove")
+    @SubCommandUsage("<range>")
+    @SubCommandMinArgs(1)
+    @SubCommandPermission(Perms.REMOVE)
+    public void remove(CommandSender sender, String label, String[] args) {
+        var player = Validator.getPlayerSender(sender);
+
+        if (!isInt(args[0])) {
+            error(player, Messages.INVALID_NUMBER.get());
+            return;
+        }
+
+        var range = Integer.parseInt(args[0]);
+        var entities = player.getNearbyEntities(range, range, range);
+
+        int removed = 0;
+        for (Entity entity : entities) {
+            var horse = PocketHorses.getSpawnedHorse(entity);
+            if (horse == null)
+                continue;
+
+            if (PocketHorses.getSpawnedHorses().get(horse.getOwner()).size() == 1)
+                PocketHorses.getSpawnedHorses().remove(horse.getOwner());
+            else
+                PocketHorses.getSpawnedHorses().get(horse.getOwner()).remove(horse);
+
+            horse.getEntity().remove();
+            if (PocketHorses.getModelEngineHook() != null)
+                PocketHorses.getModelEngineHook().remove(horse);
+
+            removed++;
+        }
+
+        success(player, Messages.REMOVED_HORSES.get().formatted(removed));
+    }
+
+    private boolean isInt(String s) {
+        try {
+            Integer.parseInt(s);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
 }

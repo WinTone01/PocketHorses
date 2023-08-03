@@ -2,6 +2,7 @@ package it.pika.pockethorses.storage.impl;
 
 import it.pika.libs.sql.sqlite.Connection;
 import it.pika.pockethorses.PocketHorses;
+import it.pika.pockethorses.enums.StorageType;
 import it.pika.pockethorses.objects.horses.ConfigHorse;
 import it.pika.pockethorses.objects.horses.Horse;
 import it.pika.pockethorses.storage.Storage;
@@ -27,8 +28,10 @@ public class SQLite extends Storage {
     @SneakyThrows
     public void init() {
         file = new File(PocketHorses.getInstance().getDataFolder(), "storage.db");
-        if (!file.exists())
-            file.createNewFile();
+        if (!file.exists()) {
+            if (!file.createNewFile())
+                PocketHorses.getConsole().warning("An error occurred");
+        }
 
         connection = new Connection(file);
         connection.connect();
@@ -128,6 +131,11 @@ public class SQLite extends Storage {
                 e.printStackTrace();
             }
         });
+    }
+
+    @Override
+    public StorageType getType() {
+        return StorageType.SQLITE;
     }
 
 }

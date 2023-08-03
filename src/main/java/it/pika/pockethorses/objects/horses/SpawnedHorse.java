@@ -1,6 +1,5 @@
 package it.pika.pockethorses.objects.horses;
 
-import it.pika.pockethorses.PocketHorses;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.entity.Entity;

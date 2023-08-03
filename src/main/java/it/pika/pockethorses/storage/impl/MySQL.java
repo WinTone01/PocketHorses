@@ -2,6 +2,7 @@ package it.pika.pockethorses.storage.impl;
 
 import it.pika.libs.sql.mysql.Connection;
 import it.pika.pockethorses.PocketHorses;
+import it.pika.pockethorses.enums.StorageType;
 import it.pika.pockethorses.objects.horses.ConfigHorse;
 import it.pika.pockethorses.objects.horses.Horse;
 import it.pika.pockethorses.storage.Storage;
@@ -133,6 +134,11 @@ public class MySQL extends Storage {
                 e.printStackTrace();
             }
         });
+    }
+
+    @Override
+    public StorageType getType() {
+        return StorageType.MYSQL;
     }
 
 }

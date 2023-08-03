@@ -19,7 +19,9 @@ public class Perms {
             HELP_HORSES = "pockethorses.help.horses",
             BYPASS_REGION = "pockethorses.bypass_region",
             GIVE_ITEM = "pockethorses.give.item",
-            LIST_ITEMS = "pockethorses.list.items";
+            LIST_ITEMS = "pockethorses.list.items",
+            DEBUG = "pockethorses.debug",
+            REMOVE = "pockethorses.remove";
 
     public static String getHorse(String name) {
         return "pockethorses.horse.%s".formatted(name);
@@ -27,6 +29,10 @@ public class Perms {
 
     public static String getVoucher(String name) {
         return "pockethorses.voucher.%s".formatted(name);
+    }
+
+    public static String getLimit(int n) {
+        return "pockethorses.max.%s".formatted(n);
     }
 
 

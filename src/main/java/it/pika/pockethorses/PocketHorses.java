@@ -10,10 +10,15 @@ import com.tchristofferson.configupdater.ConfigUpdater;
 import fr.minuskube.inv.InventoryManager;
 import io.papermc.lib.PaperLib;
 import it.pika.libs.config.Config;
+import it.pika.libs.reflection.Reflections;
 import it.pika.pockethorses.api.events.HorsesInitializeEvent;
 import it.pika.pockethorses.commands.HorsesCmd;
 import it.pika.pockethorses.commands.MainCmd;
+import it.pika.pockethorses.enums.EconomyType;
 import it.pika.pockethorses.hooks.ModelEngineHook;
+import it.pika.pockethorses.hooks.economy.Economy;
+import it.pika.pockethorses.hooks.economy.impl.PlayerPointsEconomy;
+import it.pika.pockethorses.hooks.economy.impl.VaultEconomy;
 import it.pika.pockethorses.listeners.HorseListener;
 import it.pika.pockethorses.listeners.JoinListener;
 import it.pika.pockethorses.listeners.VoucherListener;
@@ -22,11 +27,11 @@ import it.pika.pockethorses.objects.horses.Horse;
 import it.pika.pockethorses.objects.horses.SpawnedHorse;
 import it.pika.pockethorses.objects.items.Supplement;
 import it.pika.pockethorses.storage.Storage;
-import it.pika.pockethorses.storage.StorageType;
+import it.pika.pockethorses.enums.StorageType;
 import it.pika.pockethorses.storage.impl.JSON;
 import it.pika.pockethorses.storage.impl.MySQL;
 import it.pika.pockethorses.storage.impl.SQLite;
-import it.pika.pockethorses.utils.Cooldowns;
+import it.pika.pockethorses.utils.Cooldown;
 import it.pika.pockethorses.utils.Metrics;
 import it.pika.pockethorses.utils.Placeholders;
 import it.pika.pockethorses.utils.UpdateChecker;
@@ -35,7 +40,8 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.ChatColor;
-import net.milkbowl.vault.economy.Economy;
+import org.black_ixx.playerpoints.PlayerPoints;
+import org.black_ixx.playerpoints.PlayerPointsAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -64,7 +70,7 @@ public final class PocketHorses extends JavaPlugin {
     @Getter
     private static Economy economy = null;
     @Getter
-    private static final Cooldowns cooldowns = new Cooldowns();
+    private static final Cooldown cooldownManager = new Cooldown();
     @Getter
     private static WorldGuardPlugin worldGuard = null;
     @Getter
@@ -104,7 +110,7 @@ public final class PocketHorses extends JavaPlugin {
     private static boolean modelEngineEnabled = false;
 
 
-    public static final String VERSION = "1.7.3";
+    public static final String VERSION = "1.8.0";
 
     @Override
     public void onLoad() {
@@ -116,6 +122,13 @@ public final class PocketHorses extends JavaPlugin {
         instance = this;
         var stopwatch = Stopwatch.createStarted();
 
+        if (Reflections.getNumericalVersion() < 13) {
+            stopwatch.stop();
+            console.warning("Server version not supported, disabling the plugin...");
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
+
         setupFiles();
         if (!setupStorage()) {
             stopwatch.stop();
@@ -125,7 +138,7 @@ public final class PocketHorses extends JavaPlugin {
         }
         if (!setupEconomy()) {
             shopEnabled = false;
-            console.warning("Vault not found, you will not be able to use the shop!");
+            console.warning("Couldn't setup economy, you will not be able to use shop-related features!");
         }
         if (!setupPlaceholders())
             console.warning("PlaceholderAPI not found, you will not be able to use placeholders!");
@@ -143,6 +156,7 @@ public final class PocketHorses extends JavaPlugin {
 
         PaperLib.suggestPaper(this);
         console.info("Plugin enabled in %s ms.".formatted(stopwatch.elapsed(TimeUnit.MILLISECONDS)));
+        console.info("For support join my Discord server: dsc.gg/pockethorses");
     }
 
     @Override
@@ -171,8 +185,10 @@ public final class PocketHorses extends JavaPlugin {
         shopEnabled = configFile.getBoolean("Options.Shop-Enabled");
 
         var horsesFolder = new File(getDataFolder() + File.separator + "Horses");
-        if (!horsesFolder.exists())
-            horsesFolder.mkdir();
+        if (!horsesFolder.exists()) {
+            if (!horsesFolder.mkdir())
+                console.warning("An error occurred");
+        }
     }
 
     private boolean setupStorage() {
@@ -243,16 +259,35 @@ public final class PocketHorses extends JavaPlugin {
     }
 
     private boolean setupEconomy() {
-        if (Bukkit.getPluginManager().getPlugin("Vault") == null)
+        EconomyType type;
+        try {
+            type = EconomyType.valueOf(Objects.requireNonNull(configFile.getString("Options.Economy-Type")).toUpperCase());
+        } catch (IllegalArgumentException e) {
+            console.warning("Economy type not recognized!");
             return false;
+        }
 
-        var rsp = getServer().getServicesManager().getRegistration(Economy.class);
-        if (rsp == null)
-            return false;
+        switch (type) {
+            case VAULT -> {
+                if (Bukkit.getPluginManager().getPlugin("Vault") == null)
+                    return false;
 
-        economy = rsp.getProvider();
+                var rsp = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
+                if (rsp == null)
+                    return false;
 
-        console.info("Hooked into Vault!");
+                economy = new VaultEconomy(rsp.getProvider());
+            }
+            case PLAYERPOINTS -> {
+                var plugin = Bukkit.getPluginManager().getPlugin("PlayerPoints");
+                if (plugin == null)
+                    return false;
+
+                economy = new PlayerPointsEconomy(new PlayerPointsAPI((PlayerPoints) plugin));
+            }
+        }
+
+        console.info("Economy type: %s".formatted(economy.getType()));
         return true;
     }
 
@@ -443,6 +478,20 @@ public final class PocketHorses extends JavaPlugin {
             if (!result)
                 entity.teleport(location);
         });
+    }
+
+    public static boolean respectsLimit(Player player) {
+        if (player.isOp() || player.hasPermission("*"))
+            return true;
+
+        var horses = getHorsesOf(player).size();
+        int limit = getConfigFile().getInt("Options.Horse-Limit");
+
+        for (int i = 0; i < limit; i++)
+            if (player.hasPermission(Perms.getLimit(i)))
+                limit = i;
+
+        return horses < limit;
     }
 
 }

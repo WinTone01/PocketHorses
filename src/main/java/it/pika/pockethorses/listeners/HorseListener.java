@@ -26,6 +26,8 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
+import java.util.Objects;
+
 import static it.pika.libs.chat.Chat.error;
 import static it.pika.libs.chat.Chat.success;
 
@@ -56,7 +58,7 @@ public class HorseListener implements Listener {
             var nbt = new NBTItem(item);
 
             if (nbt.hasTag("supplement")) {
-                var supplement = Supplement.of(nbt.getString("supplement"));
+                var supplement = Supplement.fromItem(item);
 
                 if (supplement != null) {
                     var configHorse = ConfigHorse.of(spawnedHorse.getName());
@@ -66,7 +68,7 @@ public class HorseListener implements Listener {
                     spawnedHorse.setSpeed(spawnedHorse.getSpeed() + supplement.getExtraSpeed());
 
                     double speed = spawnedHorse.getSpeed() / 3.6;
-                    horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(speed / 20);
+                    Objects.requireNonNull(horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED)).setBaseValue(speed / 20);
 
                     var newJumpStrength = horse.getJumpStrength() + supplement.getExtraJump();
                     horse.setJumpStrength(Math.min(newJumpStrength, 2.0));
@@ -80,7 +82,8 @@ public class HorseListener implements Listener {
                         spawnedHorse.setSpeed(configHorse.getSpeed());
 
                         double newSpeed = configHorse.getSpeed() / 3.6;
-                        horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(newSpeed / 20);
+                        Objects.requireNonNull(horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
+                                .setBaseValue(newSpeed / 20);
 
                         horse.setJumpStrength(configHorse.getJumpStrength());
                         PocketHorses.getActiveSupplements().remove(spawnedHorse.getUuid());
@@ -89,7 +92,7 @@ public class HorseListener implements Listener {
                     }, 20 * supplement.getDuration());
                 }
             } else if (nbt.hasTag("care")) {
-                var care = Care.of(nbt.getString("care"));
+                var care = Care.fromItem(item);
 
                 if (care != null) {
                     var configHorse = ConfigHorse.of(spawnedHorse.getName());
@@ -103,13 +106,15 @@ public class HorseListener implements Listener {
                             && !spawnedHorse.getCustomName().equalsIgnoreCase("null")) {
                         horse.setCustomName(PocketHorses.parseColors(horse.getCustomName()) +
                                 (PocketHorses.getConfigFile().getBoolean("Options.Display-HP-In-Name") ?
-                                        " " + PocketHorses.parseColors(PocketHorses.getConfigFile().getString("Options.Display-HP")
+                                        " " + PocketHorses.parseColors(Objects.requireNonNull(PocketHorses.getConfigFile()
+                                                        .getString("Options.Display-HP"))
                                                 .replaceAll("%health%", String.valueOf((int) horse.getHealth()))) : ""));
                         horse.setCustomNameVisible(true);
                     } else {
                         horse.setCustomName(PocketHorses.parseColors(configHorse.getDisplayName()) +
                                 (PocketHorses.getConfigFile().getBoolean("Options.Display-HP-In-Name") ?
-                                        " " + PocketHorses.parseColors(PocketHorses.getConfigFile().getString("Options.Display-HP")
+                                        " " + PocketHorses.parseColors(Objects.requireNonNull(PocketHorses.getConfigFile()
+                                                        .getString("Options.Display-HP"))
                                                 .replaceAll("%health%", String.valueOf((int) horse.getHealth()))) : ""));
                     }
 
@@ -241,13 +246,15 @@ public class HorseListener implements Listener {
         if (horse.getCustomName() != null && !horse.getCustomName().equalsIgnoreCase("null")) {
             entity.setCustomName(PocketHorses.parseColors(horse.getCustomName()) +
                     (PocketHorses.getConfigFile().getBoolean("Options.Display-HP-In-Name") ?
-                            " " + PocketHorses.parseColors(PocketHorses.getConfigFile().getString("Options.Display-HP")
+                            " " + PocketHorses.parseColors(Objects.requireNonNull(PocketHorses.getConfigFile()
+                                            .getString("Options.Display-HP"))
                                     .replaceAll("%health%", String.valueOf((int) entity.getHealth()))) : ""));
             entity.setCustomNameVisible(true);
         } else {
             entity.setCustomName(PocketHorses.parseColors(configHorse.getDisplayName()) +
                     (PocketHorses.getConfigFile().getBoolean("Options.Display-HP-In-Name") ?
-                            " " + PocketHorses.parseColors(PocketHorses.getConfigFile().getString("Options.Display-HP")
+                            " " + PocketHorses.parseColors(Objects.requireNonNull(PocketHorses.getConfigFile()
+                                            .getString("Options.Display-HP"))
                                     .replaceAll("%health%", String.valueOf((int) entity.getHealth()))) : ""));
         }
     }

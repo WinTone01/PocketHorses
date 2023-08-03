@@ -13,6 +13,8 @@ import org.bukkit.Material;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 
+import java.util.Objects;
+
 @AllArgsConstructor
 public class StyleSelectorMenu implements InventoryProvider {
 
@@ -34,7 +36,8 @@ public class StyleSelectorMenu implements InventoryProvider {
         for (Horse.Style value : Horse.Style.values())
             contents.add(ClickableItem.of(new ItemBuilder()
                     .material(Material.valueOf(PocketHorses.getConfigFile().getString("Editor-GUI.Style-GUI.Style-Item.Material")))
-                    .name(PocketHorses.getConfigFile().getString("Editor-GUI.Style-GUI.Style-Item.Name")
+                    .name(Objects.requireNonNull(PocketHorses.getConfigFile()
+                                    .getString("Editor-GUI.Style-GUI.Style-Item.Name"))
                             .replaceAll("%style%", value.name()))
                     .lore(PocketHorses.getConfigFile().getStringList("Editor-GUI.Style-GUI.Style-Item.Lore"))
                     .build(), e -> {
