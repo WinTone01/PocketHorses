@@ -116,6 +116,10 @@ public class HorseMenu implements InventoryProvider {
                 ((AbstractHorse) horse.getEntity()).setAI(true);
                 ((AbstractHorse) horse.getEntity()).setTarget(player);
 
+                if (PocketHorses.isModelEngineEnabled() && PocketHorses.getModelEngineHook() != null
+                        && horse.getModeledEntity() != null)
+                    PocketHorses.getModelEngineHook().makeIdle(horse);
+
                 success(player, Messages.GET_UP.get());
             }));
         } else {
@@ -126,6 +130,10 @@ public class HorseMenu implements InventoryProvider {
                 player.closeInventory();
                 horse.setSit(true);
                 ((AbstractHorse) horse.getEntity()).setAI(false);
+
+                if (PocketHorses.isModelEngineEnabled() && PocketHorses.getModelEngineHook() != null
+                        && horse.getModeledEntity() != null)
+                    PocketHorses.getModelEngineHook().makeIdle(horse);
 
                 success(player, Messages.MAKE_SIT.get());
             }));

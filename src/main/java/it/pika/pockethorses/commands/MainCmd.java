@@ -281,6 +281,38 @@ public class MainCmd extends SubCommand {
         success(player, Messages.REMOVED_HORSES.get().formatted(removed));
     }
 
+    @SubCommandName("info")
+    @SubCommandUsage("<horse>")
+    @SubCommandMinArgs(1)
+    @SubCommandPermission(Perms.HORSE_INFO)
+    public void info(CommandSender sender, String label, String[] args) {
+        var horse = ConfigHorse.of(args[0]);
+
+        if (horse == null) {
+            error(sender, Messages.HORSE_NOT_EXISTING.get());
+            return;
+        }
+
+        sender.sendMessage(PocketHorses.parseColors("&6------------------------------------"));
+        sender.sendMessage(PocketHorses.parseColors("&eName: &f%s".formatted(horse.getId())));
+        sender.sendMessage(PocketHorses.parseColors("&eDisplay Name: &f%s".formatted(horse.getDisplayName())));
+        sender.sendMessage(PocketHorses.parseColors("&eConfig File: &f%s".formatted(horse.getConfig().getFileName())));
+        sender.sendMessage(PocketHorses.parseColors("&eColor: &f%s".formatted(horse.getColor().name())));
+        sender.sendMessage(PocketHorses.parseColors("&eStyle: &f%s".formatted(horse.getStyle().name())));
+        sender.sendMessage(PocketHorses.parseColors("&eSpeed: &f%s km/h".formatted(horse.getSpeed())));
+        sender.sendMessage(PocketHorses.parseColors("&eJump Strength: &f%s".formatted(horse.getJumpStrength())));
+        sender.sendMessage(PocketHorses.parseColors("&eMax Health: &f%s".formatted(horse.getMaxHealth())));
+        sender.sendMessage(PocketHorses.parseColors("&eIs buyable: &f%s".formatted(horse.isBuyable())));
+        sender.sendMessage(PocketHorses.parseColors("&ePrice: &f%s".formatted(horse.getPrice())));
+        sender.sendMessage(PocketHorses.parseColors("&eRequires permission: &f%s".formatted(horse.isPermission())));
+        sender.sendMessage(PocketHorses.parseColors("&eHas storage: &f%s".formatted(horse.isStorage())));
+        sender.sendMessage(PocketHorses.parseColors("&eIs recyclable: &f%s".formatted(horse.isRecyclable())));
+        sender.sendMessage(PocketHorses.parseColors("&eRecycle price: &f%s".formatted(horse.getRecyclePrice())));
+        sender.sendMessage(PocketHorses.parseColors("&eModelEngine model: &f%s"
+                .formatted(horse.getModel() == null ? "None" : horse.getModel())));
+        sender.sendMessage(PocketHorses.parseColors("&6------------------------------------"));
+    }
+
     private boolean isInt(String s) {
         try {
             Integer.parseInt(s);

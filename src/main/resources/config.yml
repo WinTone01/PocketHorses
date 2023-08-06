@@ -263,6 +263,14 @@ Editor-GUI:
         - '&7Current: &f%recyclePrice%'
         - ''
         - '&6&lClick to set!'
+    Model:
+      Name: '&f&lModelEngine Model'
+      Material: DIAMOND_HORSE_ARMOR
+      Lore:
+        - '&7The ModelEngine model used for the horse (optional).'
+        - '&7Current: &f%model%'
+        - ''
+        - '&6&lClick to set!'
     Back:
       Name: '&c&lBack'
       Material: ARROW
@@ -291,6 +299,16 @@ Editor-GUI:
       Material: PAPER
       Lore:
         - '&7Click to select this style.'
+  Model-GUI:
+    Title: 'Select model'
+    Size:
+      Rows: 4
+      Columns: 9
+    Model-Item:
+      Name: '&f&l%model%'
+      Material: PAPER
+      Lore:
+        - '&7Click to select this model.'
 
 Confirm-GUI:
   Title: 'Confirm' # The GUI title

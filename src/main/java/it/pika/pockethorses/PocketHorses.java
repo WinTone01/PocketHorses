@@ -3,9 +3,7 @@ package it.pika.pockethorses;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.tchristofferson.configupdater.ConfigUpdater;
 import fr.minuskube.inv.InventoryManager;
 import io.papermc.lib.PaperLib;
@@ -16,6 +14,8 @@ import it.pika.pockethorses.commands.HorsesCmd;
 import it.pika.pockethorses.commands.MainCmd;
 import it.pika.pockethorses.enums.EconomyType;
 import it.pika.pockethorses.hooks.ModelEngineHook;
+import it.pika.pockethorses.hooks.PlaceholdersHook;
+import it.pika.pockethorses.hooks.WorldGuardHook;
 import it.pika.pockethorses.hooks.economy.Economy;
 import it.pika.pockethorses.hooks.economy.impl.PlayerPointsEconomy;
 import it.pika.pockethorses.hooks.economy.impl.VaultEconomy;
@@ -33,7 +33,6 @@ import it.pika.pockethorses.storage.impl.MySQL;
 import it.pika.pockethorses.storage.impl.SQLite;
 import it.pika.pockethorses.utils.Cooldown;
 import it.pika.pockethorses.utils.Metrics;
-import it.pika.pockethorses.utils.Placeholders;
 import it.pika.pockethorses.utils.UpdateChecker;
 import lombok.Getter;
 import lombok.Setter;
@@ -72,9 +71,11 @@ public final class PocketHorses extends JavaPlugin {
     @Getter
     private static final Cooldown cooldownManager = new Cooldown();
     @Getter
-    private static WorldGuardPlugin worldGuard = null;
-    @Getter
     private static ModelEngineHook modelEngineHook = null;
+    @Getter
+    private static PlaceholdersHook placeholdersHook = null;
+    @Getter
+    private static WorldGuardHook worldGuardHook = null;
 
 
     @Getter
@@ -110,7 +111,7 @@ public final class PocketHorses extends JavaPlugin {
     private static boolean modelEngineEnabled = false;
 
 
-    public static final String VERSION = "1.8.0";
+    public static final String VERSION = "1.8.2";
 
     @Override
     public void onLoad() {
@@ -295,7 +296,7 @@ public final class PocketHorses extends JavaPlugin {
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") == null)
             return false;
 
-        new Placeholders().register();
+        placeholdersHook = new PlaceholdersHook();
         placeholdersEnabled = true;
 
         console.info("Hooked into PlaceholderAPI!");
@@ -308,12 +309,10 @@ public final class PocketHorses extends JavaPlugin {
         if (!(plugin instanceof WorldGuardPlugin))
             return;
 
-        worldGuard = (WorldGuardPlugin) plugin;
-        worldGuardEnabled = true;
+        worldGuardHook = new WorldGuardHook();
+        worldGuardHook.init();
 
-        var registry = WorldGuard.getInstance().getFlagRegistry();
-        var flag = new StateFlag("allow-horses", true);
-        registry.register(flag);
+        worldGuardEnabled = true;
 
         console.info("Hooked into WorldGuard!");
     }

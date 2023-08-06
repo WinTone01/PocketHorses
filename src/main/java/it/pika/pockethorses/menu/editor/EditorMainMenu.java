@@ -61,7 +61,7 @@ public class EditorMainMenu implements InventoryProvider {
                     new EditingHorseMenu(new EditingHorse(horse.getId(), horse.getDisplayName(), horse.getColor(),
                             horse.getStyle(), horse.getSpeed(), horse.getJumpStrength(), horse.getMaxHealth(),
                             horse.isBuyable(), horse.getPrice(), horse.isPermission(), horse.isStorage(),
-                            horse.isRecyclable(), horse.getRecyclePrice()), false)
+                            horse.isRecyclable(), horse.getRecyclePrice(), horse.getModel() != null ? horse.getModel() : null), false)
                             .get().open(player);
                 }
 

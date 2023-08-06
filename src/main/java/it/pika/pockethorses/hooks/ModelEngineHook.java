@@ -5,17 +5,25 @@ import it.pika.pockethorses.PocketHorses;
 import it.pika.pockethorses.objects.horses.ConfigHorse;
 import it.pika.pockethorses.objects.horses.Horse;
 import it.pika.pockethorses.objects.horses.SpawnedHorse;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
 import java.time.Duration;
 import java.util.Objects;
+import java.util.Set;
 
 import static it.pika.libs.chat.Chat.error;
 
-public class ModelEngineHook {
+public class ModelEngineHook implements Listener {
+
+    public ModelEngineHook() {
+        Bukkit.getPluginManager().registerEvents(this, PocketHorses.getInstance());
+    }
 
     public void spawn(Player player, Horse horse) {
         var config = PocketHorses.getConfigFile();
@@ -121,6 +129,45 @@ public class ModelEngineHook {
             return;
 
         ((com.ticxo.modelengine.api.model.ModeledEntity) horse.getModeledEntity()).destroy();
+    }
+
+    public void getOn(Player player, SpawnedHorse horse) {
+        if (!(horse.getModeledEntity() instanceof com.ticxo.modelengine.api.model.ModeledEntity modeled))
+            return;
+
+        var mountManager = modeled.getMountManager();
+        var controller = com.ticxo.modelengine.api.ModelEngineAPI.getControllerRegistry().getDefault();
+        if (player.getVehicle() != null)
+            player.getVehicle().eject();
+
+        if (mountManager.hasPassengers())
+            return;
+
+        mountManager.setDriver(player, controller);
+        mountManager.setCanDamageMount(player, false);
+    }
+
+    public void makeIdle(SpawnedHorse horse) {
+        if (!(horse.getModeledEntity() instanceof com.ticxo.modelengine.api.model.ModeledEntity modeled))
+            return;
+
+        modeled.setState(com.ticxo.modelengine.api.animation.state.ModelState.IDLE);
+    }
+
+    public Set<String> getModels() {
+        return com.ticxo.modelengine.api.ModelEngineAPI.api.getModelRegistry().getAllBlueprintId();
+    }
+
+    @EventHandler
+    public void onDismount(com.ticxo.modelengine.api.events.ModelDismountEvent event) {
+        if (!(event.getPassenger() instanceof Player))
+            return;
+
+        var modeled = event.getVehicle();
+        var mountManager = modeled.getMountManager();
+
+        if (!mountManager.hasPassengers())
+            modeled.setState(com.ticxo.modelengine.api.animation.state.ModelState.IDLE);
     }
 
 }

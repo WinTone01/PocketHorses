@@ -1,4 +1,4 @@
-package it.pika.pockethorses.utils;
+package it.pika.pockethorses.hooks;
 
 import it.pika.pockethorses.PocketHorses;
 import it.pika.pockethorses.objects.horses.ConfigHorse;
@@ -6,7 +6,11 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
-public class Placeholders extends PlaceholderExpansion {
+public class PlaceholdersHook extends PlaceholderExpansion {
+
+    public PlaceholdersHook() {
+        register();
+    }
 
     @Override
     public @NotNull String getIdentifier() {
@@ -20,7 +24,7 @@ public class Placeholders extends PlaceholderExpansion {
 
     @Override
     public @NotNull String getVersion() {
-        return "1.3.0";
+        return "1.8.2";
     }
 
     @Override
@@ -49,6 +53,8 @@ public class Placeholders extends PlaceholderExpansion {
             return PocketHorses.parseColors(horse.getDisplayName());
         if (parts[1].equalsIgnoreCase("color"))
             return horse.getColor().name();
+        if (parts[1].equalsIgnoreCase("style"))
+            return horse.getStyle().name();
         if (parts[1].equalsIgnoreCase("speed"))
             return String.valueOf(horse.getSpeed());
         if (parts[1].equalsIgnoreCase("jumpStrength"))
@@ -63,8 +69,15 @@ public class Placeholders extends PlaceholderExpansion {
             return String.valueOf(horse.isPermission());
         if (parts[1].equalsIgnoreCase("storage"))
             return String.valueOf(horse.isStorage());
+        if (parts[1].equalsIgnoreCase("recyclable"))
+            return String.valueOf(horse.isRecyclable());
+        if (parts[1].equalsIgnoreCase("recyclePrice"))
+            return String.valueOf(horse.getRecyclePrice());
+        if (parts[1].equalsIgnoreCase("model"))
+            return horse.getModel();
 
         return "Unrecognized option";
     }
+
 
 }

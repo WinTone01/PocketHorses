@@ -136,7 +136,17 @@ public class HorseListener implements Listener {
             return;
         }
 
-        spawnedHorse.getEntity().addPassenger(player);
+
+        var configHorse = ConfigHorse.of(spawnedHorse.getName());
+        if (configHorse != null && configHorse.getModel() != null) {
+            if (!PocketHorses.isModelEngineEnabled() || PocketHorses.getModelEngineHook() == null)
+                return;
+
+            PocketHorses.getModelEngineHook().getOn(player, spawnedHorse);
+        } else {
+            spawnedHorse.getEntity().addPassenger(player);
+        }
+
         player.sendMessage(PocketHorses.parseMessage(Messages.RIDING_HORSE.get(), spawnedHorse, player));
     }
 
@@ -212,10 +222,7 @@ public class HorseListener implements Listener {
         if (player.getVehicle() == null)
             return;
 
-        if (!(player.getVehicle() instanceof AbstractHorse horse))
-            return;
-
-        var spawnedHorse = PocketHorses.getSpawnedHorse(horse);
+        var spawnedHorse = PocketHorses.getSpawnedHorse(player.getVehicle());
         if (spawnedHorse == null)
             return;
 

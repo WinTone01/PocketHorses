@@ -16,6 +16,7 @@ help-message:
   - ' &8• &e/pockethorses giveItem <type> <player> <item>'
   - ' &8• &e/pockethorses listItems'
   - ' &8• &e/pockethorses remove <range>'
+  - ' &8• &e/pockethorses info <horse>'
   - ' &8• &e/pockethorses reload'
   - ' &8• &e/pockethorses debug'
   - ''

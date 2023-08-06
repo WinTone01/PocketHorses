@@ -67,7 +67,8 @@ public class MyHorsesMenu implements InventoryProvider {
                         return;
                     }
 
-                    if (PocketHorses.isWorldGuardEnabled() && !player.hasPermission(Perms.BYPASS_REGION)) {
+                    if (PocketHorses.getWorldGuardHook() != null
+                            && PocketHorses.isWorldGuardEnabled() && !player.hasPermission(Perms.BYPASS_REGION)) {
                         for (ProtectedRegion region : getRegions(player)) {
                             for (Map.Entry<Flag<?>, Object> entry : region.getFlags().entrySet()) {
                                 if (!entry.getKey().getName().equalsIgnoreCase("allow-horses"))

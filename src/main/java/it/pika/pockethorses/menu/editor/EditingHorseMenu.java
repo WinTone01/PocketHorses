@@ -70,17 +70,13 @@ public class EditingHorseMenu implements InventoryProvider {
                 .material(Material.valueOf(config.getString("Editor-GUI.Editing-GUI.Color.Material")))
                 .name(parse(config.getString("Editor-GUI.Editing-GUI.Color.Name")))
                 .lore(parse(config.getStringList("Editor-GUI.Editing-GUI.Color.Lore")))
-                .build(), e -> {
-            new ColorSelectorMenu(horse, this).get().open(player);
-        }));
+                .build(), e -> new ColorSelectorMenu(horse, this).get().open(player)));
 
         contents.set(SlotPos.of(1, 5), ClickableItem.of(new ItemBuilder()
                 .material(Material.valueOf(config.getString("Editor-GUI.Editing-GUI.Style.Material")))
                 .name(parse(config.getString("Editor-GUI.Editing-GUI.Style.Name")))
                 .lore(parse(config.getStringList("Editor-GUI.Editing-GUI.Style.Lore")))
-                .build(), e -> {
-            new StyleSelectorMenu(horse, this).get().open(player);
-        }));
+                .build(), e -> new StyleSelectorMenu(horse, this).get().open(player)));
 
         contents.set(SlotPos.of(1, 7), ClickableItem.of(new ItemBuilder()
                 .material(Material.valueOf(config.getString("Editor-GUI.Editing-GUI.Speed.Material")))
@@ -210,6 +206,17 @@ public class EditingHorseMenu implements InventoryProvider {
                 })
                 .open(player)));
 
+        contents.set(SlotPos.of(4, 2), ClickableItem.of(new ItemBuilder()
+                .material(Material.valueOf(config.getString("Editor-GUI.Editing-GUI.Model.Material")))
+                .name(parse(config.getString("Editor-GUI.Editing-GUI.Model.Name")))
+                .lore(parse(config.getStringList("Editor-GUI.Editing-GUI.Model.Lore")))
+                .build(), e -> {
+            if (!PocketHorses.isModelEngineEnabled() || PocketHorses.getModelEngineHook() == null)
+                return;
+
+            new ModelSelectorMenu(horse, this).get().open(player);
+        }));
+
         contents.set(SlotPos.of(4, 4), ClickableItem.of(new ItemBuilder()
                 .material(Material.valueOf(config.getString("Editor-GUI.Editing-GUI.Recycle-Price.Material")))
                 .name(parse(config.getString("Editor-GUI.Editing-GUI.Recycle-Price.Name")))
@@ -276,6 +283,8 @@ public class EditingHorseMenu implements InventoryProvider {
                 horseConfig.set("Storage", horse.isStorage());
                 horseConfig.set("Recyclable", horse.isRecyclable());
                 horseConfig.set("Recycle-Price", horse.getRecyclePrice());
+                if (horse.getModel() != null)
+                    horseConfig.set("Model", horse.getModel());
                 horseConfig.save();
 
                 reloadHorses();
@@ -328,7 +337,8 @@ public class EditingHorseMenu implements InventoryProvider {
                 .replaceAll("%permission%", horse.isPermission() ? Messages.ENABLED.get() : Messages.DISABLED.get())
                 .replaceAll("%storage%", horse.isStorage() ? Messages.ENABLED.get() : Messages.DISABLED.get())
                 .replaceAll("%recyclable%", horse.isRecyclable() ? Messages.ENABLED.get() : Messages.DISABLED.get())
-                .replaceAll("%recyclePrice%", horse.getRecyclePrice() != 0 ? String.valueOf(horse.getRecyclePrice()) : Messages.UNDEFINED.get());
+                .replaceAll("%recyclePrice%", horse.getRecyclePrice() != 0 ? String.valueOf(horse.getRecyclePrice()) : Messages.UNDEFINED.get())
+                .replaceAll("%model%", horse.getModel() != null ? horse.getModel() : Messages.UNDEFINED.get());
     }
 
     private List<String> parse(List<String> list) {
