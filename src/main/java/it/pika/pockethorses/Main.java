@@ -13,6 +13,7 @@ import it.pika.pockethorses.api.events.HorsesInitializeEvent;
 import it.pika.pockethorses.commands.HorsesCmd;
 import it.pika.pockethorses.commands.MainCmd;
 import it.pika.pockethorses.enums.EconomyType;
+import it.pika.pockethorses.enums.StorageType;
 import it.pika.pockethorses.hooks.ModelEngineHook;
 import it.pika.pockethorses.hooks.PlaceholdersHook;
 import it.pika.pockethorses.hooks.WorldGuardHook;
@@ -20,18 +21,18 @@ import it.pika.pockethorses.hooks.economy.Economy;
 import it.pika.pockethorses.hooks.economy.impl.PlayerPointsEconomy;
 import it.pika.pockethorses.hooks.economy.impl.VaultEconomy;
 import it.pika.pockethorses.listeners.HorseListener;
-import it.pika.pockethorses.listeners.JoinListener;
+import it.pika.pockethorses.listeners.PlayerListener;
 import it.pika.pockethorses.listeners.VoucherListener;
 import it.pika.pockethorses.objects.horses.ConfigHorse;
 import it.pika.pockethorses.objects.horses.Horse;
 import it.pika.pockethorses.objects.horses.SpawnedHorse;
 import it.pika.pockethorses.objects.items.Supplement;
 import it.pika.pockethorses.storage.Storage;
-import it.pika.pockethorses.enums.StorageType;
 import it.pika.pockethorses.storage.impl.JSON;
 import it.pika.pockethorses.storage.impl.MySQL;
 import it.pika.pockethorses.storage.impl.SQLite;
 import it.pika.pockethorses.utils.Cooldown;
+import it.pika.pockethorses.utils.LanguageManager;
 import it.pika.pockethorses.utils.Metrics;
 import it.pika.pockethorses.utils.UpdateChecker;
 import lombok.Getter;
@@ -49,6 +50,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.annotation.Nullable;
 import java.io.File;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -56,10 +58,10 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-public final class PocketHorses extends JavaPlugin {
+public final class Main extends JavaPlugin {
 
     @Getter
-    private static PocketHorses instance = null;
+    private static Main instance = null;
     @Getter
     private static final Logger console = Logger.getLogger("PocketHorses");
     @Getter
@@ -76,12 +78,12 @@ public final class PocketHorses extends JavaPlugin {
     private static PlaceholdersHook placeholdersHook = null;
     @Getter
     private static WorldGuardHook worldGuardHook = null;
+    @Getter
+    private static LanguageManager languageManager = null;
 
 
     @Getter
     private static Config configFile = null;
-    @Getter
-    private static Config messagesFile = null;
     @Getter
     private static Config vouchersFile = null;
     @Getter
@@ -111,7 +113,7 @@ public final class PocketHorses extends JavaPlugin {
     private static boolean modelEngineEnabled = false;
 
 
-    public static final String VERSION = "1.8.2";
+    public static final String VERSION = "1.8.3.1";
 
     @Override
     public void onLoad() {
@@ -173,15 +175,18 @@ public final class PocketHorses extends JavaPlugin {
     @SneakyThrows
     private void setupFiles() {
         configFile = new Config(this, "config.yml");
-        messagesFile = new Config(this, "messages.yml");
         vouchersFile = new Config(this, "vouchers.yml");
         itemsFile = new Config(this, "items.yml");
 
         ConfigUpdater.update(this, "config.yml", configFile.getFile());
-        ConfigUpdater.update(this, "messages.yml", messagesFile.getFile());
-
         configFile.reload();
-        messagesFile.reload();
+
+        var messages = new File(getDataFolder(), "messages.yml");
+        if (messages.exists())
+            Files.delete(messages.toPath());
+
+        languageManager = new LanguageManager();
+        languageManager.init();
 
         shopEnabled = configFile.getBoolean("Options.Shop-Enabled");
 
@@ -227,7 +232,7 @@ public final class PocketHorses extends JavaPlugin {
     private void registerListeners() {
         var pm = Bukkit.getPluginManager();
         pm.registerEvents(new HorseListener(), this);
-        pm.registerEvents(new JoinListener(), this);
+        pm.registerEvents(new PlayerListener(), this);
         pm.registerEvents(new VoucherListener(), this);
     }
 

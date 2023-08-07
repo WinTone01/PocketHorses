@@ -1,7 +1,7 @@
 package it.pika.pockethorses.hooks;
 
 import com.google.common.collect.Lists;
-import it.pika.pockethorses.PocketHorses;
+import it.pika.pockethorses.Main;
 import it.pika.pockethorses.objects.horses.ConfigHorse;
 import it.pika.pockethorses.objects.horses.Horse;
 import it.pika.pockethorses.objects.horses.SpawnedHorse;
@@ -22,17 +22,17 @@ import static it.pika.libs.chat.Chat.error;
 public class ModelEngineHook implements Listener {
 
     public ModelEngineHook() {
-        Bukkit.getPluginManager().registerEvents(this, PocketHorses.getInstance());
+        Bukkit.getPluginManager().registerEvents(this, Main.getInstance());
     }
 
     public void spawn(Player player, Horse horse) {
-        var config = PocketHorses.getConfigFile();
+        var config = Main.getConfigFile();
         var configHorse = ConfigHorse.of(horse.getName());
         if (configHorse == null)
             return;
 
-        if (!PocketHorses.isModelEngineEnabled()) {
-            PocketHorses.getConsole().warning("ModelEngine is not enabled on this server!");
+        if (!Main.isModelEngineEnabled()) {
+            Main.getConsole().warning("ModelEngine is not enabled on this server!");
             error(player, "An error was encountered, check the console for more information!");
             return;
         }
@@ -46,8 +46,8 @@ public class ModelEngineHook implements Listener {
 
             horseEntity.setTarget(player);
 
-            if (PocketHorses.getActiveSupplements().containsKey(horse.getUuid())) {
-                var supplement = PocketHorses.getActiveSupplements().get(horse.getUuid());
+            if (Main.getActiveSupplements().containsKey(horse.getUuid())) {
+                var supplement = Main.getActiveSupplements().get(horse.getUuid());
 
                 var speed = (configHorse.getSpeed() + supplement.getExtraSpeed()) / 3.6;
                 Objects.requireNonNull(horseEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED)).setBaseValue(speed / 20);
@@ -66,26 +66,26 @@ public class ModelEngineHook implements Listener {
             horseEntity.setHealth(configHorse.getMaxHealth());
 
             if (horse.getCustomName() != null && !horse.getCustomName().equalsIgnoreCase("null")) {
-                horseEntity.setCustomName(PocketHorses.parseColors(horse.getCustomName()) +
+                horseEntity.setCustomName(Main.parseColors(horse.getCustomName()) +
                         (config.getBoolean("Options.Display-HP-In-Name") ?
-                                " " + PocketHorses.parseColors(config.getString("Options.Display-HP")
+                                " " + Main.parseColors(config.getString("Options.Display-HP")
                                         .replaceAll("%health%", String.valueOf((int) horseEntity.getHealth()))) : ""));
                 horseEntity.setCustomNameVisible(true);
             } else {
-                horseEntity.setCustomName(PocketHorses.parseColors(configHorse.getDisplayName()) +
+                horseEntity.setCustomName(Main.parseColors(configHorse.getDisplayName()) +
                         (config.getBoolean("Options.Display-HP-In-Name") ?
-                                " " + PocketHorses.parseColors(config.getString("Options.Display-HP")
+                                " " + Main.parseColors(config.getString("Options.Display-HP")
                                         .replaceAll("%health%", String.valueOf((int) horseEntity.getHealth()))) : ""));
             }
 
-            var seconds = PocketHorses.getConfigFile().getInt("Options.Horse-Cooldown");
+            var seconds = Main.getConfigFile().getInt("Options.Horse-Cooldown");
             if (seconds > 0)
-                PocketHorses.getCooldownManager().setCooldown(player.getUniqueId(), Duration.ofSeconds(seconds));
+                Main.getCooldownManager().setCooldown(player.getUniqueId(), Duration.ofSeconds(seconds));
         });
 
         var blueprint = com.ticxo.modelengine.api.ModelEngineAPI.getBlueprint(configHorse.getModel());
         if (blueprint == null) {
-            PocketHorses.getConsole().warning("The %s model for the %s horse does not exist on ModelEngine!"
+            Main.getConsole().warning("The %s model for the %s horse does not exist on ModelEngine!"
                     .formatted(configHorse.getModel(), configHorse.getId()));
             error(player, "An error was encountered, check the console for more information!");
             return;
@@ -93,7 +93,7 @@ public class ModelEngineHook implements Listener {
 
         var model = com.ticxo.modelengine.api.ModelEngineAPI.api.createActiveModelImpl(blueprint);
         if (model == null) {
-            PocketHorses.getConsole().warning("The %s model for the %s horse does not exist on ModelEngine!"
+            Main.getConsole().warning("The %s model for the %s horse does not exist on ModelEngine!"
                     .formatted(configHorse.getModel(), configHorse.getId()));
             error(player, "An error was encountered, check the console for more information!");
             return;
@@ -102,7 +102,7 @@ public class ModelEngineHook implements Listener {
         var modeledEntity = com.ticxo.modelengine.api.ModelEngineAPI.api
                 .createModeledEntityImpl(new com.ticxo.modelengine.api.entity.BukkitEntity(entity));
         if (modeledEntity == null) {
-            PocketHorses.getConsole().warning("The %s model for the %s horse does not exist on ModelEngine!"
+            Main.getConsole().warning("The %s model for the %s horse does not exist on ModelEngine!"
                     .formatted(configHorse.getModel(), configHorse.getId()));
             error(player, "An error was encountered, check the console for more information!");
             return;
@@ -110,16 +110,16 @@ public class ModelEngineHook implements Listener {
 
         modeledEntity.addModel(model, true);
 
-        if (PocketHorses.getSpawnedHorses().containsKey(player.getName())) {
-            var list = PocketHorses.getSpawnedHorses().remove(player.getName());
+        if (Main.getSpawnedHorses().containsKey(player.getName())) {
+            var list = Main.getSpawnedHorses().remove(player.getName());
             list.add(new SpawnedHorse(horse.getUuid(), horse.getName(), horse.getOwner(), horse.getCustomName(),
                     horse.getStoredItems(), entity, configHorse.getSpeed(), false, false, modeledEntity));
 
-            PocketHorses.getSpawnedHorses().put(player.getName(), list);
+            Main.getSpawnedHorses().put(player.getName(), list);
             return;
         }
 
-        PocketHorses.getSpawnedHorses().put(player.getName(), Lists.newArrayList(
+        Main.getSpawnedHorses().put(player.getName(), Lists.newArrayList(
                 new SpawnedHorse(horse.getUuid(), horse.getName(), horse.getOwner(), horse.getCustomName(),
                         horse.getStoredItems(), entity, configHorse.getSpeed(), false, false, modeledEntity)));
     }

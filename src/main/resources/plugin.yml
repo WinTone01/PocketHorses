@@ -1,6 +1,6 @@
 name: PocketHorses
-version: 1.8.2
-main: it.pika.pockethorses.PocketHorses
+version: 1.8.3.1
+main: it.pika.pockethorses.Main
 api-version: '1.13'
 author: Pika
 softdepend: [Vault, PlaceholderAPI, WorldGuard, ModelEngine, PlayerPoints]

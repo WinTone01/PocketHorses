@@ -6,7 +6,7 @@ import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import it.pika.libs.item.ItemBuilder;
-import it.pika.pockethorses.PocketHorses;
+import it.pika.pockethorses.Main;
 import it.pika.pockethorses.enums.Messages;
 import it.pika.pockethorses.objects.horses.ConfigHorse;
 import org.bukkit.Material;
@@ -23,48 +23,48 @@ public class ShopMenu implements InventoryProvider {
     public SmartInventory get() {
         return SmartInventory.builder()
                 .id("inv")
-                .title(PocketHorses.getConfigFile().getString("Shop-GUI.Title"))
-                .size(PocketHorses.getConfigFile().getInt("Shop-GUI.Size.Rows"), 9)
+                .title(Main.getConfigFile().getString("Shop-GUI.Title"))
+                .size(Main.getConfigFile().getInt("Shop-GUI.Size.Rows"), 9)
                 .provider(this)
-                .manager(PocketHorses.getInventoryManager())
+                .manager(Main.getInventoryManager())
                 .build();
     }
 
     @Override
     public void init(Player player, InventoryContents contents) {
-        for (ConfigHorse horse : PocketHorses.getLoadedHorses()) {
+        for (ConfigHorse horse : Main.getLoadedHorses()) {
             if (horse == null || !horse.isBuyable())
                 continue;
 
             contents.add(ClickableItem.of(new ItemBuilder()
-                    .material(Material.valueOf(PocketHorses.getConfigFile().getString("Shop-GUI.Horse-Item.Material")))
-                    .name(format(PocketHorses.getConfigFile().getString("Shop-GUI.Horse-Item.Name"), horse))
-                    .lore(format(PocketHorses.getConfigFile().getStringList("Shop-GUI.Horse-Item.Lore"), horse))
+                    .material(Material.valueOf(Main.getConfigFile().getString("Shop-GUI.Horse-Item.Material")))
+                    .name(format(Main.getConfigFile().getString("Shop-GUI.Horse-Item.Name"), horse))
+                    .lore(format(Main.getConfigFile().getStringList("Shop-GUI.Horse-Item.Lore"), horse))
                     .build(), e -> {
                 player.closeInventory();
 
-                if (PocketHorses.has(player, horse.getId()) &&
-                        !PocketHorses.getConfigFile().getBoolean("Options.More-Than-Once-Same-Horse")) {
+                if (Main.has(player, horse.getId()) &&
+                        !Main.getConfigFile().getBoolean("Options.More-Than-Once-Same-Horse")) {
                     error(player, Messages.ALREADY_OWNED.get());
                     return;
                 }
 
-                if (!PocketHorses.respectsLimit(player)) {
+                if (!Main.respectsLimit(player)) {
                     error(player, Messages.LIMIT_REACHED.get());
                     return;
                 }
 
-                if (!PocketHorses.getEconomy().has(player, horse.getPrice())) {
+                if (!Main.getEconomy().has(player, horse.getPrice())) {
                     error(player, Messages.NOT_ENOUGH_MONEY.get());
                     return;
                 }
 
-                PocketHorses.getEconomy().withdraw(player, horse.getPrice());
-                PocketHorses.getStorage().giveHorse(player, horse);
+                Main.getEconomy().withdraw(player, horse.getPrice());
+                Main.getStorage().giveHorse(player, horse);
 
                 success(player, Messages.PURCHASE_COMPLETED.get());
-                if (PocketHorses.getConfigFile().getBoolean("Options.Play-Sound-When-Buy"))
-                    player.playSound(player.getLocation(), Sound.valueOf(PocketHorses.
+                if (Main.getConfigFile().getBoolean("Options.Play-Sound-When-Buy"))
+                    player.playSound(player.getLocation(), Sound.valueOf(Main.
                             getConfigFile().getString("Shop-GUI.Buy-Sound")), 1F, 1F);
             }));
         }
@@ -75,7 +75,7 @@ public class ShopMenu implements InventoryProvider {
     }
 
     private String format(String s, ConfigHorse horse) {
-        return PocketHorses.parseColors(s)
+        return Main.parseColors(s)
                 .replaceAll("%displayName%", horse.getDisplayName())
                 .replaceAll("%speed%", String.valueOf(horse.getSpeed()))
                 .replaceAll("%price%", String.valueOf(horse.getPrice()))

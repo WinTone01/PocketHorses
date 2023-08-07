@@ -10,7 +10,7 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import it.pika.libs.item.ItemBuilder;
 import it.pika.pockethorses.Perms;
-import it.pika.pockethorses.PocketHorses;
+import it.pika.pockethorses.Main;
 import it.pika.pockethorses.enums.Messages;
 import it.pika.pockethorses.objects.horses.ConfigHorse;
 import it.pika.pockethorses.objects.horses.Horse;
@@ -30,16 +30,16 @@ public class MyHorsesMenu implements InventoryProvider {
     public SmartInventory get() {
         return SmartInventory.builder()
                 .id("inv")
-                .title(PocketHorses.parseColors(PocketHorses.getConfigFile().getString("Horses-GUI.Title")))
-                .size(PocketHorses.getConfigFile().getInt("Horses-GUI.Size.Rows"), 9)
+                .title(Main.parseColors(Main.getConfigFile().getString("Horses-GUI.Title")))
+                .size(Main.getConfigFile().getInt("Horses-GUI.Size.Rows"), 9)
                 .provider(this)
-                .manager(PocketHorses.getInventoryManager())
+                .manager(Main.getInventoryManager())
                 .build();
     }
 
     @Override
     public void init(Player player, InventoryContents contents) {
-        for (Horse horse : PocketHorses.getHorsesOf(player)) {
+        for (Horse horse : Main.getHorsesOf(player)) {
             var configHorse = ConfigHorse.of(horse.getName());
             if (configHorse == null)
                 continue;
@@ -48,10 +48,10 @@ public class MyHorsesMenu implements InventoryProvider {
                 continue;
 
             contents.add(ClickableItem.of(new ItemBuilder()
-                    .material(Material.valueOf(PocketHorses.getConfigFile().getString("Horses-GUI.Horse-Item.Material")))
-                    .name(PocketHorses.parseMessage(PocketHorses.getConfigFile()
+                    .material(Material.valueOf(Main.getConfigFile().getString("Horses-GUI.Horse-Item.Material")))
+                    .name(Main.parseMessage(Main.getConfigFile()
                             .getString("Horses-GUI.Horse-Item.Name"), horse, player))
-                    .lore(PocketHorses.parseMessage(PocketHorses.getConfigFile().getStringList("Horses-GUI.Horse-Item.Lore"), horse, player))
+                    .lore(Main.parseMessage(Main.getConfigFile().getStringList("Horses-GUI.Horse-Item.Lore"), horse, player))
                     .build(), e -> {
                 player.closeInventory();
 
@@ -61,14 +61,14 @@ public class MyHorsesMenu implements InventoryProvider {
                         return;
                     }
 
-                    if (!PocketHorses.getConfigFile().getBoolean("Options.More-Horses-At-Time")
-                            && PocketHorses.getSpawnedHorses().containsKey(player.getName())) {
+                    if (!Main.getConfigFile().getBoolean("Options.More-Horses-At-Time")
+                            && Main.getSpawnedHorses().containsKey(player.getName())) {
                         error(player, Messages.CANNOT_SPAWN.get());
                         return;
                     }
 
-                    if (PocketHorses.getWorldGuardHook() != null
-                            && PocketHorses.isWorldGuardEnabled() && !player.hasPermission(Perms.BYPASS_REGION)) {
+                    if (Main.getWorldGuardHook() != null
+                            && Main.isWorldGuardEnabled() && !player.hasPermission(Perms.BYPASS_REGION)) {
                         for (ProtectedRegion region : getRegions(player)) {
                             for (Map.Entry<Flag<?>, Object> entry : region.getFlags().entrySet()) {
                                 if (!entry.getKey().getName().equalsIgnoreCase("allow-horses"))
@@ -83,7 +83,7 @@ public class MyHorsesMenu implements InventoryProvider {
                         }
                     }
 
-                    var cooldown = PocketHorses.getCooldownManager().getRemainingCooldown(player.getUniqueId());
+                    var cooldown = Main.getCooldownManager().getRemainingCooldown(player.getUniqueId());
                     if (!cooldown.isZero() && !cooldown.isNegative()) {
                         error(player, Messages.IN_COOLDOWN.get().formatted(cooldown.toSeconds()));
                         return;
@@ -96,23 +96,23 @@ public class MyHorsesMenu implements InventoryProvider {
                 }
 
                 if (e.isRightClick()) {
-                    if (!configHorse.isRecyclable() || !PocketHorses.isShopEnabled())
+                    if (!configHorse.isRecyclable() || !Main.isShopEnabled())
                         return;
 
                     new ConfirmMenu(() -> {
                         player.closeInventory();
 
-                        PocketHorses.getStorage().takeHorse(player, horse);
-                        PocketHorses.getEconomy().deposit(player, configHorse.getRecyclePrice());
+                        Main.getStorage().takeHorse(player, horse);
+                        Main.getEconomy().deposit(player, configHorse.getRecyclePrice());
 
-                        for (List<SpawnedHorse> value : PocketHorses.getSpawnedHorses().values()) {
+                        for (List<SpawnedHorse> value : Main.getSpawnedHorses().values()) {
                             for (SpawnedHorse spawnedHorse : value) {
                                 if (spawnedHorse.getUuid() != horse.getUuid())
                                     continue;
 
                                 spawnedHorse.getEntity().remove();
-                                if (PocketHorses.getModelEngineHook() != null)
-                                    PocketHorses.getModelEngineHook().remove(spawnedHorse);
+                                if (Main.getModelEngineHook() != null)
+                                    Main.getModelEngineHook().remove(spawnedHorse);
                             }
                         }
 
@@ -128,10 +128,10 @@ public class MyHorsesMenu implements InventoryProvider {
     }
 
     private boolean alreadySpawned(Player player, Horse horse) {
-        if (!PocketHorses.getSpawnedHorses().containsKey(player.getName()))
+        if (!Main.getSpawnedHorses().containsKey(player.getName()))
             return false;
 
-        for (SpawnedHorse spawnedHorse : PocketHorses.getSpawnedHorses().get(player.getName())) {
+        for (SpawnedHorse spawnedHorse : Main.getSpawnedHorses().get(player.getName())) {
             if (spawnedHorse.getUuid() != horse.getUuid())
                 continue;
 

@@ -2,7 +2,7 @@ package it.pika.pockethorses.objects.items;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import it.pika.libs.item.ItemBuilder;
-import it.pika.pockethorses.PocketHorses;
+import it.pika.pockethorses.Main;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,7 +13,8 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Objects;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Getter @Setter
+@Getter
+@Setter
 public class Supplement {
 
     private String id;
@@ -23,12 +24,12 @@ public class Supplement {
     private ItemStack item;
 
     public static Supplement of(String name) {
-        var config = PocketHorses.getItemsFile();
+        var config = Main.getItemsFile();
 
         try {
             if (!Objects.requireNonNull(config.getString("%s.Type".formatted(name)))
                     .equalsIgnoreCase("SUPPLEMENT")) {
-                PocketHorses.getConsole().warning("%s is not a valid supplement!".formatted(name));
+                Main.getConsole().warning("%s is not a valid supplement!".formatted(name));
                 return null;
             }
 
@@ -38,8 +39,8 @@ public class Supplement {
 
             var item = new ItemBuilder()
                     .material(Material.valueOf(config.getString("%s.Item.Material".formatted(name))))
-                    .name(PocketHorses.parseColors(config.getString("%s.Item.Name".formatted(name))))
-                    .lore(PocketHorses.parseColors(config.getStringList("%s.Item.Lore".formatted(name))))
+                    .name(Main.parseColors(config.getString("%s.Item.Name".formatted(name))))
+                    .lore(Main.parseColors(config.getStringList("%s.Item.Lore".formatted(name))))
                     .modelData(config.getInt("%s.Item.Model-Data".formatted(name)))
                     .build();
 
@@ -49,7 +50,7 @@ public class Supplement {
 
             return new Supplement(name, extraSpeed, extraJump, duration, item);
         } catch (NullPointerException e) {
-            PocketHorses.getConsole().warning("%s is not a valid supplement!".formatted(name));
+            Main.getConsole().warning("%s is not a valid supplement!".formatted(name));
             return null;
         }
     }

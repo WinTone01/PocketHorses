@@ -4,7 +4,7 @@ import it.pika.libs.command.SubCommand;
 import it.pika.libs.config.Config;
 import it.pika.libs.reflection.Reflections;
 import it.pika.pockethorses.Perms;
-import it.pika.pockethorses.PocketHorses;
+import it.pika.pockethorses.Main;
 import it.pika.pockethorses.enums.Messages;
 import it.pika.pockethorses.menu.editor.EditingHorseMenu;
 import it.pika.pockethorses.menu.editor.EditorMainMenu;
@@ -32,8 +32,8 @@ public class MainCmd extends SubCommand {
 
     @Override
     public void noArgs(CommandSender sender) {
-        for (String s : PocketHorses.getMessagesFile().getStringList("help-message"))
-            sender.sendMessage(PocketHorses.parseColors(s));
+        for (String s : Main.getLanguageManager().getMainHelp())
+            sender.sendMessage(Main.parseColors(s));
     }
 
     @SubCommandName("give")
@@ -43,25 +43,25 @@ public class MainCmd extends SubCommand {
     public void give(CommandSender sender, String label, String[] args) {
         var player = Validator.getPlayerSender(sender);
         var target = Validator.getOnlinePlayer(args[0]);
-        var horse = PocketHorses.getLoadedHorse(args[1]);
+        var horse = Main.getLoadedHorse(args[1]);
 
         if (horse == null) {
             error(player, Messages.HORSE_NOT_EXISTING.get());
             return;
         }
 
-        if (PocketHorses.has(player, horse.getId()) &&
-                !PocketHorses.getConfigFile().getBoolean("Options.More-Than-Once-Same-Horse")) {
+        if (Main.has(player, horse.getId()) &&
+                !Main.getConfigFile().getBoolean("Options.More-Than-Once-Same-Horse")) {
             error(player, Messages.ALREADY_OWNED.get());
             return;
         }
 
-        if (!PocketHorses.respectsLimit(player)) {
+        if (!Main.respectsLimit(player)) {
             error(player, Messages.LIMIT_REACHED.get());
             return;
         }
 
-        PocketHorses.getStorage().giveHorse(target, horse);
+        Main.getStorage().giveHorse(target, horse);
         success(player, Messages.HORSE_GIVEN.get().formatted(target.getName()));
     }
 
@@ -81,7 +81,7 @@ public class MainCmd extends SubCommand {
         var player = Validator.getPlayerSender(sender);
         var name = args[0];
 
-        if (PocketHorses.getLoadedHorse(name) != null) {
+        if (Main.getLoadedHorse(name) != null) {
             error(player, Messages.HORSE_ALREADY_EXISTS.get());
             return;
         }
@@ -95,9 +95,9 @@ public class MainCmd extends SubCommand {
     @SubCommandName("list")
     @SubCommandPermission(Perms.LIST)
     public void list(CommandSender sender, String label, String[] args) {
-        sender.sendMessage(PocketHorses.parseColors(PocketHorses.getConfigFile().getString("Horses-List.Header")));
-        for (ConfigHorse horse : PocketHorses.getLoadedHorses())
-            sender.sendMessage(PocketHorses.parseColors(PocketHorses.getConfigFile().getString("Horses-List.Horse"))
+        sender.sendMessage(Main.parseColors(Main.getConfigFile().getString("Horses-List.Header")));
+        for (ConfigHorse horse : Main.getLoadedHorses())
+            sender.sendMessage(Main.parseColors(Main.getConfigFile().getString("Horses-List.Horse"))
                     .replaceAll("%horse%", horse.getId()));
     }
 
@@ -122,9 +122,9 @@ public class MainCmd extends SubCommand {
     @SubCommandName("listVouchers")
     @SubCommandPermission(Perms.LIST_VOUCHERS)
     public void listVouchers(CommandSender sender, String label, String[] args) {
-        sender.sendMessage(PocketHorses.parseColors(PocketHorses.getConfigFile().getString("Vouchers.List.Header")));
-        for (String key : Objects.requireNonNull(PocketHorses.getVouchersFile().getConfigurationSection("")).getKeys(false))
-            sender.sendMessage(PocketHorses.parseColors(PocketHorses.getConfigFile().getString("Vouchers.List.Voucher"))
+        sender.sendMessage(Main.parseColors(Main.getConfigFile().getString("Vouchers.List.Header")));
+        for (String key : Objects.requireNonNull(Main.getVouchersFile().getConfigurationSection("")).getKeys(false))
+            sender.sendMessage(Main.parseColors(Main.getConfigFile().getString("Vouchers.List.Voucher"))
                     .replaceAll("%voucher%", key));
     }
 
@@ -132,13 +132,14 @@ public class MainCmd extends SubCommand {
     @SubCommandPermission(Perms.RELOAD)
     public void reload(CommandSender sender, String label, String[] args) {
         if (args.length == 0) {
-            PocketHorses.getConfigFile().reload();
-            PocketHorses.getMessagesFile().reload();
-            PocketHorses.getVouchersFile().reload();
-            PocketHorses.getItemsFile().reload();
+            Main.getConfigFile().reload();
+            Main.getVouchersFile().reload();
+            Main.getItemsFile().reload();
 
-            PocketHorses.getLoadedHorses().clear();
-            PocketHorses.getInstance().loadHorses();
+            Main.getLanguageManager().init();
+
+            Main.getLoadedHorses().clear();
+            Main.getInstance().loadHorses();
 
             success(sender, Messages.RELOAD.get());
             return;
@@ -155,19 +156,18 @@ public class MainCmd extends SubCommand {
                 path.append(File.separator);
         }
 
-        var file = new File(PocketHorses.getInstance().getDataFolder(), path.toString());
+        var file = new File(Main.getInstance().getDataFolder(), path.toString());
         if (!file.exists() || !file.getName().endsWith(".yml")) {
             error(sender, Messages.INVALID_FILE.get());
             return;
         }
 
         switch (file.getName()) {
-            case "config.yml" -> PocketHorses.getConfigFile().reload();
-            case "messages.yml" -> PocketHorses.getMessagesFile().reload();
-            case "vouchers.yml" -> PocketHorses.getVouchersFile().reload();
-            case "items.yml" -> PocketHorses.getItemsFile().reload();
+            case "config.yml" -> Main.getConfigFile().reload();
+            case "vouchers.yml" -> Main.getVouchersFile().reload();
+            case "items.yml" -> Main.getItemsFile().reload();
             default -> {
-                var config = new Config(PocketHorses.getInstance(), file);
+                var config = new Config(Main.getInstance(), file, false);
                 config.reload();
             }
         }
@@ -178,8 +178,8 @@ public class MainCmd extends SubCommand {
     @SubCommandName("help")
     @SubCommandPermission(Perms.HELP_MAIN)
     public void help(CommandSender sender, String label, String[] args) {
-        for (String s : PocketHorses.getMessagesFile().getStringList("help-message"))
-            sender.sendMessage(PocketHorses.parseColors(s));
+        for (String s : Main.getLanguageManager().getMainHelp())
+            sender.sendMessage(Main.parseColors(s));
     }
 
     @SubCommandName("giveItem")
@@ -219,30 +219,30 @@ public class MainCmd extends SubCommand {
     @SubCommandName("listItems")
     @SubCommandPermission(Perms.LIST_ITEMS)
     public void listItems(CommandSender sender, String label, String[] args) {
-        sender.sendMessage(PocketHorses.parseColors(PocketHorses.getConfigFile().getString("Items-List.Header")));
-        for (String key : Objects.requireNonNull(PocketHorses.getItemsFile().getConfigurationSection("")).getKeys(false))
-            sender.sendMessage(PocketHorses.parseColors(PocketHorses.getConfigFile().getString("Items-List.Item"))
+        sender.sendMessage(Main.parseColors(Main.getConfigFile().getString("Items-List.Header")));
+        for (String key : Objects.requireNonNull(Main.getItemsFile().getConfigurationSection("")).getKeys(false))
+            sender.sendMessage(Main.parseColors(Main.getConfigFile().getString("Items-List.Item"))
                     .replaceAll("%item%", key)
                     .replaceAll("%type%",
-                            Objects.requireNonNull(PocketHorses.getItemsFile().getString("%s.Type".formatted(key)))));
+                            Objects.requireNonNull(Main.getItemsFile().getString("%s.Type".formatted(key)))));
     }
 
     @SubCommandName("debug")
     @SubCommandPermission(Perms.DEBUG)
     public void debug(CommandSender sender, String label, String[] args) {
-        sender.sendMessage(PocketHorses.parseColors("&6------------------------------------"));
-        sender.sendMessage(PocketHorses.parseColors("&eStorage type: &f%s".formatted(PocketHorses.getStorage().getType())));
-        sender.sendMessage(PocketHorses.parseColors("&eEconomy type: &f%s")
-                .formatted(PocketHorses.getEconomy() == null ? "//" : PocketHorses.getEconomy().getType()));
-        sender.sendMessage(PocketHorses.parseColors("&ePlugin version: &f%s".formatted(PocketHorses.VERSION)));
-        sender.sendMessage(PocketHorses.parseColors("&eServer version: &f%s".formatted(Reflections.getVersion())));
-        sender.sendMessage(PocketHorses.parseColors("&eCache size: &f%s".formatted(PocketHorses.getCache().size())));
-        sender.sendMessage(PocketHorses.parseColors("&eSpawned horses: &f%s".formatted(PocketHorses.getSpawnedHorses().size())));
-        sender.sendMessage(PocketHorses.parseColors("&eShop enabled: &f%s".formatted(PocketHorses.isShopEnabled())));
-        sender.sendMessage(PocketHorses.parseColors("&ePlaceholderAPI Hook: &f%s".formatted(PocketHorses.isPlaceholdersEnabled())));
-        sender.sendMessage(PocketHorses.parseColors("&eWorldGuard Hook: &f%s".formatted(PocketHorses.isWorldGuardEnabled())));
-        sender.sendMessage(PocketHorses.parseColors("&eModelEngine Hook: &f%s".formatted(PocketHorses.isModelEngineEnabled())));
-        sender.sendMessage(PocketHorses.parseColors("&6------------------------------------"));
+        sender.sendMessage(Main.parseColors("&6------------------------------------"));
+        sender.sendMessage(Main.parseColors("&eStorage type: &f%s".formatted(Main.getStorage().getType())));
+        sender.sendMessage(Main.parseColors("&eEconomy type: &f%s")
+                .formatted(Main.getEconomy() == null ? "//" : Main.getEconomy().getType()));
+        sender.sendMessage(Main.parseColors("&ePlugin version: &f%s".formatted(Main.VERSION)));
+        sender.sendMessage(Main.parseColors("&eServer version: &f%s".formatted(Reflections.getVersion())));
+        sender.sendMessage(Main.parseColors("&eCache size: &f%s".formatted(Main.getCache().size())));
+        sender.sendMessage(Main.parseColors("&eSpawned horses: &f%s".formatted(Main.getSpawnedHorses().size())));
+        sender.sendMessage(Main.parseColors("&eShop enabled: &f%s".formatted(Main.isShopEnabled())));
+        sender.sendMessage(Main.parseColors("&ePlaceholderAPI Hook: &f%s".formatted(Main.isPlaceholdersEnabled())));
+        sender.sendMessage(Main.parseColors("&eWorldGuard Hook: &f%s".formatted(Main.isWorldGuardEnabled())));
+        sender.sendMessage(Main.parseColors("&eModelEngine Hook: &f%s".formatted(Main.isModelEngineEnabled())));
+        sender.sendMessage(Main.parseColors("&6------------------------------------"));
     }
 
     @SubCommandName("remove")
@@ -262,18 +262,18 @@ public class MainCmd extends SubCommand {
 
         int removed = 0;
         for (Entity entity : entities) {
-            var horse = PocketHorses.getSpawnedHorse(entity);
+            var horse = Main.getSpawnedHorse(entity);
             if (horse == null)
                 continue;
 
-            if (PocketHorses.getSpawnedHorses().get(horse.getOwner()).size() == 1)
-                PocketHorses.getSpawnedHorses().remove(horse.getOwner());
+            if (Main.getSpawnedHorses().get(horse.getOwner()).size() == 1)
+                Main.getSpawnedHorses().remove(horse.getOwner());
             else
-                PocketHorses.getSpawnedHorses().get(horse.getOwner()).remove(horse);
+                Main.getSpawnedHorses().get(horse.getOwner()).remove(horse);
 
             horse.getEntity().remove();
-            if (PocketHorses.getModelEngineHook() != null)
-                PocketHorses.getModelEngineHook().remove(horse);
+            if (Main.getModelEngineHook() != null)
+                Main.getModelEngineHook().remove(horse);
 
             removed++;
         }
@@ -293,24 +293,24 @@ public class MainCmd extends SubCommand {
             return;
         }
 
-        sender.sendMessage(PocketHorses.parseColors("&6------------------------------------"));
-        sender.sendMessage(PocketHorses.parseColors("&eName: &f%s".formatted(horse.getId())));
-        sender.sendMessage(PocketHorses.parseColors("&eDisplay Name: &f%s".formatted(horse.getDisplayName())));
-        sender.sendMessage(PocketHorses.parseColors("&eConfig File: &f%s".formatted(horse.getConfig().getFileName())));
-        sender.sendMessage(PocketHorses.parseColors("&eColor: &f%s".formatted(horse.getColor().name())));
-        sender.sendMessage(PocketHorses.parseColors("&eStyle: &f%s".formatted(horse.getStyle().name())));
-        sender.sendMessage(PocketHorses.parseColors("&eSpeed: &f%s km/h".formatted(horse.getSpeed())));
-        sender.sendMessage(PocketHorses.parseColors("&eJump Strength: &f%s".formatted(horse.getJumpStrength())));
-        sender.sendMessage(PocketHorses.parseColors("&eMax Health: &f%s".formatted(horse.getMaxHealth())));
-        sender.sendMessage(PocketHorses.parseColors("&eIs buyable: &f%s".formatted(horse.isBuyable())));
-        sender.sendMessage(PocketHorses.parseColors("&ePrice: &f%s".formatted(horse.getPrice())));
-        sender.sendMessage(PocketHorses.parseColors("&eRequires permission: &f%s".formatted(horse.isPermission())));
-        sender.sendMessage(PocketHorses.parseColors("&eHas storage: &f%s".formatted(horse.isStorage())));
-        sender.sendMessage(PocketHorses.parseColors("&eIs recyclable: &f%s".formatted(horse.isRecyclable())));
-        sender.sendMessage(PocketHorses.parseColors("&eRecycle price: &f%s".formatted(horse.getRecyclePrice())));
-        sender.sendMessage(PocketHorses.parseColors("&eModelEngine model: &f%s"
+        sender.sendMessage(Main.parseColors("&6------------------------------------"));
+        sender.sendMessage(Main.parseColors("&eName: &f%s".formatted(horse.getId())));
+        sender.sendMessage(Main.parseColors("&eDisplay Name: &f%s".formatted(horse.getDisplayName())));
+        sender.sendMessage(Main.parseColors("&eConfig File: &f%s".formatted(horse.getConfig().getFileName())));
+        sender.sendMessage(Main.parseColors("&eColor: &f%s".formatted(horse.getColor().name())));
+        sender.sendMessage(Main.parseColors("&eStyle: &f%s".formatted(horse.getStyle().name())));
+        sender.sendMessage(Main.parseColors("&eSpeed: &f%s km/h".formatted(horse.getSpeed())));
+        sender.sendMessage(Main.parseColors("&eJump Strength: &f%s".formatted(horse.getJumpStrength())));
+        sender.sendMessage(Main.parseColors("&eMax Health: &f%s".formatted(horse.getMaxHealth())));
+        sender.sendMessage(Main.parseColors("&eIs buyable: &f%s".formatted(horse.isBuyable())));
+        sender.sendMessage(Main.parseColors("&ePrice: &f%s".formatted(horse.getPrice())));
+        sender.sendMessage(Main.parseColors("&eRequires permission: &f%s".formatted(horse.isPermission())));
+        sender.sendMessage(Main.parseColors("&eHas storage: &f%s".formatted(horse.isStorage())));
+        sender.sendMessage(Main.parseColors("&eIs recyclable: &f%s".formatted(horse.isRecyclable())));
+        sender.sendMessage(Main.parseColors("&eRecycle price: &f%s".formatted(horse.getRecyclePrice())));
+        sender.sendMessage(Main.parseColors("&eModelEngine model: &f%s"
                 .formatted(horse.getModel() == null ? "None" : horse.getModel())));
-        sender.sendMessage(PocketHorses.parseColors("&6------------------------------------"));
+        sender.sendMessage(Main.parseColors("&6------------------------------------"));
     }
 
     private boolean isInt(String s) {

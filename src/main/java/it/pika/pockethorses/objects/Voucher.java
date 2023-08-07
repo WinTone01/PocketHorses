@@ -3,7 +3,7 @@ package it.pika.pockethorses.objects;
 import com.google.common.collect.Lists;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import it.pika.libs.item.ItemBuilder;
-import it.pika.pockethorses.PocketHorses;
+import it.pika.pockethorses.Main;
 import it.pika.pockethorses.objects.horses.ConfigHorse;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -27,7 +27,7 @@ public class Voucher {
     private List<ConfigHorse> rewards;
 
     public static Voucher of(String name) {
-        var config = PocketHorses.getVouchersFile();
+        var config = Main.getVouchersFile();
 
         try {
             var displayName = config.getString("%s.DisplayName".formatted(name));
@@ -60,8 +60,8 @@ public class Voucher {
     public ItemStack getItem() {
         var item = new ItemBuilder()
                 .material(material)
-                .name(PocketHorses.parseColors(displayName))
-                .lore(PocketHorses.parseColors(lore))
+                .name(Main.parseColors(displayName))
+                .lore(Main.parseColors(lore))
                 .build();
 
         var nbt = new NBTItem(item);

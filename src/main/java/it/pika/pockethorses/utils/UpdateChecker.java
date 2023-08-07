@@ -1,6 +1,6 @@
 package it.pika.pockethorses.utils;
 
-import it.pika.pockethorses.PocketHorses;
+import it.pika.pockethorses.Main;
 import lombok.AllArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -24,7 +24,7 @@ public class UpdateChecker {
                 if (scanner.hasNext())
                     consumer.accept(scanner.next());
             } catch (IOException e) {
-                PocketHorses.getConsole().warning("Unable to check for updates: %s".formatted(e.getMessage()));
+                Main.getConsole().warning("Unable to check for updates: %s".formatted(e.getMessage()));
             }
         });
     }

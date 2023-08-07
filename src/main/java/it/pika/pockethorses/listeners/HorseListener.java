@@ -2,7 +2,7 @@ package it.pika.pockethorses.listeners;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import it.pika.pockethorses.Perms;
-import it.pika.pockethorses.PocketHorses;
+import it.pika.pockethorses.Main;
 import it.pika.pockethorses.enums.Messages;
 import it.pika.pockethorses.menu.HorseMenu;
 import it.pika.pockethorses.objects.horses.ConfigHorse;
@@ -33,7 +33,7 @@ import static it.pika.libs.chat.Chat.success;
 
 public class HorseListener implements Listener {
 
-    private static final int AUTO_RECALL_RANGE = PocketHorses.getConfigFile().getInt("Options.Auto-Recall-Range");
+    private static final int AUTO_RECALL_RANGE = Main.getConfigFile().getInt("Options.Auto-Recall-Range");
 
     @EventHandler
     public void onClick(PlayerInteractEntityEvent event) {
@@ -42,7 +42,7 @@ public class HorseListener implements Listener {
         if (!(event.getRightClicked() instanceof AbstractHorse horse))
             return;
 
-        var spawnedHorse = PocketHorses.getSpawnedHorse(horse);
+        var spawnedHorse = Main.getSpawnedHorse(horse);
         if (spawnedHorse == null)
             return;
 
@@ -74,11 +74,11 @@ public class HorseListener implements Listener {
                     horse.setJumpStrength(Math.min(newJumpStrength, 2.0));
 
                     item.setAmount(item.getAmount() - 1);
-                    PocketHorses.getActiveSupplements().put(spawnedHorse.getUuid(), supplement);
+                    Main.getActiveSupplements().put(spawnedHorse.getUuid(), supplement);
 
                     success(player, Messages.ITEM_USED.get());
 
-                    Bukkit.getScheduler().runTaskLaterAsynchronously(PocketHorses.getInstance(), () -> {
+                    Bukkit.getScheduler().runTaskLaterAsynchronously(Main.getInstance(), () -> {
                         spawnedHorse.setSpeed(configHorse.getSpeed());
 
                         double newSpeed = configHorse.getSpeed() / 3.6;
@@ -86,7 +86,7 @@ public class HorseListener implements Listener {
                                 .setBaseValue(newSpeed / 20);
 
                         horse.setJumpStrength(configHorse.getJumpStrength());
-                        PocketHorses.getActiveSupplements().remove(spawnedHorse.getUuid());
+                        Main.getActiveSupplements().remove(spawnedHorse.getUuid());
 
                         success(player, Messages.SUPPLEMENT_EXPIRED.get());
                     }, 20 * supplement.getDuration());
@@ -104,16 +104,16 @@ public class HorseListener implements Listener {
 
                     if (spawnedHorse.getCustomName() != null
                             && !spawnedHorse.getCustomName().equalsIgnoreCase("null")) {
-                        horse.setCustomName(PocketHorses.parseColors(horse.getCustomName()) +
-                                (PocketHorses.getConfigFile().getBoolean("Options.Display-HP-In-Name") ?
-                                        " " + PocketHorses.parseColors(Objects.requireNonNull(PocketHorses.getConfigFile()
+                        horse.setCustomName(Main.parseColors(horse.getCustomName()) +
+                                (Main.getConfigFile().getBoolean("Options.Display-HP-In-Name") ?
+                                        " " + Main.parseColors(Objects.requireNonNull(Main.getConfigFile()
                                                         .getString("Options.Display-HP"))
                                                 .replaceAll("%health%", String.valueOf((int) horse.getHealth()))) : ""));
                         horse.setCustomNameVisible(true);
                     } else {
-                        horse.setCustomName(PocketHorses.parseColors(configHorse.getDisplayName()) +
-                                (PocketHorses.getConfigFile().getBoolean("Options.Display-HP-In-Name") ?
-                                        " " + PocketHorses.parseColors(Objects.requireNonNull(PocketHorses.getConfigFile()
+                        horse.setCustomName(Main.parseColors(configHorse.getDisplayName()) +
+                                (Main.getConfigFile().getBoolean("Options.Display-HP-In-Name") ?
+                                        " " + Main.parseColors(Objects.requireNonNull(Main.getConfigFile()
                                                         .getString("Options.Display-HP"))
                                                 .replaceAll("%health%", String.valueOf((int) horse.getHealth()))) : ""));
                     }
@@ -126,7 +126,7 @@ public class HorseListener implements Listener {
         }
 
         if (player.isSneaking() || spawnedHorse.isSit() || horse.getPassengers().contains(player)) {
-            if (PocketHorses.getConfigFile().getBoolean("Horse-GUI.Use-Permission") &&
+            if (Main.getConfigFile().getBoolean("Horse-GUI.Use-Permission") &&
                     !player.hasPermission(Perms.HORSE_GUI)) {
                 error(player, Messages.NO_PERMISSION.get());
                 return;
@@ -139,15 +139,15 @@ public class HorseListener implements Listener {
 
         var configHorse = ConfigHorse.of(spawnedHorse.getName());
         if (configHorse != null && configHorse.getModel() != null) {
-            if (!PocketHorses.isModelEngineEnabled() || PocketHorses.getModelEngineHook() == null)
+            if (!Main.isModelEngineEnabled() || Main.getModelEngineHook() == null)
                 return;
 
-            PocketHorses.getModelEngineHook().getOn(player, spawnedHorse);
+            Main.getModelEngineHook().getOn(player, spawnedHorse);
         } else {
             spawnedHorse.getEntity().addPassenger(player);
         }
 
-        player.sendMessage(PocketHorses.parseMessage(Messages.RIDING_HORSE.get(), spawnedHorse, player));
+        player.sendMessage(Main.parseMessage(Messages.RIDING_HORSE.get(), spawnedHorse, player));
     }
 
     @EventHandler
@@ -155,16 +155,16 @@ public class HorseListener implements Listener {
         var player = event.getPlayer();
         var contents = event.getInventory().getContents();
 
-        var horse = PocketHorses.getInHorseStorage().remove(player.getName());
+        var horse = Main.getInHorseStorage().remove(player.getName());
         if (horse == null)
             return;
 
         var title = event.getView().getTitle();
-        if (!title.equalsIgnoreCase(PocketHorses.parseColors(PocketHorses.getConfigFile().getString("Storage-GUI.Title"))))
+        if (!title.equalsIgnoreCase(Main.parseColors(Main.getConfigFile().getString("Storage-GUI.Title"))))
             return;
 
         horse.setStoredItems(Serializer.serialize(contents));
-        PocketHorses.getStorage().setStoredItems(horse, contents);
+        Main.getStorage().setStoredItems(horse, contents);
     }
 
     @EventHandler
@@ -175,11 +175,11 @@ public class HorseListener implements Listener {
         if (!(event.getEntity() instanceof AbstractHorse entity))
             return;
 
-        var spawnedHorse = PocketHorses.getSpawnedHorse(entity);
+        var spawnedHorse = Main.getSpawnedHorse(entity);
         if (spawnedHorse == null)
             return;
 
-        event.setCancelled(!PocketHorses.getConfigFile().getBoolean("Options.Allow-Player-Damage"));
+        event.setCancelled(!Main.getConfigFile().getBoolean("Options.Allow-Player-Damage"));
     }
 
     @EventHandler
@@ -187,22 +187,22 @@ public class HorseListener implements Listener {
         if (!(event.getEntity() instanceof AbstractHorse entity))
             return;
 
-        var spawnedHorse = PocketHorses.getSpawnedHorse(entity);
+        var spawnedHorse = Main.getSpawnedHorse(entity);
         if (spawnedHorse == null)
             return;
 
         event.getDrops().clear();
-        PocketHorses.getSpawnedHorses().get(spawnedHorse.getOwner()).remove(spawnedHorse);
+        Main.getSpawnedHorses().get(spawnedHorse.getOwner()).remove(spawnedHorse);
     }
 
     @EventHandler
     public void autoRecall(PlayerMoveEvent event) {
         var player = event.getPlayer();
 
-        if (!PocketHorses.getSpawnedHorses().containsKey(player.getName()))
+        if (!Main.getSpawnedHorses().containsKey(player.getName()))
             return;
 
-        for (SpawnedHorse spawnedHorse : PocketHorses.getSpawnedHorses().get(player.getName())) {
+        for (SpawnedHorse spawnedHorse : Main.getSpawnedHorses().get(player.getName())) {
             if (!spawnedHorse.isAutoRecall())
                 continue;
 
@@ -210,7 +210,7 @@ public class HorseListener implements Listener {
                     .contains(spawnedHorse.getEntity()))
                 continue;
 
-            PocketHorses.teleport(spawnedHorse.getEntity(), player.getLocation());
+            Main.teleport(spawnedHorse.getEntity(), player.getLocation());
             success(player, Messages.AUTO_RECALLED.get());
         }
     }
@@ -222,15 +222,15 @@ public class HorseListener implements Listener {
         if (player.getVehicle() == null)
             return;
 
-        var spawnedHorse = PocketHorses.getSpawnedHorse(player.getVehicle());
+        var spawnedHorse = Main.getSpawnedHorse(player.getVehicle());
         if (spawnedHorse == null)
             return;
 
-        if (!PocketHorses.getConfigFile().getBoolean("Options.Action-Bar-While-Riding"))
+        if (!Main.getConfigFile().getBoolean("Options.Action-Bar-While-Riding"))
             return;
 
-        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(PocketHorses
-                .parseMessage(PocketHorses.getConfigFile().getString("Options.Action-Bar-Message"),
+        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(Main
+                .parseMessage(Main.getConfigFile().getString("Options.Action-Bar-Message"),
                         spawnedHorse, player)));
     }
 
@@ -242,7 +242,7 @@ public class HorseListener implements Listener {
 
         var entity = (AbstractHorse) event.getEntity();
 
-        var horse = PocketHorses.getSpawnedHorse(entity);
+        var horse = Main.getSpawnedHorse(entity);
         if (horse == null)
             return;
 
@@ -251,16 +251,16 @@ public class HorseListener implements Listener {
             return;
 
         if (horse.getCustomName() != null && !horse.getCustomName().equalsIgnoreCase("null")) {
-            entity.setCustomName(PocketHorses.parseColors(horse.getCustomName()) +
-                    (PocketHorses.getConfigFile().getBoolean("Options.Display-HP-In-Name") ?
-                            " " + PocketHorses.parseColors(Objects.requireNonNull(PocketHorses.getConfigFile()
+            entity.setCustomName(Main.parseColors(horse.getCustomName()) +
+                    (Main.getConfigFile().getBoolean("Options.Display-HP-In-Name") ?
+                            " " + Main.parseColors(Objects.requireNonNull(Main.getConfigFile()
                                             .getString("Options.Display-HP"))
                                     .replaceAll("%health%", String.valueOf((int) entity.getHealth()))) : ""));
             entity.setCustomNameVisible(true);
         } else {
-            entity.setCustomName(PocketHorses.parseColors(configHorse.getDisplayName()) +
-                    (PocketHorses.getConfigFile().getBoolean("Options.Display-HP-In-Name") ?
-                            " " + PocketHorses.parseColors(Objects.requireNonNull(PocketHorses.getConfigFile()
+            entity.setCustomName(Main.parseColors(configHorse.getDisplayName()) +
+                    (Main.getConfigFile().getBoolean("Options.Display-HP-In-Name") ?
+                            " " + Main.parseColors(Objects.requireNonNull(Main.getConfigFile()
                                             .getString("Options.Display-HP"))
                                     .replaceAll("%health%", String.valueOf((int) entity.getHealth()))) : ""));
         }

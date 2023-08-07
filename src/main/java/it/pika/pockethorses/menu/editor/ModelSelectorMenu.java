@@ -6,7 +6,7 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.SlotPos;
 import it.pika.libs.item.ItemBuilder;
-import it.pika.pockethorses.PocketHorses;
+import it.pika.pockethorses.Main;
 import it.pika.pockethorses.objects.horses.EditingHorse;
 import lombok.AllArgsConstructor;
 import org.bukkit.Material;
@@ -23,26 +23,26 @@ public class ModelSelectorMenu implements InventoryProvider {
     public SmartInventory get() {
         return SmartInventory.builder()
                 .id("inv")
-                .title(PocketHorses.getConfigFile().getString("Editor-GUI.Model-GUI.Title"))
-                .size(PocketHorses.getConfigFile().getInt("Editor-GUI.Model-GUI.Size.Rows"), 9)
+                .title(Main.getConfigFile().getString("Editor-GUI.Model-GUI.Title"))
+                .size(Main.getConfigFile().getInt("Editor-GUI.Model-GUI.Size.Rows"), 9)
                 .provider(this)
-                .manager(PocketHorses.getInventoryManager())
+                .manager(Main.getInventoryManager())
                 .build();
     }
 
     @Override
     public void init(Player player, InventoryContents contents) {
-        if (!PocketHorses.isModelEngineEnabled() || PocketHorses.getModelEngineHook() == null)
+        if (!Main.isModelEngineEnabled() || Main.getModelEngineHook() == null)
             return;
 
-        var config = PocketHorses.getConfigFile();
+        var config = Main.getConfigFile();
 
-        for (String model : PocketHorses.getModelEngineHook().getModels()) {
+        for (String model : Main.getModelEngineHook().getModels()) {
             contents.add(ClickableItem.of(new ItemBuilder()
                     .material(Material.valueOf(config.getString("Editor-GUI.Model-GUI.Model-Item.Material")))
-                    .name(PocketHorses.parseColors(Objects.requireNonNull(
+                    .name(Main.parseColors(Objects.requireNonNull(
                             config.getString("Editor-GUI.Model-GUI.Model-Item.Name")).replaceAll("%model%", model)))
-                    .lore(PocketHorses.parseColors(config.getStringList("Editor-GUI.Model-GUI.Model-Item.Lore")))
+                    .lore(Main.parseColors(config.getStringList("Editor-GUI.Model-GUI.Model-Item.Lore")))
                     .build(), e -> {
                 horse.setModel(model);
                 new EditingHorseMenu(horse, parent.isCreating()).get().open(player);
@@ -50,9 +50,9 @@ public class ModelSelectorMenu implements InventoryProvider {
         }
 
         contents.set(SlotPos.of(3, 4), ClickableItem.of(new ItemBuilder()
-                .material(Material.valueOf(PocketHorses.getConfigFile().getString("Editor-GUI.Editing-GUI.Back.Material")))
-                .name(PocketHorses.getConfigFile().getString("Editor-GUI.Editing-GUI.Back.Name"))
-                .lore(PocketHorses.getConfigFile().getStringList("Editor-GUI.Editing-GUI.Back.Lore"))
+                .material(Material.valueOf(Main.getConfigFile().getString("Editor-GUI.Editing-GUI.Back.Material")))
+                .name(Main.getConfigFile().getString("Editor-GUI.Editing-GUI.Back.Name"))
+                .lore(Main.getConfigFile().getStringList("Editor-GUI.Editing-GUI.Back.Lore"))
                 .build(), e -> new EditingHorseMenu(horse, parent.isCreating()).get().open(player)));
     }
 

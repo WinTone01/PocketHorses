@@ -6,7 +6,7 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.SlotPos;
 import it.pika.libs.item.ItemBuilder;
-import it.pika.pockethorses.PocketHorses;
+import it.pika.pockethorses.Main;
 import it.pika.pockethorses.api.events.HorseDespawnEvent;
 import it.pika.pockethorses.enums.Messages;
 import it.pika.pockethorses.objects.horses.ConfigHorse;
@@ -34,10 +34,10 @@ public class HorseMenu implements InventoryProvider {
     public SmartInventory get() {
         return SmartInventory.builder()
                 .id("inv")
-                .title(PocketHorses.parseColors(PocketHorses.getConfigFile().getString("Horse-GUI.Title")))
-                .size(PocketHorses.getConfigFile().getInt("Horse-GUI.Size.Rows"), 9)
+                .title(Main.parseColors(Main.getConfigFile().getString("Horse-GUI.Title")))
+                .size(Main.getConfigFile().getInt("Horse-GUI.Size.Rows"), 9)
                 .provider(this)
-                .manager(PocketHorses.getInventoryManager())
+                .manager(Main.getInventoryManager())
                 .build();
     }
 
@@ -45,9 +45,9 @@ public class HorseMenu implements InventoryProvider {
     public void init(Player player, InventoryContents contents) {
         if (horse.isAutoRecall()) {
             contents.set(SlotPos.of(1, 1), ClickableItem.of(new ItemBuilder()
-                    .material(Material.valueOf(PocketHorses.getConfigFile().getString("Horse-GUI.Auto-Recall.Material")))
-                    .name(PocketHorses.parseMessage(PocketHorses.getConfigFile().getString("Horse-GUI.Auto-Recall.Name"), horse, player))
-                    .lore(PocketHorses.parseMessage(PocketHorses.getConfigFile().getStringList("Horse-GUI.Auto-Recall.Enabled-Lore"), horse, player))
+                    .material(Material.valueOf(Main.getConfigFile().getString("Horse-GUI.Auto-Recall.Material")))
+                    .name(Main.parseMessage(Main.getConfigFile().getString("Horse-GUI.Auto-Recall.Name"), horse, player))
+                    .lore(Main.parseMessage(Main.getConfigFile().getStringList("Horse-GUI.Auto-Recall.Enabled-Lore"), horse, player))
                     .build(), e -> {
                 player.closeInventory();
                 horse.setAutoRecall(false);
@@ -56,9 +56,9 @@ public class HorseMenu implements InventoryProvider {
             }));
         } else {
             contents.set(SlotPos.of(1, 1), ClickableItem.of(new ItemBuilder()
-                    .material(Material.valueOf(PocketHorses.getConfigFile().getString("Horse-GUI.Auto-Recall.Material")))
-                    .name(PocketHorses.parseMessage(PocketHorses.getConfigFile().getString("Horse-GUI.Auto-Recall.Name"), horse, player))
-                    .lore(PocketHorses.parseMessage(PocketHorses.getConfigFile().getStringList("Horse-GUI.Auto-Recall.Disabled-Lore"), horse, player))
+                    .material(Material.valueOf(Main.getConfigFile().getString("Horse-GUI.Auto-Recall.Material")))
+                    .name(Main.parseMessage(Main.getConfigFile().getString("Horse-GUI.Auto-Recall.Name"), horse, player))
+                    .lore(Main.parseMessage(Main.getConfigFile().getStringList("Horse-GUI.Auto-Recall.Disabled-Lore"), horse, player))
                     .build(), e -> {
                 player.closeInventory();
                 horse.setAutoRecall(true);
@@ -73,19 +73,19 @@ public class HorseMenu implements InventoryProvider {
 
         if (configHorse.isStorage()) {
             contents.set(SlotPos.of(1, 4), ClickableItem.of(new ItemBuilder()
-                    .material(Material.valueOf(PocketHorses.getConfigFile().getString("Horse-GUI.Horse-Storage.Material")))
-                    .name(PocketHorses.parseMessage(PocketHorses.getConfigFile().getString("Horse-GUI.Horse-Storage.Name"), horse, player))
+                    .material(Material.valueOf(Main.getConfigFile().getString("Horse-GUI.Horse-Storage.Material")))
+                    .name(Main.parseMessage(Main.getConfigFile().getString("Horse-GUI.Horse-Storage.Name"), horse, player))
                     .build(), e -> horse.openStorage(player)));
         } else {
             contents.set(SlotPos.of(1, 4), ClickableItem.empty(new ItemBuilder()
-                    .material(Material.valueOf(PocketHorses.getConfigFile().getString("Horse-GUI.Horse-Info.Material")))
-                    .name(PocketHorses.parseMessage(PocketHorses.getConfigFile().getString("Horse-GUI.Horse-Info.Name"), horse, player))
+                    .material(Material.valueOf(Main.getConfigFile().getString("Horse-GUI.Horse-Info.Material")))
+                    .name(Main.parseMessage(Main.getConfigFile().getString("Horse-GUI.Horse-Info.Name"), horse, player))
                     .build()));
         }
 
         contents.set(SlotPos.of(3, 1), ClickableItem.of(changeName(), e ->
                 new AnvilGUI.Builder()
-                        .plugin(PocketHorses.getInstance())
+                        .plugin(Main.getInstance())
                         .title(Messages.CHANGE_NAME.get())
                         .text(Messages.CHANGE_NAME.get())
                         .itemLeft(changeName())
@@ -93,14 +93,14 @@ public class HorseMenu implements InventoryProvider {
                             if (slot != AnvilGUI.Slot.OUTPUT)
                                 return Collections.emptyList();
 
-                            var config = PocketHorses.getConfigFile();
-                            horse.getEntity().setCustomName(PocketHorses.parseColors(stateSnapshot.getText()) +
+                            var config = Main.getConfigFile();
+                            horse.getEntity().setCustomName(Main.parseColors(stateSnapshot.getText()) +
                                     (config.getBoolean("Options.Display-HP-In-Name") ?
-                                            " " + PocketHorses.parseColors(
+                                            " " + Main.parseColors(
                                                     Objects.requireNonNull(config.getString("Options.Display-HP"))
-                                                    .replaceAll("%health%", String.valueOf((int)
-                                                            ((AbstractHorse) horse.getEntity()).getHealth()))) : ""));
-                            PocketHorses.getStorage().setCustomName(horse, stateSnapshot.getText());
+                                                            .replaceAll("%health%", String.valueOf((int)
+                                                                    ((AbstractHorse) horse.getEntity()).getHealth()))) : ""));
+                            Main.getStorage().setCustomName(horse, stateSnapshot.getText());
 
                             success(player, Messages.CUSTOM_NAME_SET.get());
                             return Collections.singletonList(AnvilGUI.ResponseAction.close());
@@ -108,32 +108,32 @@ public class HorseMenu implements InventoryProvider {
 
         if (horse.isSit()) {
             contents.set(SlotPos.of(3, 3), ClickableItem.of(new ItemBuilder()
-                    .material(Material.valueOf(PocketHorses.getConfigFile().getString("Horse-GUI.Get-Up.Material")))
-                    .name(PocketHorses.parseMessage(PocketHorses.getConfigFile().getString("Horse-GUI.Get-Up.Name"), horse, player))
+                    .material(Material.valueOf(Main.getConfigFile().getString("Horse-GUI.Get-Up.Material")))
+                    .name(Main.parseMessage(Main.getConfigFile().getString("Horse-GUI.Get-Up.Name"), horse, player))
                     .build(), e -> {
                 player.closeInventory();
                 horse.setSit(false);
                 ((AbstractHorse) horse.getEntity()).setAI(true);
                 ((AbstractHorse) horse.getEntity()).setTarget(player);
 
-                if (PocketHorses.isModelEngineEnabled() && PocketHorses.getModelEngineHook() != null
+                if (Main.isModelEngineEnabled() && Main.getModelEngineHook() != null
                         && horse.getModeledEntity() != null)
-                    PocketHorses.getModelEngineHook().makeIdle(horse);
+                    Main.getModelEngineHook().makeIdle(horse);
 
                 success(player, Messages.GET_UP.get());
             }));
         } else {
             contents.set(SlotPos.of(3, 3), ClickableItem.of(new ItemBuilder()
-                    .material(Material.valueOf(PocketHorses.getConfigFile().getString("Horse-GUI.Make-Sit.Material")))
-                    .name(PocketHorses.parseMessage(PocketHorses.getConfigFile().getString("Horse-GUI.Make-Sit.Name"), horse, player))
+                    .material(Material.valueOf(Main.getConfigFile().getString("Horse-GUI.Make-Sit.Material")))
+                    .name(Main.parseMessage(Main.getConfigFile().getString("Horse-GUI.Make-Sit.Name"), horse, player))
                     .build(), e -> {
                 player.closeInventory();
                 horse.setSit(true);
                 ((AbstractHorse) horse.getEntity()).setAI(false);
 
-                if (PocketHorses.isModelEngineEnabled() && PocketHorses.getModelEngineHook() != null
+                if (Main.isModelEngineEnabled() && Main.getModelEngineHook() != null
                         && horse.getModeledEntity() != null)
-                    PocketHorses.getModelEngineHook().makeIdle(horse);
+                    Main.getModelEngineHook().makeIdle(horse);
 
                 success(player, Messages.MAKE_SIT.get());
             }));
@@ -141,7 +141,7 @@ public class HorseMenu implements InventoryProvider {
 
         contents.set(SlotPos.of(3, 5), ClickableItem.of(setSpeed(), e ->
                 new AnvilGUI.Builder()
-                        .plugin(PocketHorses.getInstance())
+                        .plugin(Main.getInstance())
                         .title(Messages.SET_SPEED.get())
                         .text(Messages.SET_SPEED.get())
                         .itemLeft(setSpeed())
@@ -162,15 +162,15 @@ public class HorseMenu implements InventoryProvider {
 
                             var speedModifier = speed / 3.6;
                             Objects.requireNonNull(((AbstractHorse) horse.getEntity())
-                                            .getAttribute(Attribute.GENERIC_MOVEMENT_SPEED)).setBaseValue(speedModifier / 20);
+                                    .getAttribute(Attribute.GENERIC_MOVEMENT_SPEED)).setBaseValue(speedModifier / 20);
                             horse.setSpeed(speed);
                             success(player, Messages.SPEED_SET.get());
                             return Collections.singletonList(AnvilGUI.ResponseAction.close());
                         }).open(player)));
 
         contents.set(SlotPos.of(3, 7), ClickableItem.of(new ItemBuilder()
-                .material(Material.valueOf(PocketHorses.getConfigFile().getString("Horse-GUI.Remove.Material")))
-                .name(PocketHorses.parseMessage(PocketHorses.getConfigFile().getString("Horse-GUI.Remove.Name"), horse, player))
+                .material(Material.valueOf(Main.getConfigFile().getString("Horse-GUI.Remove.Material")))
+                .name(Main.parseMessage(Main.getConfigFile().getString("Horse-GUI.Remove.Name"), horse, player))
                 .build(), e -> {
             player.closeInventory();
 
@@ -180,14 +180,14 @@ public class HorseMenu implements InventoryProvider {
             if (event.isCancelled())
                 return;
 
-            if (PocketHorses.getSpawnedHorses().get(player.getName()).size() == 1)
-                PocketHorses.getSpawnedHorses().remove(player.getName());
+            if (Main.getSpawnedHorses().get(player.getName()).size() == 1)
+                Main.getSpawnedHorses().remove(player.getName());
             else
-                PocketHorses.getSpawnedHorses().get(player.getName()).remove(horse);
+                Main.getSpawnedHorses().get(player.getName()).remove(horse);
 
             horse.getEntity().remove();
-            if (PocketHorses.getModelEngineHook() != null)
-                PocketHorses.getModelEngineHook().remove(horse);
+            if (Main.getModelEngineHook() != null)
+                Main.getModelEngineHook().remove(horse);
 
             success(player, Messages.HORSE_REMOVED.get());
         }));
@@ -199,15 +199,15 @@ public class HorseMenu implements InventoryProvider {
 
     private ItemStack changeName() {
         return new ItemBuilder()
-                .material(Material.valueOf(PocketHorses.getConfigFile().getString("Horse-GUI.Change-Name.Material")))
-                .name(PocketHorses.parseMessage(PocketHorses.getConfigFile().getString("Horse-GUI.Change-Name.Name"), horse, null))
+                .material(Material.valueOf(Main.getConfigFile().getString("Horse-GUI.Change-Name.Material")))
+                .name(Main.parseMessage(Main.getConfigFile().getString("Horse-GUI.Change-Name.Name"), horse, null))
                 .build();
     }
 
     private ItemStack setSpeed() {
         return new ItemBuilder()
-                .material(Material.valueOf(PocketHorses.getConfigFile().getString("Horse-GUI.Set-Speed.Material")))
-                .name(PocketHorses.parseMessage(PocketHorses.getConfigFile().getString("Horse-GUI.Set-Speed.Name"), horse, null))
+                .material(Material.valueOf(Main.getConfigFile().getString("Horse-GUI.Set-Speed.Material")))
+                .name(Main.parseMessage(Main.getConfigFile().getString("Horse-GUI.Set-Speed.Name"), horse, null))
                 .build();
     }
 

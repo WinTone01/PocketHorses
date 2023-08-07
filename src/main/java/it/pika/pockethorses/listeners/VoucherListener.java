@@ -2,7 +2,7 @@ package it.pika.pockethorses.listeners;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import it.pika.pockethorses.Perms;
-import it.pika.pockethorses.PocketHorses;
+import it.pika.pockethorses.Main;
 import it.pika.pockethorses.enums.Messages;
 import it.pika.pockethorses.objects.Voucher;
 import org.bukkit.Bukkit;
@@ -50,29 +50,29 @@ public class VoucherListener implements Listener {
         if (voucher.isPermission() && !player.hasPermission(Perms.getVoucher(voucher.getName())))
             return;
 
-        if (!PocketHorses.respectsLimit(player)) {
+        if (!Main.respectsLimit(player)) {
             error(player, Messages.LIMIT_REACHED.get());
             return;
         }
 
         item.setAmount(item.getAmount() - 1);
-        player.sendTitle(PocketHorses.parseColors(PocketHorses.getConfigFile().getString("Vouchers.Opening.Title")),
-                PocketHorses.parseColors(PocketHorses.getConfigFile().getString("Vouchers.Opening.Sub-Title")),
-                0, 20 * PocketHorses.getConfigFile().getInt("Vouchers.Opening.Delay"), 0);
+        player.sendTitle(Main.parseColors(Main.getConfigFile().getString("Vouchers.Opening.Title")),
+                Main.parseColors(Main.getConfigFile().getString("Vouchers.Opening.Sub-Title")),
+                0, 20 * Main.getConfigFile().getInt("Vouchers.Opening.Delay"), 0);
         player.playSound(player.getLocation(),
-                Sound.valueOf(PocketHorses.getConfigFile().getString("Vouchers.Opening.Sound")), 1F, 1F);
+                Sound.valueOf(Main.getConfigFile().getString("Vouchers.Opening.Sound")), 1F, 1F);
 
-        Bukkit.getScheduler().runTaskLaterAsynchronously(PocketHorses.getInstance(), () -> {
+        Bukkit.getScheduler().runTaskLaterAsynchronously(Main.getInstance(), () -> {
             var reward = voucher.getRewards().get(new Random().nextInt(voucher.getRewards().size()));
 
-            PocketHorses.getStorage().giveHorse(player, reward);
-            player.sendTitle(PocketHorses.parseColors(PocketHorses.getConfigFile().getString("Vouchers.Reward.Title")),
-                    PocketHorses.parseColors(Objects.requireNonNull(PocketHorses.getConfigFile()
+            Main.getStorage().giveHorse(player, reward);
+            player.sendTitle(Main.parseColors(Main.getConfigFile().getString("Vouchers.Reward.Title")),
+                    Main.parseColors(Objects.requireNonNull(Main.getConfigFile()
                                     .getString("Vouchers.Reward.Sub-Title"))
                             .replaceAll("%reward%", reward.getDisplayName())), 0, 40, 0);
             player.playSound(player.getLocation(),
-                    Sound.valueOf(PocketHorses.getConfigFile().getString("Vouchers.Reward.Sound")), 1F, 1F);
-        }, 20L * PocketHorses.getConfigFile().getInt("Vouchers.Opening.Delay"));
+                    Sound.valueOf(Main.getConfigFile().getString("Vouchers.Reward.Sound")), 1F, 1F);
+        }, 20L * Main.getConfigFile().getInt("Vouchers.Opening.Delay"));
     }
 
 }

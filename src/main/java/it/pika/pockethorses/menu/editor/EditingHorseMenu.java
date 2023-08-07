@@ -8,7 +8,7 @@ import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.SlotPos;
 import it.pika.libs.config.Config;
 import it.pika.libs.item.ItemBuilder;
-import it.pika.pockethorses.PocketHorses;
+import it.pika.pockethorses.Main;
 import it.pika.pockethorses.enums.Messages;
 import it.pika.pockethorses.objects.horses.ConfigHorse;
 import it.pika.pockethorses.objects.horses.EditingHorse;
@@ -37,23 +37,23 @@ public class EditingHorseMenu implements InventoryProvider {
     public SmartInventory get() {
         return SmartInventory.builder()
                 .id("inv")
-                .title(parse(PocketHorses.getConfigFile().getString("Editor-GUI.Editing-GUI.Title")))
-                .size(PocketHorses.getConfigFile().getInt("Editor-GUI.Editing-GUI.Size.Rows"), 9)
-                .manager(PocketHorses.getInventoryManager())
+                .title(parse(Main.getConfigFile().getString("Editor-GUI.Editing-GUI.Title")))
+                .size(Main.getConfigFile().getInt("Editor-GUI.Editing-GUI.Size.Rows"), 9)
+                .manager(Main.getInventoryManager())
                 .provider(this)
                 .build();
     }
 
     @Override
     public void init(Player player, InventoryContents contents) {
-        var config = PocketHorses.getConfigFile();
+        var config = Main.getConfigFile();
 
         contents.set(SlotPos.of(1, 1), ClickableItem.of(new ItemBuilder()
                 .material(Material.valueOf(config.getString("Editor-GUI.Editing-GUI.Display-Name.Material")))
                 .name(parse(config.getString("Editor-GUI.Editing-GUI.Display-Name.Name")))
                 .lore(parse(config.getStringList("Editor-GUI.Editing-GUI.Display-Name.Lore")))
                 .build(), e -> new AnvilGUI.Builder()
-                .plugin(PocketHorses.getInstance())
+                .plugin(Main.getInstance())
                 .title("Set value")
                 .text("Set value")
                 .itemLeft(new ItemStack(Material.PAPER))
@@ -61,7 +61,7 @@ public class EditingHorseMenu implements InventoryProvider {
                     if (slot != AnvilGUI.Slot.OUTPUT)
                         return Collections.emptyList();
 
-                    horse.setDisplayName(PocketHorses.parseColors(stateSnapshot.getText()));
+                    horse.setDisplayName(Main.parseColors(stateSnapshot.getText()));
                     return List.of(AnvilGUI.ResponseAction.close(), AnvilGUI.ResponseAction.run(() -> get().open(player)));
                 })
                 .open(player)));
@@ -83,7 +83,7 @@ public class EditingHorseMenu implements InventoryProvider {
                 .name(parse(config.getString("Editor-GUI.Editing-GUI.Speed.Name")))
                 .lore(parse(config.getStringList("Editor-GUI.Editing-GUI.Speed.Lore")))
                 .build(), e -> new AnvilGUI.Builder()
-                .plugin(PocketHorses.getInstance())
+                .plugin(Main.getInstance())
                 .title("Set value")
                 .text("Set value")
                 .itemLeft(new ItemStack(Material.PAPER))
@@ -133,7 +133,7 @@ public class EditingHorseMenu implements InventoryProvider {
                 .name(parse(config.getString("Editor-GUI.Editing-GUI.Jump-Strength.Name")))
                 .lore(parse(config.getStringList("Editor-GUI.Editing-GUI.Jump-Strength.Lore")))
                 .build(), e -> new AnvilGUI.Builder()
-                .plugin(PocketHorses.getInstance())
+                .plugin(Main.getInstance())
                 .title("Set value")
                 .text("Set value")
                 .itemLeft(new ItemStack(Material.PAPER))
@@ -156,7 +156,7 @@ public class EditingHorseMenu implements InventoryProvider {
                 .name(parse(config.getString("Editor-GUI.Editing-GUI.Max-Health.Name")))
                 .lore(parse(config.getStringList("Editor-GUI.Editing-GUI.Max-Health.Lore")))
                 .build(), e -> new AnvilGUI.Builder()
-                .plugin(PocketHorses.getInstance())
+                .plugin(Main.getInstance())
                 .title("Set value")
                 .text("Set value")
                 .itemLeft(new ItemStack(Material.PAPER))
@@ -188,7 +188,7 @@ public class EditingHorseMenu implements InventoryProvider {
                 .name(parse(config.getString("Editor-GUI.Editing-GUI.Price.Name")))
                 .lore(parse(config.getStringList("Editor-GUI.Editing-GUI.Price.Lore")))
                 .build(), e -> new AnvilGUI.Builder()
-                .plugin(PocketHorses.getInstance())
+                .plugin(Main.getInstance())
                 .title("Set value")
                 .text("Set value")
                 .itemLeft(new ItemStack(Material.PAPER))
@@ -211,7 +211,7 @@ public class EditingHorseMenu implements InventoryProvider {
                 .name(parse(config.getString("Editor-GUI.Editing-GUI.Model.Name")))
                 .lore(parse(config.getStringList("Editor-GUI.Editing-GUI.Model.Lore")))
                 .build(), e -> {
-            if (!PocketHorses.isModelEngineEnabled() || PocketHorses.getModelEngineHook() == null)
+            if (!Main.isModelEngineEnabled() || Main.getModelEngineHook() == null)
                 return;
 
             new ModelSelectorMenu(horse, this).get().open(player);
@@ -222,7 +222,7 @@ public class EditingHorseMenu implements InventoryProvider {
                 .name(parse(config.getString("Editor-GUI.Editing-GUI.Recycle-Price.Name")))
                 .lore(parse(config.getStringList("Editor-GUI.Editing-GUI.Recycle-Price.Lore")))
                 .build(), e -> new AnvilGUI.Builder()
-                .plugin(PocketHorses.getInstance())
+                .plugin(Main.getInstance())
                 .title("Set value")
                 .text("Set value")
                 .itemLeft(new ItemStack(Material.PAPER))
@@ -260,7 +260,7 @@ public class EditingHorseMenu implements InventoryProvider {
                     return;
                 }
 
-                var file = new File(PocketHorses.getInstance().getDataFolder()
+                var file = new File(Main.getInstance().getDataFolder()
                         + File.separator + "Horses" + File.separator + "%s.yml".formatted(horse.getId()));
                 if (!file.exists()) {
                     try {
@@ -270,7 +270,7 @@ public class EditingHorseMenu implements InventoryProvider {
                     }
                 }
 
-                var horseConfig = new Config(PocketHorses.getInstance(), file);
+                var horseConfig = new Config(Main.getInstance(), file, false);
                 horseConfig.set("Display-Name", horse.getDisplayName());
                 horseConfig.set("Color", horse.getColor().name());
                 horseConfig.set("Style", horse.getStyle().name());
@@ -324,7 +324,7 @@ public class EditingHorseMenu implements InventoryProvider {
     }
 
     private String parse(String s) {
-        return PocketHorses.parseColors(s)
+        return Main.parseColors(s)
                 .replaceAll("%id%", horse.getId() != null ? horse.getId() : Messages.UNDEFINED.get())
                 .replaceAll("%displayName%", horse.getDisplayName() != null ? horse.getDisplayName() : Messages.UNDEFINED.get())
                 .replaceAll("%color%", horse.getColor() != null ? horse.getColor().name() : Messages.UNDEFINED.get())
@@ -369,9 +369,9 @@ public class EditingHorseMenu implements InventoryProvider {
     }
 
     private void reloadHorses() {
-        PocketHorses.getConsole().info("Reloading horses...");
-        PocketHorses.getLoadedHorses().clear();
-        PocketHorses.getInstance().loadHorses();
+        Main.getConsole().info("Reloading horses...");
+        Main.getLoadedHorses().clear();
+        Main.getInstance().loadHorses();
     }
 
 }

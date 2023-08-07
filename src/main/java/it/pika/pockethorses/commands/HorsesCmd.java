@@ -2,7 +2,7 @@ package it.pika.pockethorses.commands;
 
 import it.pika.libs.command.SubCommand;
 import it.pika.pockethorses.Perms;
-import it.pika.pockethorses.PocketHorses;
+import it.pika.pockethorses.Main;
 import it.pika.pockethorses.enums.Messages;
 import it.pika.pockethorses.menu.MyHorsesMenu;
 import it.pika.pockethorses.menu.ShopMenu;
@@ -25,7 +25,7 @@ public class HorsesCmd extends SubCommand {
     public void noArgs(CommandSender sender) {
         var player = Validator.getPlayerSender(sender);
 
-        if (PocketHorses.getConfigFile().getBoolean("Horses-GUI.Use-Permission") &&
+        if (Main.getConfigFile().getBoolean("Horses-GUI.Use-Permission") &&
                 !player.hasPermission(Perms.HORSES_GUI)) {
             error(player, Messages.NO_PERMISSION.get());
             return;
@@ -38,12 +38,12 @@ public class HorsesCmd extends SubCommand {
     public void shop(CommandSender sender, String label, String[] args) {
         var player = Validator.getPlayerSender(sender);
 
-        if (!PocketHorses.isShopEnabled()) {
+        if (!Main.isShopEnabled()) {
             error(player, Messages.SHOP_NOT_ENABLED.get());
             return;
         }
 
-        if (PocketHorses.getConfigFile().getBoolean("Shop-GUI.Use-Permission")
+        if (Main.getConfigFile().getBoolean("Shop-GUI.Use-Permission")
                 && !player.hasPermission(Perms.SHOP_GUI)) {
             error(player, Messages.NO_PERMISSION.get());
             return;
@@ -56,19 +56,19 @@ public class HorsesCmd extends SubCommand {
     public void recall(CommandSender sender, String label, String[] args) {
         var player = Validator.getPlayerSender(sender);
 
-        if (PocketHorses.getConfigFile().getBoolean("Options.Use-Recall-Permission")
+        if (Main.getConfigFile().getBoolean("Options.Use-Recall-Permission")
                 && !player.hasPermission(Perms.RECALL)) {
             error(player, Messages.NO_PERMISSION.get());
             return;
         }
 
-        if (!PocketHorses.getSpawnedHorses().containsKey(player.getName())) {
+        if (!Main.getSpawnedHorses().containsKey(player.getName())) {
             error(player, Messages.NO_HORSES_SPAWNED.get());
             return;
         }
 
-        for (SpawnedHorse horse : PocketHorses.getSpawnedHorses().get(player.getName()))
-            PocketHorses.teleport(horse.getEntity(), player.getLocation());
+        for (SpawnedHorse horse : Main.getSpawnedHorses().get(player.getName()))
+            Main.teleport(horse.getEntity(), player.getLocation());
 
         success(player, Messages.HORSES_RECALLED.get());
     }
@@ -76,8 +76,8 @@ public class HorsesCmd extends SubCommand {
     @SubCommandName("help")
     @SubCommandPermission(Perms.HELP_HORSES)
     public void help(CommandSender sender, String label, String[] args) {
-        for (String s : PocketHorses.getMessagesFile().getStringList("horses-help-message"))
-            sender.sendMessage(PocketHorses.parseColors(s));
+        for (String s : Main.getLanguageManager().getHorsesHelp())
+            sender.sendMessage(Main.parseColors(s));
     }
 
 }

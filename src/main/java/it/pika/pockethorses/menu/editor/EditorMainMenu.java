@@ -8,7 +8,7 @@ import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.SlotIterator;
 import fr.minuskube.inv.content.SlotPos;
 import it.pika.libs.item.ItemBuilder;
-import it.pika.pockethorses.PocketHorses;
+import it.pika.pockethorses.Main;
 import it.pika.pockethorses.enums.Messages;
 import it.pika.pockethorses.menu.ConfirmMenu;
 import it.pika.pockethorses.objects.horses.ConfigHorse;
@@ -31,17 +31,17 @@ public class EditorMainMenu implements InventoryProvider {
     public SmartInventory get() {
         return SmartInventory.builder()
                 .id("inv")
-                .title(PocketHorses.getConfigFile().getString("Editor-GUI.Main.Title"))
-                .size(PocketHorses.getConfigFile().getInt("Editor-GUI.Main.Size.Rows"), 9)
+                .title(Main.getConfigFile().getString("Editor-GUI.Main.Title"))
+                .size(Main.getConfigFile().getInt("Editor-GUI.Main.Size.Rows"), 9)
                 .provider(this)
-                .manager(PocketHorses.getInventoryManager())
+                .manager(Main.getInventoryManager())
                 .build();
     }
 
     @Override
     public void init(Player player, InventoryContents contents) {
         var pagination = contents.pagination();
-        var horses = Lists.newArrayList(PocketHorses.getLoadedHorses());
+        var horses = Lists.newArrayList(Main.getLoadedHorses());
         horses.removeIf(Objects::isNull);
 
         ClickableItem[] items = new ClickableItem[horses.size()];
@@ -50,10 +50,10 @@ public class EditorMainMenu implements InventoryProvider {
             var horse = horses.get(i);
 
             items[i] = ClickableItem.of(new ItemBuilder()
-                    .material(Material.valueOf(PocketHorses.getConfigFile().getString("Editor-GUI.Main.Horse-Item.Material")))
-                    .name(parse(Objects.requireNonNull(PocketHorses.getConfigFile()
+                    .material(Material.valueOf(Main.getConfigFile().getString("Editor-GUI.Main.Horse-Item.Material")))
+                    .name(parse(Objects.requireNonNull(Main.getConfigFile()
                             .getString("Editor-GUI.Main.Horse-Item.Name")), horse))
-                    .lore(parse(PocketHorses.getConfigFile().getStringList("Editor-GUI.Main.Horse-Item.Lore"), horse))
+                    .lore(parse(Main.getConfigFile().getStringList("Editor-GUI.Main.Horse-Item.Lore"), horse))
                     .build(), e -> {
                 if (e.isLeftClick()) {
                     player.closeInventory();
@@ -82,7 +82,7 @@ public class EditorMainMenu implements InventoryProvider {
         }
 
         pagination.setItems(items);
-        pagination.setItemsPerPage((PocketHorses.getConfigFile().getInt("Editor-GUI.Main.Size.Rows") * 9) - 9);
+        pagination.setItemsPerPage((Main.getConfigFile().getInt("Editor-GUI.Main.Size.Rows") * 9) - 9);
 
         var iterator = contents.newIterator(SlotIterator.Type.HORIZONTAL, 0, 0);
         iterator.blacklist(5, 0).blacklist(5, 1).blacklist(5, 2)
@@ -91,19 +91,19 @@ public class EditorMainMenu implements InventoryProvider {
         pagination.addToIterator(iterator);
 
         contents.set(SlotPos.of(5, 4), ClickableItem.of(new ItemBuilder()
-                .material(Material.valueOf(PocketHorses.getConfigFile().getString("Editor-GUI.Main.New-Horse.Material")))
-                .name(PocketHorses.parseColors(PocketHorses.getConfigFile().getString("Editor-GUI.Main.New-Horse.Name")))
-                .lore(PocketHorses.parseColors(PocketHorses.getConfigFile().getStringList("Editor-GUI.Main.New-Horse.Lore")))
+                .material(Material.valueOf(Main.getConfigFile().getString("Editor-GUI.Main.New-Horse.Material")))
+                .name(Main.parseColors(Main.getConfigFile().getString("Editor-GUI.Main.New-Horse.Name")))
+                .lore(Main.parseColors(Main.getConfigFile().getStringList("Editor-GUI.Main.New-Horse.Lore")))
                 .build(), e -> {
             player.closeInventory();
 
             new AnvilGUI.Builder()
-                    .plugin(PocketHorses.getInstance())
+                    .plugin(Main.getInstance())
                     .title("Set name")
                     .text("Set name")
                     .itemLeft(new ItemStack(Material.PAPER))
                     .onClick((slot, stateSnapshot) -> {
-                        if (PocketHorses.getLoadedHorse(stateSnapshot.getText()) != null) {
+                        if (Main.getLoadedHorse(stateSnapshot.getText()) != null) {
                             error(player, Messages.HORSE_ALREADY_EXISTS.get());
                             return Collections.singletonList(AnvilGUI.ResponseAction.close());
                         }
@@ -117,15 +117,15 @@ public class EditorMainMenu implements InventoryProvider {
         }));
 
         contents.set(SlotPos.of(5, 3), ClickableItem.of(new ItemBuilder()
-                .material(Material.valueOf(PocketHorses.getConfigFile().getString("Editor-GUI.Main.Previous-Page.Material")))
-                .name(PocketHorses.parseColors(PocketHorses.getConfigFile().getString("Editor-GUI.Main.Previous-Page.Name")))
-                .lore(PocketHorses.parseColors(PocketHorses.getConfigFile().getStringList("Editor-GUI.Main.Previous-Page.Lore")))
+                .material(Material.valueOf(Main.getConfigFile().getString("Editor-GUI.Main.Previous-Page.Material")))
+                .name(Main.parseColors(Main.getConfigFile().getString("Editor-GUI.Main.Previous-Page.Name")))
+                .lore(Main.parseColors(Main.getConfigFile().getStringList("Editor-GUI.Main.Previous-Page.Lore")))
                 .build(), e -> contents.inventory().open(player, pagination.previous().getPage())));
 
         contents.set(SlotPos.of(5, 5), ClickableItem.of(new ItemBuilder()
-                .material(Material.valueOf(PocketHorses.getConfigFile().getString("Editor-GUI.Main.Next-Page.Material")))
-                .name(PocketHorses.parseColors(PocketHorses.getConfigFile().getString("Editor-GUI.Main.Next-Page.Name")))
-                .lore(PocketHorses.parseColors(PocketHorses.getConfigFile().getStringList("Editor-GUI.Main.Next-Page.Lore")))
+                .material(Material.valueOf(Main.getConfigFile().getString("Editor-GUI.Main.Next-Page.Material")))
+                .name(Main.parseColors(Main.getConfigFile().getString("Editor-GUI.Main.Next-Page.Name")))
+                .lore(Main.parseColors(Main.getConfigFile().getStringList("Editor-GUI.Main.Next-Page.Lore")))
                 .build(), e -> contents.inventory().open(player, pagination.next().getPage())));
     }
 
@@ -134,7 +134,7 @@ public class EditorMainMenu implements InventoryProvider {
     }
 
     private String parse(String message, ConfigHorse horse) {
-        return PocketHorses.parseColors(message
+        return Main.parseColors(message
                 .replaceAll("%id%", horse.getId())
                 .replaceAll("%displayName%", horse.getDisplayName())
                 .replaceAll("%color%", horse.getColor().name())
@@ -158,9 +158,9 @@ public class EditorMainMenu implements InventoryProvider {
     }
 
     private void reloadHorses() {
-        PocketHorses.getConsole().info("Reloading horses...");
-        PocketHorses.getLoadedHorses().clear();
-        PocketHorses.getInstance().loadHorses();
+        Main.getConsole().info("Reloading horses...");
+        Main.getLoadedHorses().clear();
+        Main.getInstance().loadHorses();
     }
 
 }

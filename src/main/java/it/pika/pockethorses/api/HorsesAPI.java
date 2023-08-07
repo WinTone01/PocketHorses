@@ -1,6 +1,6 @@
 package it.pika.pockethorses.api;
 
-import it.pika.pockethorses.PocketHorses;
+import it.pika.pockethorses.Main;
 import it.pika.pockethorses.objects.horses.ConfigHorse;
 import it.pika.pockethorses.objects.horses.Horse;
 import it.pika.pockethorses.objects.horses.SpawnedHorse;
@@ -23,7 +23,7 @@ public class HorsesAPI {
      */
     public static HorsesAPI getInstance() {
         var plugin = Bukkit.getPluginManager().getPlugin("PocketHorses");
-        return (plugin instanceof PocketHorses && plugin.isEnabled()) ? new HorsesAPI() : null;
+        return (plugin instanceof Main && plugin.isEnabled()) ? new HorsesAPI() : null;
     }
 
     /**
@@ -32,7 +32,7 @@ public class HorsesAPI {
      * @return a list with loaded horses
      */
     public List<ConfigHorse> getLoadedHorses() {
-        return PocketHorses.getLoadedHorses();
+        return Main.getLoadedHorses();
     }
 
     /**
@@ -42,7 +42,7 @@ public class HorsesAPI {
      * @return a list of horses owned by the player
      */
     public List<Horse> getHorsesOf(Player player) {
-        return PocketHorses.getHorsesOf(player);
+        return Main.getHorsesOf(player);
     }
 
     /**
@@ -52,7 +52,7 @@ public class HorsesAPI {
      * @return An instance of SpawnedHorse
      */
     public SpawnedHorse getSpawnedHorse(Entity entity) {
-        return PocketHorses.getSpawnedHorse(entity);
+        return Main.getSpawnedHorse(entity);
     }
 
     /**
@@ -62,7 +62,7 @@ public class HorsesAPI {
      * @return An instance of Horse
      */
     public Horse getHorse(UUID uuid) {
-        return PocketHorses.getHorse(uuid);
+        return Main.getHorse(uuid);
     }
 
     /**
@@ -72,7 +72,7 @@ public class HorsesAPI {
      * @return An instance of ConfigHorse
      */
     public ConfigHorse getLoadedHorse(String name) {
-        return PocketHorses.getLoadedHorse(name);
+        return Main.getLoadedHorse(name);
     }
 
 }

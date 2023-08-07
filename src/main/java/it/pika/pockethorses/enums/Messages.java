@@ -1,9 +1,8 @@
 package it.pika.pockethorses.enums;
 
-import it.pika.pockethorses.PocketHorses;
+import it.pika.libs.config.Config;
+import it.pika.pockethorses.Main;
 import lombok.AllArgsConstructor;
-
-import java.util.Objects;
 
 @AllArgsConstructor
 public enum Messages {
@@ -64,7 +63,12 @@ public enum Messages {
     private final String path;
 
     public String get() {
-        return PocketHorses.parseColors(Objects.requireNonNull(PocketHorses.getMessagesFile().getString(path)));
+        var language = Main.getLanguageManager().getLanguage();
+        if (!language.getFile().exists())
+            return "Undefined";
+
+        var config = new Config(Main.getInstance(), language.getFile(), false);
+        return Main.parseColors(config.getString(path));
     }
 
 }

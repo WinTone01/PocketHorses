@@ -1,7 +1,7 @@
 package it.pika.pockethorses.storage.impl;
 
 import it.pika.libs.sql.sqlite.Connection;
-import it.pika.pockethorses.PocketHorses;
+import it.pika.pockethorses.Main;
 import it.pika.pockethorses.enums.StorageType;
 import it.pika.pockethorses.objects.horses.ConfigHorse;
 import it.pika.pockethorses.objects.horses.Horse;
@@ -27,17 +27,17 @@ public class SQLite extends Storage {
     @Override
     @SneakyThrows
     public void init() {
-        file = new File(PocketHorses.getInstance().getDataFolder(), "storage.db");
+        file = new File(Main.getInstance().getDataFolder(), "storage.db");
         if (!file.exists()) {
             if (!file.createNewFile())
-                PocketHorses.getConsole().warning("An error occurred");
+                Main.getConsole().warning("An error occurred");
         }
 
         connection = new Connection(file);
         connection.connect();
 
         if (connection.isConnectionValid()) {
-            Bukkit.getScheduler().runTaskAsynchronously(PocketHorses.getInstance(), () -> {
+            Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> {
                 try {
                     connection.update("CREATE TABLE IF NOT EXISTS `horses` (" +
                             "`uuid` VARCHAR(255) NOT NULL PRIMARY KEY," +
@@ -54,7 +54,7 @@ public class SQLite extends Storage {
                                 result.getString("customName"),
                                 result.getString("storedItems"));
 
-                        PocketHorses.getCache().add(horse);
+                        Main.getCache().add(horse);
                     }
 
                     result.close();
@@ -74,10 +74,10 @@ public class SQLite extends Storage {
     @Override
     @SneakyThrows
     public void giveHorse(Player player, ConfigHorse horse) {
-        Bukkit.getScheduler().runTaskAsynchronously(PocketHorses.getInstance(), () -> {
+        Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> {
             var uuid = UUID.randomUUID();
 
-            PocketHorses.getCache().add(new Horse(uuid, horse.getId(), player.getName(),
+            Main.getCache().add(new Horse(uuid, horse.getId(), player.getName(),
                     null, null));
 
             try {
@@ -92,8 +92,8 @@ public class SQLite extends Storage {
     @Override
     @SneakyThrows
     public void takeHorse(Player player, Horse horse) {
-        Bukkit.getScheduler().runTaskAsynchronously(PocketHorses.getInstance(), () -> {
-            PocketHorses.getCache().remove(horse);
+        Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> {
+            Main.getCache().remove(horse);
 
             try {
                 connection.preparedUpdate("DELETE FROM horses WHERE uuid = ?", horse.getUuid().toString());
@@ -105,8 +105,8 @@ public class SQLite extends Storage {
 
     @Override
     public void setCustomName(Horse horse, String name) {
-        Bukkit.getScheduler().runTaskAsynchronously(PocketHorses.getInstance(), () -> {
-            PocketHorses.getCache().get(PocketHorses.getCache().lastIndexOf(PocketHorses.getHorse(horse.getUuid()))).setCustomName(name);
+        Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> {
+            Main.getCache().get(Main.getCache().lastIndexOf(Main.getHorse(horse.getUuid()))).setCustomName(name);
 
             try {
                 connection.preparedUpdate("UPDATE horses SET customName = ? WHERE uuid = ?", name,
@@ -120,8 +120,8 @@ public class SQLite extends Storage {
     @Override
     @SneakyThrows
     public void setStoredItems(Horse horse, ItemStack[] items) {
-        Bukkit.getScheduler().runTaskAsynchronously(PocketHorses.getInstance(), () -> {
-            PocketHorses.getCache().get(PocketHorses.getCache().lastIndexOf(PocketHorses.getHorse(horse.getUuid())))
+        Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> {
+            Main.getCache().get(Main.getCache().lastIndexOf(Main.getHorse(horse.getUuid())))
                     .setStoredItems(Serializer.serialize(items));
 
             try {

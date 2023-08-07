@@ -2,7 +2,7 @@ package it.pika.pockethorses.storage.impl;
 
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
-import it.pika.pockethorses.PocketHorses;
+import it.pika.pockethorses.Main;
 import it.pika.pockethorses.enums.StorageType;
 import it.pika.pockethorses.objects.horses.ConfigHorse;
 import it.pika.pockethorses.objects.horses.Horse;
@@ -28,10 +28,10 @@ public class JSON extends Storage {
     @Override
     @SneakyThrows
     public void init() {
-        file = new File(PocketHorses.getInstance().getDataFolder(), "storage.json");
+        file = new File(Main.getInstance().getDataFolder(), "storage.json");
         if (!file.exists())
             if (!file.createNewFile())
-                PocketHorses.getConsole().warning("An error occurred");
+                Main.getConsole().warning("An error occurred");
 
         var reader = new FileReader(file);
         var horses = gson.fromJson(reader, Horse[].class);
@@ -39,38 +39,38 @@ public class JSON extends Storage {
         if (horses == null)
             return;
 
-        PocketHorses.setCache(Lists.newArrayList(horses));
+        Main.setCache(Lists.newArrayList(horses));
     }
 
     @Override
     @SneakyThrows
     public void close() {
         var writer = new FileWriter(file, false);
-        gson.toJson(PocketHorses.getCache(), writer);
+        gson.toJson(Main.getCache(), writer);
         writer.flush();
         writer.close();
     }
 
     @Override
     public void giveHorse(Player player, ConfigHorse horse) {
-        PocketHorses.getCache().add(new Horse(UUID.randomUUID(), horse.getId(), player.getName(),
+        Main.getCache().add(new Horse(UUID.randomUUID(), horse.getId(), player.getName(),
                 null, null));
     }
 
     @Override
     @SneakyThrows
     public void takeHorse(Player player, Horse horse) {
-        PocketHorses.getCache().remove(horse);
+        Main.getCache().remove(horse);
     }
 
     @Override
     public void setCustomName(Horse horse, String name) {
-        PocketHorses.getCache().get(PocketHorses.getCache().lastIndexOf(PocketHorses.getHorse(horse.getUuid()))).setCustomName(name);
+        Main.getCache().get(Main.getCache().lastIndexOf(Main.getHorse(horse.getUuid()))).setCustomName(name);
     }
 
     @Override
     public void setStoredItems(Horse horse, ItemStack[] items) {
-        PocketHorses.getCache().get(PocketHorses.getCache().lastIndexOf(PocketHorses.getHorse(horse.getUuid())))
+        Main.getCache().get(Main.getCache().lastIndexOf(Main.getHorse(horse.getUuid())))
                 .setStoredItems(Serializer.serialize(items));
     }
 

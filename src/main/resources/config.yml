@@ -20,6 +20,7 @@ Storage:
     Password: ''
 
 Options:
+  Language: 'en' # The language used for the plugin messages
   Economy-Type: 'Vault' # The plugin used to manage the plugin economy, can be 'Vault' or 'PlayerPoints'
   Shop-Enabled: true # If enabled, players will be able to purchase horses through the /horses shop command
   More-Horses-At-Time: true # If enabled, players will be able to spawn more than one horse at a time

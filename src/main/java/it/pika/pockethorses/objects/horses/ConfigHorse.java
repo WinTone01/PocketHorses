@@ -1,7 +1,7 @@
 package it.pika.pockethorses.objects.horses;
 
 import it.pika.libs.config.Config;
-import it.pika.pockethorses.PocketHorses;
+import it.pika.pockethorses.Main;
 import it.pika.pockethorses.enums.HorseColor;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -33,16 +33,16 @@ public class ConfigHorse {
     private String model;
 
     public static ConfigHorse of(String name) {
-        var file = new File(PocketHorses.getInstance().getDataFolder()
+        var file = new File(Main.getInstance().getDataFolder()
                 + File.separator + "Horses" + File.separator + "%s.yml".formatted(name));
         if (!file.exists())
             return null;
 
-        return load(new Config(PocketHorses.getInstance(), file));
+        return load(new Config(Main.getInstance(), file, false));
     }
 
     public static ConfigHorse of(File file) {
-        var config = new Config(PocketHorses.getInstance(), file);
+        var config = new Config(Main.getInstance(), file, false);
 
         return load(config);
     }
