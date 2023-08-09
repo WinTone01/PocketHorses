@@ -3,8 +3,8 @@ package it.pika.pockethorses.commands;
 import it.pika.libs.command.SubCommand;
 import it.pika.libs.config.Config;
 import it.pika.libs.reflection.Reflections;
-import it.pika.pockethorses.Perms;
 import it.pika.pockethorses.Main;
+import it.pika.pockethorses.Perms;
 import it.pika.pockethorses.enums.Messages;
 import it.pika.pockethorses.menu.editor.EditingHorseMenu;
 import it.pika.pockethorses.menu.editor.EditorMainMenu;
@@ -37,32 +37,84 @@ public class MainCmd extends SubCommand {
     }
 
     @SubCommandName("give")
-    @SubCommandUsage("<player> <horse>")
-    @SubCommandMinArgs(2)
+    @SubCommandUsage("<horse|voucher|item> <player> <name>")
+    @SubCommandMinArgs(3)
     @SubCommandPermission(Perms.GIVE)
     public void give(CommandSender sender, String label, String[] args) {
         var player = Validator.getPlayerSender(sender);
-        var target = Validator.getOnlinePlayer(args[0]);
-        var horse = Main.getLoadedHorse(args[1]);
 
-        if (horse == null) {
-            error(player, Messages.HORSE_NOT_EXISTING.get());
-            return;
+        if (args.length == 3) {
+            var target = Validator.getOnlinePlayer(args[1]);
+
+            if (args[0].equalsIgnoreCase("horse")) {
+                var horse = Main.getLoadedHorse(args[2]);
+
+                if (horse == null) {
+                    error(player, Messages.HORSE_NOT_EXISTING.get());
+                    return;
+                }
+
+                if (Main.has(player, horse.getId()) &&
+                        !Main.getConfigFile().getBoolean("Options.More-Than-Once-Same-Horse")) {
+                    error(player, Messages.ALREADY_OWNED.get());
+                    return;
+                }
+
+                if (!Main.respectsLimit(player)) {
+                    error(player, Messages.LIMIT_REACHED.get());
+                    return;
+                }
+
+                Main.getStorage().giveHorse(target, horse);
+                success(player, Messages.HORSE_GIVEN.get().formatted(target.getName()));
+            } else if (args[0].equalsIgnoreCase("voucher")) {
+                var voucher = Voucher.of(args[2]);
+                if (voucher == null) {
+                    error(player, Messages.VOUCHER_NOT_EXISTING.get());
+                    return;
+                }
+
+                target.getInventory().addItem(voucher.getItem());
+                success(player, Messages.VOUCHER_GIVEN.get().formatted(target.getName()));
+            } else {
+                for (String s : Main.getLanguageManager().getMainHelp())
+                    player.sendMessage(Main.parseColors(s));
+            }
+        } else if (args.length == 4) {
+            if (args[0].equalsIgnoreCase("item")) {
+                var type = args[1];
+                var target = Validator.getOnlinePlayer(args[2]);
+                var name = args[3];
+
+                if (type.equalsIgnoreCase("SUPPLEMENT")) {
+                    var supplement = Supplement.of(name);
+                    if (supplement == null) {
+                        error(player, Messages.ITEM_NOT_EXISTING.get());
+                        return;
+                    }
+
+                    target.getInventory().addItem(supplement.getItem());
+                    success(player, Messages.ITEM_GIVEN.get());
+                } else if (type.equalsIgnoreCase("CARE")) {
+                    var care = Care.of(name);
+                    if (care == null) {
+                        error(player, Messages.ITEM_NOT_EXISTING.get());
+                        return;
+                    }
+
+                    target.getInventory().addItem(care.getItem());
+                    success(player, Messages.ITEM_GIVEN.get());
+                } else {
+                    error(player, Messages.ITEM_TYPE_NOT_EXISTING.get());
+                }
+            } else {
+                for (String s : Main.getLanguageManager().getMainHelp())
+                    player.sendMessage(Main.parseColors(s));
+            }
+        } else {
+            for (String s : Main.getLanguageManager().getMainHelp())
+                player.sendMessage(Main.parseColors(s));
         }
-
-        if (Main.has(player, horse.getId()) &&
-                !Main.getConfigFile().getBoolean("Options.More-Than-Once-Same-Horse")) {
-            error(player, Messages.ALREADY_OWNED.get());
-            return;
-        }
-
-        if (!Main.respectsLimit(player)) {
-            error(player, Messages.LIMIT_REACHED.get());
-            return;
-        }
-
-        Main.getStorage().giveHorse(target, horse);
-        success(player, Messages.HORSE_GIVEN.get().formatted(target.getName()));
     }
 
     @SubCommandName("editor")
@@ -93,39 +145,31 @@ public class MainCmd extends SubCommand {
     }
 
     @SubCommandName("list")
+    @SubCommandUsage("<horses|vouchers|items>")
+    @SubCommandMinArgs(1)
     @SubCommandPermission(Perms.LIST)
     public void list(CommandSender sender, String label, String[] args) {
-        sender.sendMessage(Main.parseColors(Main.getConfigFile().getString("Horses-List.Header")));
-        for (ConfigHorse horse : Main.getLoadedHorses())
-            sender.sendMessage(Main.parseColors(Main.getConfigFile().getString("Horses-List.Horse"))
-                    .replaceAll("%horse%", horse.getId()));
-    }
-
-    @SubCommandName("giveVoucher")
-    @SubCommandMinArgs(2)
-    @SubCommandUsage("<player> <voucher>")
-    @SubCommandPermission(Perms.GIVE_VOUCHER)
-    public void giveVoucher(CommandSender sender, String label, String[] args) {
-        var player = Validator.getPlayerSender(sender);
-        var target = Validator.getOnlinePlayer(args[0]);
-
-        var voucher = Voucher.of(args[1]);
-        if (voucher == null) {
-            error(player, Messages.VOUCHER_NOT_EXISTING.get());
-            return;
+        if (args[0].equalsIgnoreCase("horses")) {
+            sender.sendMessage(Main.parseColors(Main.getConfigFile().getString("Horses-List.Header")));
+            for (ConfigHorse horse : Main.getLoadedHorses())
+                sender.sendMessage(Main.parseColors(Main.getConfigFile().getString("Horses-List.Horse"))
+                        .replaceAll("%horse%", horse.getId()));
+        } else if (args[0].equalsIgnoreCase("vouchers")) {
+            sender.sendMessage(Main.parseColors(Main.getConfigFile().getString("Vouchers.List.Header")));
+            for (String key : Objects.requireNonNull(Main.getVouchersFile().getConfigurationSection("")).getKeys(false))
+                sender.sendMessage(Main.parseColors(Main.getConfigFile().getString("Vouchers.List.Voucher"))
+                        .replaceAll("%voucher%", key));
+        } else if (args[0].equalsIgnoreCase("items")) {
+            sender.sendMessage(Main.parseColors(Main.getConfigFile().getString("Items-List.Header")));
+            for (String key : Objects.requireNonNull(Main.getItemsFile().getConfigurationSection("")).getKeys(false))
+                sender.sendMessage(Main.parseColors(Main.getConfigFile().getString("Items-List.Item"))
+                        .replaceAll("%item%", key)
+                        .replaceAll("%type%",
+                                Objects.requireNonNull(Main.getItemsFile().getString("%s.Type".formatted(key)))));
+        } else {
+            for (String s : Main.getLanguageManager().getMainHelp())
+                sender.sendMessage(Main.parseColors(s));
         }
-
-        target.getInventory().addItem(voucher.getItem());
-        success(player, Messages.VOUCHER_GIVEN.get().formatted(target.getName()));
-    }
-
-    @SubCommandName("listVouchers")
-    @SubCommandPermission(Perms.LIST_VOUCHERS)
-    public void listVouchers(CommandSender sender, String label, String[] args) {
-        sender.sendMessage(Main.parseColors(Main.getConfigFile().getString("Vouchers.List.Header")));
-        for (String key : Objects.requireNonNull(Main.getVouchersFile().getConfigurationSection("")).getKeys(false))
-            sender.sendMessage(Main.parseColors(Main.getConfigFile().getString("Vouchers.List.Voucher"))
-                    .replaceAll("%voucher%", key));
     }
 
     @SubCommandName("reload")
@@ -180,51 +224,6 @@ public class MainCmd extends SubCommand {
     public void help(CommandSender sender, String label, String[] args) {
         for (String s : Main.getLanguageManager().getMainHelp())
             sender.sendMessage(Main.parseColors(s));
-    }
-
-    @SubCommandName("giveItem")
-    @SubCommandUsage("<type> <player> <item>")
-    @SubCommandMinArgs(3)
-    @SubCommandPermission(Perms.GIVE_ITEM)
-    public void giveItem(CommandSender sender, String label, String[] args) {
-        var player = Validator.getPlayerSender(sender);
-
-        var type = args[0];
-        var target = Validator.getOnlinePlayer(args[1]);
-        var name = args[2];
-
-        if (type.equalsIgnoreCase("SUPPLEMENT")) {
-            var supplement = Supplement.of(name);
-            if (supplement == null) {
-                error(player, Messages.ITEM_NOT_EXISTING.get());
-                return;
-            }
-
-            target.getInventory().addItem(supplement.getItem());
-            success(player, Messages.ITEM_GIVEN.get());
-        } else if (type.equalsIgnoreCase("CARE")) {
-            var care = Care.of(name);
-            if (care == null) {
-                error(player, Messages.ITEM_NOT_EXISTING.get());
-                return;
-            }
-
-            target.getInventory().addItem(care.getItem());
-            success(player, Messages.ITEM_GIVEN.get());
-        } else {
-            error(player, Messages.ITEM_TYPE_NOT_EXISTING.get());
-        }
-    }
-
-    @SubCommandName("listItems")
-    @SubCommandPermission(Perms.LIST_ITEMS)
-    public void listItems(CommandSender sender, String label, String[] args) {
-        sender.sendMessage(Main.parseColors(Main.getConfigFile().getString("Items-List.Header")));
-        for (String key : Objects.requireNonNull(Main.getItemsFile().getConfigurationSection("")).getKeys(false))
-            sender.sendMessage(Main.parseColors(Main.getConfigFile().getString("Items-List.Item"))
-                    .replaceAll("%item%", key)
-                    .replaceAll("%type%",
-                            Objects.requireNonNull(Main.getItemsFile().getString("%s.Type".formatted(key)))));
     }
 
     @SubCommandName("debug")

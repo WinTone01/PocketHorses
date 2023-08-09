@@ -1,15 +1,15 @@
 package it.pika.pockethorses.objects.horses;
 
 import com.google.common.collect.Lists;
-import it.pika.pockethorses.Perms;
 import it.pika.pockethorses.Main;
+import it.pika.pockethorses.Perms;
 import it.pika.pockethorses.api.events.HorseSpawnEvent;
 import it.pika.pockethorses.enums.Messages;
 import it.pika.pockethorses.utils.Serializer;
+import it.pika.pockethorses.utils.xseries.XMaterial;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -57,7 +57,7 @@ public class Horse {
                             horse.setAdult();
                             horse.setTamed(true);
                             horse.setOwner(player);
-                            horse.getInventory().setSaddle(new ItemStack(Material.SADDLE));
+                            horse.getInventory().setSaddle(new ItemStack(XMaterial.SADDLE.parseMaterial()));
 
                             horse.setTarget(player);
                             horse.setColor(configHorse.getColor().getBukkitColor());
@@ -117,7 +117,7 @@ public class Horse {
                             horse.setAdult();
                             horse.setTamed(true);
                             horse.setOwner(player);
-                            horse.getInventory().setSaddle(new ItemStack(Material.SADDLE));
+                            horse.getInventory().setSaddle(new ItemStack(XMaterial.SADDLE.parseMaterial()));
 
                             horse.setTarget(player);
 
@@ -174,7 +174,7 @@ public class Horse {
                             horse.setAdult();
                             horse.setTamed(true);
                             horse.setOwner(player);
-                            horse.getInventory().setSaddle(new ItemStack(Material.SADDLE));
+                            horse.getInventory().setSaddle(new ItemStack(XMaterial.SADDLE.parseMaterial()));
 
                             horse.setTarget(player);
 
@@ -251,5 +251,6 @@ public class Horse {
         player.openInventory(inventory);
         Main.getInHorseStorage().put(player.getName(), this);
     }
+
 
 }

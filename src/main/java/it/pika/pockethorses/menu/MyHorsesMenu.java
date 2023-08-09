@@ -1,5 +1,6 @@
 package it.pika.pockethorses.menu;
 
+import com.google.common.collect.Lists;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.flags.Flag;
@@ -9,8 +10,8 @@ import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import it.pika.libs.item.ItemBuilder;
-import it.pika.pockethorses.Perms;
 import it.pika.pockethorses.Main;
+import it.pika.pockethorses.Perms;
 import it.pika.pockethorses.enums.Messages;
 import it.pika.pockethorses.objects.horses.ConfigHorse;
 import it.pika.pockethorses.objects.horses.Horse;
@@ -39,7 +40,11 @@ public class MyHorsesMenu implements InventoryProvider {
 
     @Override
     public void init(Player player, InventoryContents contents) {
-        for (Horse horse : Main.getHorsesOf(player)) {
+        var horses = Lists.newArrayList(Main.getHorsesOf(player));
+        horses.sort((o1, o2) -> o1.getCustomName() != null && o2.getCustomName() != null
+                ? o1.getCustomName().compareTo(o2.getCustomName()) : o1.getName().compareTo(o2.getName()));
+
+        for (Horse horse : horses) {
             var configHorse = ConfigHorse.of(horse.getName());
             if (configHorse == null)
                 continue;

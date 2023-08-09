@@ -12,6 +12,7 @@ import it.pika.pockethorses.Main;
 import it.pika.pockethorses.enums.Messages;
 import it.pika.pockethorses.objects.horses.ConfigHorse;
 import it.pika.pockethorses.objects.horses.EditingHorse;
+import it.pika.pockethorses.utils.xseries.XMaterial;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.wesjd.anvilgui.AnvilGUI;
@@ -56,7 +57,7 @@ public class EditingHorseMenu implements InventoryProvider {
                 .plugin(Main.getInstance())
                 .title("Set value")
                 .text("Set value")
-                .itemLeft(new ItemStack(Material.PAPER))
+                .itemLeft(new ItemStack(XMaterial.PAPER.parseMaterial()))
                 .onClick((slot, stateSnapshot) -> {
                     if (slot != AnvilGUI.Slot.OUTPUT)
                         return Collections.emptyList();
@@ -86,7 +87,7 @@ public class EditingHorseMenu implements InventoryProvider {
                 .plugin(Main.getInstance())
                 .title("Set value")
                 .text("Set value")
-                .itemLeft(new ItemStack(Material.PAPER))
+                .itemLeft(new ItemStack(XMaterial.PAPER.parseMaterial()))
                 .onClick((slot, stateSnapshot) -> {
                     if (slot != AnvilGUI.Slot.OUTPUT)
                         return Collections.emptyList();
@@ -136,7 +137,7 @@ public class EditingHorseMenu implements InventoryProvider {
                 .plugin(Main.getInstance())
                 .title("Set value")
                 .text("Set value")
-                .itemLeft(new ItemStack(Material.PAPER))
+                .itemLeft(new ItemStack(XMaterial.PAPER.parseMaterial()))
                 .onClick((slot, stateSnapshot) -> {
                     if (slot != AnvilGUI.Slot.OUTPUT)
                         return Collections.emptyList();
@@ -159,7 +160,7 @@ public class EditingHorseMenu implements InventoryProvider {
                 .plugin(Main.getInstance())
                 .title("Set value")
                 .text("Set value")
-                .itemLeft(new ItemStack(Material.PAPER))
+                .itemLeft(new ItemStack(XMaterial.PAPER.parseMaterial()))
                 .onClick((slot, stateSnapshot) -> {
                     if (slot != AnvilGUI.Slot.OUTPUT)
                         return Collections.emptyList();
@@ -191,7 +192,7 @@ public class EditingHorseMenu implements InventoryProvider {
                 .plugin(Main.getInstance())
                 .title("Set value")
                 .text("Set value")
-                .itemLeft(new ItemStack(Material.PAPER))
+                .itemLeft(new ItemStack(XMaterial.PAPER.parseMaterial()))
                 .onClick((slot, stateSnapshot) -> {
                     if (slot != AnvilGUI.Slot.OUTPUT)
                         return Collections.emptyList();
@@ -225,7 +226,7 @@ public class EditingHorseMenu implements InventoryProvider {
                 .plugin(Main.getInstance())
                 .title("Set value")
                 .text("Set value")
-                .itemLeft(new ItemStack(Material.PAPER))
+                .itemLeft(new ItemStack(XMaterial.PAPER.parseMaterial()))
                 .onClick((slot, stateSnapshot) -> {
                     if (slot != AnvilGUI.Slot.OUTPUT)
                         return Collections.emptyList();

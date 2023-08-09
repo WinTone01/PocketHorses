@@ -1,10 +1,11 @@
 package it.pika.pockethorses.listeners;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
-import it.pika.pockethorses.Perms;
 import it.pika.pockethorses.Main;
+import it.pika.pockethorses.Perms;
 import it.pika.pockethorses.enums.Messages;
 import it.pika.pockethorses.objects.Voucher;
+import it.pika.pockethorses.utils.xseries.Titles;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
@@ -56,9 +57,9 @@ public class VoucherListener implements Listener {
         }
 
         item.setAmount(item.getAmount() - 1);
-        player.sendTitle(Main.parseColors(Main.getConfigFile().getString("Vouchers.Opening.Title")),
-                Main.parseColors(Main.getConfigFile().getString("Vouchers.Opening.Sub-Title")),
-                0, 20 * Main.getConfigFile().getInt("Vouchers.Opening.Delay"), 0);
+        Titles.sendTitle(player, 0, 20 * Main.getConfigFile().getInt("Vouchers.Opening.Delay"), 0,
+                Main.parseColors(Main.getConfigFile().getString("Vouchers.Opening.Title")),
+                Main.parseColors(Main.getConfigFile().getString("Vouchers.Opening.Sub-Title")));
         player.playSound(player.getLocation(),
                 Sound.valueOf(Main.getConfigFile().getString("Vouchers.Opening.Sound")), 1F, 1F);
 
@@ -66,10 +67,10 @@ public class VoucherListener implements Listener {
             var reward = voucher.getRewards().get(new Random().nextInt(voucher.getRewards().size()));
 
             Main.getStorage().giveHorse(player, reward);
-            player.sendTitle(Main.parseColors(Main.getConfigFile().getString("Vouchers.Reward.Title")),
+            Titles.sendTitle(player, 0, 40, 0, Main.parseColors(Main.getConfigFile().getString("Vouchers.Reward.Title")),
                     Main.parseColors(Objects.requireNonNull(Main.getConfigFile()
                                     .getString("Vouchers.Reward.Sub-Title"))
-                            .replaceAll("%reward%", reward.getDisplayName())), 0, 40, 0);
+                            .replaceAll("%reward%", reward.getDisplayName())));
             player.playSound(player.getLocation(),
                     Sound.valueOf(Main.getConfigFile().getString("Vouchers.Reward.Sound")), 1F, 1F);
         }, 20L * Main.getConfigFile().getInt("Vouchers.Opening.Delay"));

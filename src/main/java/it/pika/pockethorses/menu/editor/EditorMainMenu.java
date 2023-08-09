@@ -13,6 +13,7 @@ import it.pika.pockethorses.enums.Messages;
 import it.pika.pockethorses.menu.ConfirmMenu;
 import it.pika.pockethorses.objects.horses.ConfigHorse;
 import it.pika.pockethorses.objects.horses.EditingHorse;
+import it.pika.pockethorses.utils.xseries.XMaterial;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -101,7 +102,7 @@ public class EditorMainMenu implements InventoryProvider {
                     .plugin(Main.getInstance())
                     .title("Set name")
                     .text("Set name")
-                    .itemLeft(new ItemStack(Material.PAPER))
+                    .itemLeft(new ItemStack(XMaterial.PAPER.parseMaterial()))
                     .onClick((slot, stateSnapshot) -> {
                         if (Main.getLoadedHorse(stateSnapshot.getText()) != null) {
                             error(player, Messages.HORSE_ALREADY_EXISTS.get());

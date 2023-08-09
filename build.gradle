@@ -68,7 +68,6 @@ dependencies {
         transitive = false
     }
 
-
     compileOnly 'com.zaxxer:HikariCP:5.0.1'
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
     compileOnly 'me.clip:placeholderapi:2.11.3'
@@ -109,7 +108,7 @@ tasks.withType(JavaCompile).configureEach {
 shadowJar {
     archiveBaseName.set('PocketHorses')
     archiveClassifier.set('')
-    archiveVersion.set('1.8.3.1')
+    archiveVersion.set('1.8.5')
 
     relocate 'fr.minuskube.inv', 'it.pika.libs.smartinvs'
     relocate 'net.wesjd.anvilgui', 'it.pika.libs.anvilgui'

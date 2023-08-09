@@ -1,8 +1,8 @@
 package it.pika.pockethorses.listeners;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
-import it.pika.pockethorses.Perms;
 import it.pika.pockethorses.Main;
+import it.pika.pockethorses.Perms;
 import it.pika.pockethorses.enums.Messages;
 import it.pika.pockethorses.menu.HorseMenu;
 import it.pika.pockethorses.objects.horses.ConfigHorse;
@@ -10,8 +10,7 @@ import it.pika.pockethorses.objects.horses.SpawnedHorse;
 import it.pika.pockethorses.objects.items.Care;
 import it.pika.pockethorses.objects.items.Supplement;
 import it.pika.pockethorses.utils.Serializer;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
+import it.pika.pockethorses.utils.xseries.ActionBar;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.AbstractHorse;
@@ -27,6 +26,7 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 import java.util.Objects;
+import java.util.concurrent.Callable;
 
 import static it.pika.libs.chat.Chat.error;
 import static it.pika.libs.chat.Chat.success;
@@ -147,6 +147,9 @@ public class HorseListener implements Listener {
             spawnedHorse.getEntity().addPassenger(player);
         }
 
+        ActionBar.sendActionBarWhile(Main.getInstance(), player, Main.parseMessage(Main.getConfigFile()
+                        .getString("Options.Action-Bar-Message"), spawnedHorse, player),
+                () -> player.getVehicle() != null && Main.getSpawnedHorse(player.getVehicle()) != null);
         player.sendMessage(Main.parseMessage(Messages.RIDING_HORSE.get(), spawnedHorse, player));
     }
 
@@ -213,25 +216,6 @@ public class HorseListener implements Listener {
             Main.teleport(spawnedHorse.getEntity(), player.getLocation());
             success(player, Messages.AUTO_RECALLED.get());
         }
-    }
-
-    @EventHandler
-    public void actionBar(PlayerMoveEvent event) {
-        var player = event.getPlayer();
-
-        if (player.getVehicle() == null)
-            return;
-
-        var spawnedHorse = Main.getSpawnedHorse(player.getVehicle());
-        if (spawnedHorse == null)
-            return;
-
-        if (!Main.getConfigFile().getBoolean("Options.Action-Bar-While-Riding"))
-            return;
-
-        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(Main
-                .parseMessage(Main.getConfigFile().getString("Options.Action-Bar-Message"),
-                        spawnedHorse, player)));
     }
 
     @EventHandler

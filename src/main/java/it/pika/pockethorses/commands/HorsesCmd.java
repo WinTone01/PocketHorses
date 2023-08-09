@@ -1,12 +1,14 @@
 package it.pika.pockethorses.commands;
 
 import it.pika.libs.command.SubCommand;
-import it.pika.pockethorses.Perms;
 import it.pika.pockethorses.Main;
+import it.pika.pockethorses.Perms;
 import it.pika.pockethorses.enums.Messages;
 import it.pika.pockethorses.menu.MyHorsesMenu;
 import it.pika.pockethorses.menu.ShopMenu;
+import it.pika.pockethorses.objects.horses.ConfigHorse;
 import it.pika.pockethorses.objects.horses.SpawnedHorse;
+import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -78,6 +80,44 @@ public class HorsesCmd extends SubCommand {
     public void help(CommandSender sender, String label, String[] args) {
         for (String s : Main.getLanguageManager().getHorsesHelp())
             sender.sendMessage(Main.parseColors(s));
+    }
+
+    @SubCommandName("buy")
+    @SubCommandUsage("<horse>")
+    @SubCommandMinArgs(1)
+    @SubCommandPermission(Perms.BUY)
+    public void buy(CommandSender sender, String label, String[] args) {
+        var player = Validator.getPlayerSender(sender);
+        var horse = ConfigHorse.of(args[0]);
+
+        if (horse == null || !horse.isBuyable()) {
+            error(player, Messages.HORSE_NOT_EXISTING.get());
+            return;
+        }
+
+        if (Main.has(player, horse.getId()) &&
+                !Main.getConfigFile().getBoolean("Options.More-Than-Once-Same-Horse")) {
+            error(player, Messages.ALREADY_OWNED.get());
+            return;
+        }
+
+        if (!Main.respectsLimit(player)) {
+            error(player, Messages.LIMIT_REACHED.get());
+            return;
+        }
+
+        if (!Main.getEconomy().has(player, horse.getPrice())) {
+            error(player, Messages.NOT_ENOUGH_MONEY.get());
+            return;
+        }
+
+        Main.getEconomy().withdraw(player, horse.getPrice());
+        Main.getStorage().giveHorse(player, horse);
+
+        success(player, Messages.PURCHASE_COMPLETED.get());
+        if (Main.getConfigFile().getBoolean("Options.Play-Sound-When-Buy"))
+            player.playSound(player.getLocation(), Sound.valueOf(Main.
+                    getConfigFile().getString("Shop-GUI.Buy-Sound")), 1F, 1F);
     }
 
 }

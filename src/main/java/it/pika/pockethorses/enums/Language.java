@@ -26,7 +26,9 @@ public enum Language {
     PORTUGUESE(new File(Main.getInstance().getDataFolder() + File.separator + "Languages" + File.separator
             + "messages_pt.yml")),
     SPANISH(new File(Main.getInstance().getDataFolder() + File.separator + "Languages" + File.separator
-            + "messages_es.yml"));
+            + "messages_es.yml")),
+    CHINESE(new File(Main.getInstance().getDataFolder() + File.separator + "Languages" + File.separator
+            + "messages_zh.yml"));
 
     @Getter
     private final File file;

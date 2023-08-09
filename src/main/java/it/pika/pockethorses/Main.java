@@ -31,10 +31,7 @@ import it.pika.pockethorses.storage.Storage;
 import it.pika.pockethorses.storage.impl.JSON;
 import it.pika.pockethorses.storage.impl.MySQL;
 import it.pika.pockethorses.storage.impl.SQLite;
-import it.pika.pockethorses.utils.Cooldown;
-import it.pika.pockethorses.utils.LanguageManager;
-import it.pika.pockethorses.utils.Metrics;
-import it.pika.pockethorses.utils.UpdateChecker;
+import it.pika.pockethorses.utils.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -56,14 +53,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 public final class Main extends JavaPlugin {
 
     @Getter
     private static Main instance = null;
     @Getter
-    private static final Logger console = Logger.getLogger("PocketHorses");
+    private static final Logger console = new Logger("PocketHorses");
     @Getter
     private static Storage storage = null;
     @Getter
@@ -113,17 +109,27 @@ public final class Main extends JavaPlugin {
     private static boolean modelEngineEnabled = false;
 
 
-    public static final String VERSION = "1.8.3.1";
+    public static final String VERSION = "1.8.5";
 
     @Override
     public void onLoad() {
         setupWorldGuard();
+
+        if (!setupPlaceholders())
+            console.warning("PlaceholderAPI not found, you will not be able to use placeholders!");
     }
 
     @Override
     public void onEnable() {
         instance = this;
         var stopwatch = Stopwatch.createStarted();
+
+        console.info("§6  ____  _   _ ");
+        console.info("§6 |  _ \\| | | |");
+        console.info("§6 | |_) | |_| |    §6Pocket§eHorses §7v%s §8| §aEnabling..".formatted(VERSION));
+        console.info("§6 |  __/|  _  |    §7Made with §clove §7and §epizza §7by §bzPikaa§7.");
+        console.info("§6 |_|   |_| |_|");
+        console.info("§6              ");
 
         if (Reflections.getNumericalVersion() < 13) {
             stopwatch.stop();
@@ -143,8 +149,6 @@ public final class Main extends JavaPlugin {
             shopEnabled = false;
             console.warning("Couldn't setup economy, you will not be able to use shop-related features!");
         }
-        if (!setupPlaceholders())
-            console.warning("PlaceholderAPI not found, you will not be able to use placeholders!");
 
         registerListeners();
         registerCommands();
@@ -246,6 +250,7 @@ public final class Main extends JavaPlugin {
         if (!horsesFolder.exists())
             return;
 
+        console.info(""); // For a good appearance
         for (File file : Objects.requireNonNull(horsesFolder.listFiles())) {
             if (!file.getName().endsWith(".yml"))
                 continue;
@@ -257,6 +262,7 @@ public final class Main extends JavaPlugin {
             loadedHorses.add(horse);
             console.info("Loaded horse: %s".formatted(file.getName().replaceAll(".yml", "")));
         }
+        console.info(""); // For a good appearance
     }
 
     private void setupInventories() {
@@ -304,7 +310,6 @@ public final class Main extends JavaPlugin {
         placeholdersHook = new PlaceholdersHook();
         placeholdersEnabled = true;
 
-        console.info("Hooked into PlaceholderAPI!");
         return true;
     }
 
@@ -318,8 +323,6 @@ public final class Main extends JavaPlugin {
         worldGuardHook.init();
 
         worldGuardEnabled = true;
-
-        console.info("Hooked into WorldGuard!");
     }
 
     private void setupModelEngine() {
@@ -329,8 +332,6 @@ public final class Main extends JavaPlugin {
 
         modelEngineEnabled = true;
         modelEngineHook = new ModelEngineHook();
-
-        console.info("Hooked into ModelEngine!");
     }
 
     private void checkForUpdates() {

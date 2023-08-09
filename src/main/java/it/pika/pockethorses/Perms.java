@@ -22,7 +22,8 @@ public class Perms {
             LIST_ITEMS = "pockethorses.list.items",
             DEBUG = "pockethorses.debug",
             REMOVE = "pockethorses.remove",
-            HORSE_INFO = "pockethorses.info";
+            HORSE_INFO = "pockethorses.info",
+            BUY = "pockethorses.buy";
 
     public static String getHorse(String name) {
         return "pockethorses.horse.%s".formatted(name);
