@@ -115,9 +115,7 @@ public class MyHorsesMenu implements InventoryProvider {
                                 if (spawnedHorse.getUuid() != horse.getUuid())
                                     continue;
 
-                                spawnedHorse.getEntity().remove();
-                                if (Main.getModelEngineHook() != null)
-                                    Main.getModelEngineHook().remove(spawnedHorse);
+                                spawnedHorse.remove(player);
                             }
                         }
 

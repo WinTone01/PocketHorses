@@ -1,8 +1,12 @@
 package it.pika.pockethorses.objects.horses;
 
+import it.pika.pockethorses.Main;
+import it.pika.pockethorses.api.events.HorseDespawnEvent;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
@@ -25,6 +29,23 @@ public class SpawnedHorse extends Horse {
         this.sit = sit;
         this.autoRecall = autoRecall;
         this.modeledEntity = modeledEntity;
+    }
+
+    public void remove(Player player) {
+        var event = new HorseDespawnEvent(player, this);
+        Bukkit.getPluginManager().callEvent(event);
+
+        if (event.isCancelled())
+            return;
+
+        if (Main.getSpawnedHorses().get(player.getName()).size() == 1)
+            Main.getSpawnedHorses().remove(player.getName());
+        else
+            Main.getSpawnedHorses().get(player.getName()).remove(this);
+
+        entity.remove();
+        if (Main.getModelEngineHook() != null)
+            Main.getModelEngineHook().remove(this);
     }
 
 }

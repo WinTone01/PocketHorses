@@ -120,4 +120,18 @@ public class HorsesCmd extends SubCommand {
                     getConfigFile().getString("Shop-GUI.Buy-Sound")), 1F, 1F);
     }
 
+    @SubCommandName("autoRemove")
+    @SubCommandPermission(Perms.AUTO_REMOVE)
+    public void autoRemove(CommandSender sender, String label, String[] args) {
+        var player = Validator.getPlayerSender(sender);
+
+        if (Main.getAutoRemove().contains(player.getName())) {
+            Main.getAutoRemove().remove(player.getName());
+            success(player, Messages.AUTO_REMOVE_DISABLED.get());
+        } else {
+            Main.getAutoRemove().add(player.getName());
+            success(player, Messages.AUTO_REMOVE_ENABLED.get());
+        }
+    }
+
 }

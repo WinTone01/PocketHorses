@@ -7,13 +7,11 @@ import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.SlotPos;
 import it.pika.libs.item.ItemBuilder;
 import it.pika.pockethorses.Main;
-import it.pika.pockethorses.api.events.HorseDespawnEvent;
 import it.pika.pockethorses.enums.Messages;
 import it.pika.pockethorses.objects.horses.ConfigHorse;
 import it.pika.pockethorses.objects.horses.SpawnedHorse;
 import lombok.AllArgsConstructor;
 import net.wesjd.anvilgui.AnvilGUI;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.AbstractHorse;
@@ -173,22 +171,7 @@ public class HorseMenu implements InventoryProvider {
                 .name(Main.parseMessage(Main.getConfigFile().getString("Horse-GUI.Remove.Name"), horse, player))
                 .build(), e -> {
             player.closeInventory();
-
-            var event = new HorseDespawnEvent(player, horse);
-            Bukkit.getPluginManager().callEvent(event);
-
-            if (event.isCancelled())
-                return;
-
-            if (Main.getSpawnedHorses().get(player.getName()).size() == 1)
-                Main.getSpawnedHorses().remove(player.getName());
-            else
-                Main.getSpawnedHorses().get(player.getName()).remove(horse);
-
-            horse.getEntity().remove();
-            if (Main.getModelEngineHook() != null)
-                Main.getModelEngineHook().remove(horse);
-
+            horse.remove(player);
             success(player, Messages.HORSE_REMOVED.get());
         }));
     }

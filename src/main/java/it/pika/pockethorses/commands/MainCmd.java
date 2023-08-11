@@ -265,15 +265,7 @@ public class MainCmd extends SubCommand {
             if (horse == null)
                 continue;
 
-            if (Main.getSpawnedHorses().get(horse.getOwner()).size() == 1)
-                Main.getSpawnedHorses().remove(horse.getOwner());
-            else
-                Main.getSpawnedHorses().get(horse.getOwner()).remove(horse);
-
-            horse.getEntity().remove();
-            if (Main.getModelEngineHook() != null)
-                Main.getModelEngineHook().remove(horse);
-
+            horse.remove(player);
             removed++;
         }
 

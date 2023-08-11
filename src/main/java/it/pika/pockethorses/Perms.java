@@ -11,19 +11,16 @@ public class Perms {
             EDITOR = "pockethorses.editor",
             CREATE = "pockethorses.create",
             LIST = "pockethorses.list",
-            GIVE_VOUCHER = "pockethorses.give.voucher",
-            LIST_VOUCHERS = "pockethorses.list.vouchers",
             RECALL = "pockethorses.recall",
             RELOAD = "pockethorses.reload",
             HELP_MAIN = "pockethorses.help.main",
             HELP_HORSES = "pockethorses.help.horses",
             BYPASS_REGION = "pockethorses.bypass_region",
-            GIVE_ITEM = "pockethorses.give.item",
-            LIST_ITEMS = "pockethorses.list.items",
             DEBUG = "pockethorses.debug",
             REMOVE = "pockethorses.remove",
             HORSE_INFO = "pockethorses.info",
-            BUY = "pockethorses.buy";
+            BUY = "pockethorses.buy",
+            AUTO_REMOVE = "pockethorses.autoremove";
 
     public static String getHorse(String name) {
         return "pockethorses.horse.%s".formatted(name);

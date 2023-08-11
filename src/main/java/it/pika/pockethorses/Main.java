@@ -97,6 +97,8 @@ public final class Main extends JavaPlugin {
     private static final Map<String, Horse> inHorseStorage = Maps.newHashMap();
     @Getter
     private static final Map<UUID, Supplement> activeSupplements = Maps.newHashMap();
+    @Getter
+    private static final List<String> autoRemove = Lists.newArrayList();
 
 
     @Getter
@@ -109,7 +111,7 @@ public final class Main extends JavaPlugin {
     private static boolean modelEngineEnabled = false;
 
 
-    public static final String VERSION = "1.8.5";
+    public static final String VERSION = "1.8.6";
 
     @Override
     public void onLoad() {

@@ -58,7 +58,9 @@ public enum Messages {
     ITEM_USED("item-used"),
     SUPPLEMENT_EXPIRED("supplement-expired"),
     LIMIT_REACHED("limit-reached"),
-    REMOVED_HORSES("removed-horses");
+    REMOVED_HORSES("removed-horses"),
+    AUTO_REMOVE_ENABLED("auto-remove-enabled"),
+    AUTO_REMOVE_DISABLED("auto-remove-disabled");
 
     private final String path;
 

@@ -1,5 +1,5 @@
 name: PocketHorses
-version: 1.8.5
+version: 1.8.6
 main: it.pika.pockethorses.Main
 api-version: '1.13'
 author: Pika

@@ -32,16 +32,8 @@ public class PlayerListener implements Listener {
         if (horses == null)
             return;
 
-        for (SpawnedHorse horse : horses) {
-            if (horses.size() == 1)
-                Main.getSpawnedHorses().remove(player.getName());
-            else
-                Main.getSpawnedHorses().get(player.getName()).remove(horse);
-
-            horse.getEntity().remove();
-            if (Main.getModelEngineHook() != null)
-                Main.getModelEngineHook().remove(horse);
-        }
+        for (SpawnedHorse horse : horses)
+            horse.remove(player);
     }
 
 }

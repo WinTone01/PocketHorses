@@ -24,9 +24,9 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.vehicle.VehicleExitEvent;
 
 import java.util.Objects;
-import java.util.concurrent.Callable;
 
 import static it.pika.libs.chat.Chat.error;
 import static it.pika.libs.chat.Chat.success;
@@ -248,6 +248,25 @@ public class HorseListener implements Listener {
                                             .getString("Options.Display-HP"))
                                     .replaceAll("%health%", String.valueOf((int) entity.getHealth()))) : ""));
         }
+    }
+
+    @EventHandler
+    public void onDismount(VehicleExitEvent event) {
+        if (!(event.getExited() instanceof Player player))
+            return;
+
+        if (!Main.getAutoRemove().contains(player.getName()))
+            return;
+
+        if (!(event.getVehicle() instanceof AbstractHorse horse))
+            return;
+
+        var spawnedHorse = Main.getSpawnedHorse(horse);
+        if (spawnedHorse == null)
+            return;
+
+        spawnedHorse.remove(player);
+        success(player, Messages.HORSE_REMOVED.get());
     }
 
 }
