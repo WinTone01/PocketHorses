@@ -1796,7 +1796,7 @@ public enum XMaterial {
      */
     @Nonnull
     public static Optional<XMaterial> matchXMaterial(@Nonnull String name) {
-        if (name == null || name.isEmpty())
+        if (name.isEmpty())
             throw new IllegalArgumentException("Cannot match a material with null or empty material name");
         Optional<XMaterial> oldMatch = matchXMaterialWithData(name);
         return oldMatch.isPresent() ? oldMatch : matchDefinedXMaterial(format(name), UNKNOWN_DATA_VALUE);
@@ -1842,7 +1842,7 @@ public enum XMaterial {
         if (supports(9) && !supports(13) && item.hasItemMeta() && material.equals("MONSTER_EGG")) {
             ItemMeta meta = item.getItemMeta();
             if (meta instanceof SpawnEggMeta egg) {
-                material = egg.getSpawnedType().name() + "_SPAWN_EGG";
+                material = egg.getCustomSpawnedType().name() + "_SPAWN_EGG";
             }
         }
 
@@ -2268,33 +2268,18 @@ public enum XMaterial {
      * and is only used for parsing materials, not matching, for matching check {@link #DUPLICATED}
      */
     private boolean isDuplicated() {
-        switch (this.name()) {
-            case "MELON":
-            case "CARROT":
-            case "POTATO":
-            case "GRASS":
-            case "BRICK":
-            case "NETHER_BRICK":
+        return switch (this.name()) {
 
-                // Illegal Elements
-                // Since both 1.12 and 1.13 have <type>_DOOR XMaterial will use it
-                // for 1.12 to parse the material, but it needs <type>_DOOR_ITEM.
-                // We'll trick XMaterial into thinking this needs to be parsed
-                // using the old methods.
-                // Some of these materials have their enum name added to the legacy list as well.
-            case "DARK_OAK_DOOR":
-            case "ACACIA_DOOR":
-            case "BIRCH_DOOR":
-            case "JUNGLE_DOOR":
-            case "SPRUCE_DOOR":
-            case "MAP":
-            case "CAULDRON":
-            case "BREWING_STAND":
-            case "FLOWER_POT":
-                return true;
-            default:
-                return false;
-        }
+            // Illegal Elements
+            // Since both 1.12 and 1.13 have <type>_DOOR XMaterial will use it
+            // for 1.12 to parse the material, but it needs <type>_DOOR_ITEM.
+            // We'll trick XMaterial into thinking this needs to be parsed
+            // using the old methods.
+            // Some of these materials have their enum name added to the legacy list as well.
+            case "MELON", "CARROT", "POTATO", "GRASS", "BRICK", "NETHER_BRICK", "DARK_OAK_DOOR", "ACACIA_DOOR", "BIRCH_DOOR", "JUNGLE_DOOR", "SPRUCE_DOOR", "MAP", "CAULDRON", "BREWING_STAND", "FLOWER_POT" ->
+                    true;
+            default -> false;
+        };
     }
 
     /**
@@ -2305,7 +2290,7 @@ public enum XMaterial {
     private static final class Data {
         /**
          * The current version of the server in the form of a major version.
-         * If the static initialization for this fails, you know something's wrong with the server software.
+         * If the static initialization for these fails, you know something's wrong with the server software.
          *
          * @since 1.0.0
          */

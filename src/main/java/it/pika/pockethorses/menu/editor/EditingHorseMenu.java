@@ -92,7 +92,7 @@ public class EditingHorseMenu implements InventoryProvider {
                     if (slot != AnvilGUI.Slot.OUTPUT)
                         return Collections.emptyList();
 
-                    if (!isDouble(stateSnapshot.getText())) {
+                    if (isNotDouble(stateSnapshot.getText())) {
                         error(player, Messages.INVALID_NUMBER.get());
                         return List.of(AnvilGUI.ResponseAction.close(), AnvilGUI.ResponseAction.run(() -> get().open(player)));
                     }
@@ -142,7 +142,7 @@ public class EditingHorseMenu implements InventoryProvider {
                     if (slot != AnvilGUI.Slot.OUTPUT)
                         return Collections.emptyList();
 
-                    if (!isDouble(stateSnapshot.getText()) || Double.parseDouble(stateSnapshot.getText()) > 2.0) {
+                    if (isNotDouble(stateSnapshot.getText()) || Double.parseDouble(stateSnapshot.getText()) > 2.0) {
                         error(player, Messages.INVALID_NUMBER.get());
                         return List.of(AnvilGUI.ResponseAction.close(), AnvilGUI.ResponseAction.run(() -> get().open(player)));
                     }
@@ -197,7 +197,7 @@ public class EditingHorseMenu implements InventoryProvider {
                     if (slot != AnvilGUI.Slot.OUTPUT)
                         return Collections.emptyList();
 
-                    if (!isDouble(stateSnapshot.getText())) {
+                    if (isNotDouble(stateSnapshot.getText())) {
                         error(player, Messages.INVALID_NUMBER.get());
                         return List.of(AnvilGUI.ResponseAction.close(), AnvilGUI.ResponseAction.run(() -> get().open(player)));
                     }
@@ -231,7 +231,7 @@ public class EditingHorseMenu implements InventoryProvider {
                     if (slot != AnvilGUI.Slot.OUTPUT)
                         return Collections.emptyList();
 
-                    if (!isDouble(stateSnapshot.getText())) {
+                    if (isNotDouble(stateSnapshot.getText())) {
                         error(player, Messages.INVALID_NUMBER.get());
                         return List.of(AnvilGUI.ResponseAction.close(), AnvilGUI.ResponseAction.run(() -> get().open(player)));
                     }
@@ -351,12 +351,12 @@ public class EditingHorseMenu implements InventoryProvider {
         return newList;
     }
 
-    private boolean isDouble(String s) {
+    private boolean isNotDouble(String s) {
         try {
             Double.parseDouble(s);
-            return true;
-        } catch (NumberFormatException e) {
             return false;
+        } catch (NumberFormatException e) {
+            return true;
         }
     }
 

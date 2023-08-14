@@ -101,7 +101,7 @@ public class HorsesCmd extends SubCommand {
             return;
         }
 
-        if (!Main.respectsLimit(player)) {
+        if (Main.notRespectsLimit(player)) {
             error(player, Messages.LIMIT_REACHED.get());
             return;
         }

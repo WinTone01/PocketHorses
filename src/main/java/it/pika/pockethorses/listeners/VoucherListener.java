@@ -51,7 +51,7 @@ public class VoucherListener implements Listener {
         if (voucher.isPermission() && !player.hasPermission(Perms.getVoucher(voucher.getName())))
             return;
 
-        if (!Main.respectsLimit(player)) {
+        if (Main.notRespectsLimit(player)) {
             error(player, Messages.LIMIT_REACHED.get());
             return;
         }

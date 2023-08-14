@@ -111,7 +111,7 @@ public final class Main extends JavaPlugin {
     private static boolean modelEngineEnabled = false;
 
 
-    public static final String VERSION = "1.8.6";
+    public static final String VERSION = "1.8.7";
 
     @Override
     public void onLoad() {
@@ -487,9 +487,9 @@ public final class Main extends JavaPlugin {
         });
     }
 
-    public static boolean respectsLimit(Player player) {
+    public static boolean notRespectsLimit(Player player) {
         if (player.isOp() || player.hasPermission("*"))
-            return true;
+            return false;
 
         var horses = getHorsesOf(player).size();
         int limit = getConfigFile().getInt("Options.Horse-Limit");
@@ -498,7 +498,7 @@ public final class Main extends JavaPlugin {
             if (player.hasPermission(Perms.getLimit(i)))
                 limit = i;
 
-        return horses < limit;
+        return horses >= limit;
     }
 
 }

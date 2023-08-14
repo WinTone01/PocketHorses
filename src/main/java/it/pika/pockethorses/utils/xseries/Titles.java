@@ -41,8 +41,8 @@ import java.util.function.Function;
  * Messages are not colorized by default.
  * <p>
  * Titles are text messages that appear in the
- * middle of the players screen: https://minecraft.gamepedia.com/Commands/title
- * PacketPlayOutTitle: https://wiki.vg/Protocol#Title
+ * middle of the players screen: <a href="https://minecraft.gamepedia.com/Commands/title">...</a>
+ * PacketPlayOutTitle: <a href="https://wiki.vg/Protocol#Title">...</a>
  *
  * @author Crypto Morin
  * @version 3.1.0
@@ -98,17 +98,10 @@ public final class Titles implements Cloneable {
 
             for (Object type : titleTypes.getEnumConstants()) {
                 switch (type.toString()) {
-                    case "TIMES":
-                        times = type;
-                        break;
-                    case "TITLE":
-                        title = type;
-                        break;
-                    case "SUBTITLE":
-                        subtitle = type;
-                        break;
-                    case "CLEAR":
-                        clear = type;
+                    case "TIMES" -> times = type;
+                    case "TITLE" -> title = type;
+                    case "SUBTITLE" -> subtitle = type;
+                    case "CLEAR" -> clear = type;
                 }
             }
 

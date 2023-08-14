@@ -55,7 +55,7 @@ import static it.pika.pockethorses.utils.xseries.ReflectionUtils.*;
  * For static Action bars you'll need to send the packet every
  * 2 seconds (40 ticks) for it to stay on the screen without fading.
  * <p>
- * PacketPlayOutTitle: https://wiki.vg/Protocol#Title
+ * PacketPlayOutTitle: <a href="https://wiki.vg/Protocol#Title">...</a>
  *
  * @author Crypto Morin
  * @version 4.0.0
