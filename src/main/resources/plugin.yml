@@ -1,9 +1,10 @@
 name: PocketHorses
-version: 1.8.7
+version: 1.8.8
 main: it.pika.pockethorses.Main
 api-version: '1.13'
 author: Pika
 softdepend: [Vault, PlaceholderAPI, WorldGuard, ModelEngine, PlayerPoints]
 description: PocketHorses plugin made with love and pizza by Pika
+folia-supported: true
 libraries:
   - com.zaxxer:HikariCP:5.0.1
