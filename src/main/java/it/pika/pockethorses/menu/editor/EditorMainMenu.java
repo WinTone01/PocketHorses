@@ -7,13 +7,14 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.SlotIterator;
 import fr.minuskube.inv.content.SlotPos;
+import it.pika.libs.chat.Chat;
 import it.pika.libs.item.ItemBuilder;
 import it.pika.pockethorses.Main;
 import it.pika.pockethorses.enums.Messages;
 import it.pika.pockethorses.menu.ConfirmMenu;
 import it.pika.pockethorses.objects.horses.ConfigHorse;
 import it.pika.pockethorses.objects.horses.EditingHorse;
-import it.pika.pockethorses.utils.xseries.XMaterial;
+import it.pika.libs.xseries.XMaterial;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -62,8 +63,8 @@ public class EditorMainMenu implements InventoryProvider {
                     new EditingHorseMenu(new EditingHorse(horse.getId(), horse.getDisplayName(), horse.getColor(),
                             horse.getStyle(), horse.getSpeed(), horse.getJumpStrength(), horse.getMaxHealth(),
                             horse.isBuyable(), horse.getPrice(), horse.isPermission(), horse.isStorage(),
-                            horse.isRecyclable(), horse.getRecyclePrice(), horse.getModel() != null ? horse.getModel() : null), false)
-                            .get().open(player);
+                            horse.isRecyclable(), horse.getRecyclePrice(), horse.getModel() != null ? horse.getModel() : null,
+                            horse.getCooldown()), false).get().open(player);
                 }
 
                 if (e.isRightClick()) {
@@ -93,8 +94,8 @@ public class EditorMainMenu implements InventoryProvider {
 
         contents.set(SlotPos.of(5, 4), ClickableItem.of(new ItemBuilder()
                 .material(Material.valueOf(Main.getConfigFile().getString("Editor-GUI.Main.New-Horse.Material")))
-                .name(Main.parseColors(Main.getConfigFile().getString("Editor-GUI.Main.New-Horse.Name")))
-                .lore(Main.parseColors(Main.getConfigFile().getStringList("Editor-GUI.Main.New-Horse.Lore")))
+                .name(Chat.parseColors(Main.getConfigFile().getString("Editor-GUI.Main.New-Horse.Name")))
+                .lore(Chat.parseColors(Main.getConfigFile().getStringList("Editor-GUI.Main.New-Horse.Lore")))
                 .build(), e -> {
             player.closeInventory();
 
@@ -102,7 +103,7 @@ public class EditorMainMenu implements InventoryProvider {
                     .plugin(Main.getInstance())
                     .title("Set name")
                     .text("Set name")
-                    .itemLeft(new ItemStack(XMaterial.PAPER.parseMaterial()))
+                    .itemLeft(new ItemStack(Objects.requireNonNull(XMaterial.PAPER.parseMaterial())))
                     .onClick((slot, stateSnapshot) -> {
                         if (Main.getLoadedHorse(stateSnapshot.getText()) != null) {
                             error(player, Messages.HORSE_ALREADY_EXISTS.get());
@@ -119,14 +120,14 @@ public class EditorMainMenu implements InventoryProvider {
 
         contents.set(SlotPos.of(5, 3), ClickableItem.of(new ItemBuilder()
                 .material(Material.valueOf(Main.getConfigFile().getString("Editor-GUI.Main.Previous-Page.Material")))
-                .name(Main.parseColors(Main.getConfigFile().getString("Editor-GUI.Main.Previous-Page.Name")))
-                .lore(Main.parseColors(Main.getConfigFile().getStringList("Editor-GUI.Main.Previous-Page.Lore")))
+                .name(Chat.parseColors(Main.getConfigFile().getString("Editor-GUI.Main.Previous-Page.Name")))
+                .lore(Chat.parseColors(Main.getConfigFile().getStringList("Editor-GUI.Main.Previous-Page.Lore")))
                 .build(), e -> contents.inventory().open(player, pagination.previous().getPage())));
 
         contents.set(SlotPos.of(5, 5), ClickableItem.of(new ItemBuilder()
                 .material(Material.valueOf(Main.getConfigFile().getString("Editor-GUI.Main.Next-Page.Material")))
-                .name(Main.parseColors(Main.getConfigFile().getString("Editor-GUI.Main.Next-Page.Name")))
-                .lore(Main.parseColors(Main.getConfigFile().getStringList("Editor-GUI.Main.Next-Page.Lore")))
+                .name(Chat.parseColors(Main.getConfigFile().getString("Editor-GUI.Main.Next-Page.Name")))
+                .lore(Chat.parseColors(Main.getConfigFile().getStringList("Editor-GUI.Main.Next-Page.Lore")))
                 .build(), e -> contents.inventory().open(player, pagination.next().getPage())));
     }
 
@@ -135,7 +136,7 @@ public class EditorMainMenu implements InventoryProvider {
     }
 
     private String parse(String message, ConfigHorse horse) {
-        return Main.parseColors(message
+        return Chat.parseColors(message
                 .replaceAll("%id%", horse.getId())
                 .replaceAll("%displayName%", horse.getDisplayName())
                 .replaceAll("%color%", horse.getColor().name())
@@ -146,7 +147,9 @@ public class EditorMainMenu implements InventoryProvider {
                 .replaceAll("%buyable%", String.valueOf(horse.isBuyable()))
                 .replaceAll("%price%", String.valueOf(horse.getPrice()))
                 .replaceAll("%permission%", String.valueOf(horse.isPermission()))
-                .replaceAll("%storage%", String.valueOf(horse.isStorage())));
+                .replaceAll("%storage%", String.valueOf(horse.isStorage()))
+                .replaceAll("%model%", horse.getModel() == null ? Messages.UNDEFINED.get() : horse.getModel())
+                .replaceAll("%cooldown%", String.valueOf(horse.getCooldown())));
     }
 
     private List<String> parse(List<String> list, ConfigHorse horse) {

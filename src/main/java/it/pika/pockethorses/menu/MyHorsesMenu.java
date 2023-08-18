@@ -9,6 +9,7 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
+import it.pika.libs.chat.Chat;
 import it.pika.libs.item.ItemBuilder;
 import it.pika.pockethorses.Main;
 import it.pika.pockethorses.Perms;
@@ -31,7 +32,7 @@ public class MyHorsesMenu implements InventoryProvider {
     public SmartInventory get() {
         return SmartInventory.builder()
                 .id("inv")
-                .title(Main.parseColors(Main.getConfigFile().getString("Horses-GUI.Title")))
+                .title(Chat.parseColors(Main.getConfigFile().getString("Horses-GUI.Title")))
                 .size(Main.getConfigFile().getInt("Horses-GUI.Size.Rows"), 9)
                 .provider(this)
                 .manager(Main.getInventoryManager())
@@ -88,10 +89,12 @@ public class MyHorsesMenu implements InventoryProvider {
                         }
                     }
 
-                    var cooldown = Main.getCooldownManager().getRemainingCooldown(player.getUniqueId());
-                    if (!cooldown.isZero() && !cooldown.isNegative()) {
-                        error(player, Messages.IN_COOLDOWN.get().formatted(cooldown.toSeconds()));
-                        return;
+                    if (configHorse.getCooldown() != 0) {
+                        var cooldown = Main.getCooldownManager().getRemainingCooldown(player.getUniqueId(), horse.getName());
+                        if (!cooldown.isZero() && !cooldown.isNegative()) {
+                            error(player, Messages.IN_COOLDOWN.get().formatted(cooldown.toSeconds()));
+                            return;
+                        }
                     }
 
                     if (horse.spawn(player))

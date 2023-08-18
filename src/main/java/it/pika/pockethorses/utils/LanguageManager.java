@@ -35,7 +35,8 @@ public class LanguageManager {
     private void createFiles() {
         var folder = new File(Main.getInstance().getDataFolder(), "Languages");
         if (!folder.exists())
-            folder.mkdir();
+            if (!folder.mkdir())
+                Main.getConsole().warning("An error occurred creating Languages folder");
 
         var cs = new Config(Main.getInstance(), new File(Main.getInstance().getDataFolder()
                 + File.separator + "Languages" + File.separator + "messages_cs.yml"), true);

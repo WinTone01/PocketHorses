@@ -1,5 +1,6 @@
 package it.pika.pockethorses.commands;
 
+import it.pika.libs.chat.Chat;
 import it.pika.libs.command.SubCommand;
 import it.pika.libs.config.Config;
 import it.pika.libs.reflection.Reflections;
@@ -33,7 +34,7 @@ public class MainCmd extends SubCommand {
     @Override
     public void noArgs(CommandSender sender) {
         for (String s : Main.getLanguageManager().getMainHelp())
-            sender.sendMessage(Main.parseColors(s));
+            sender.sendMessage(Chat.parseColors(s));
     }
 
     @SubCommandName("give")
@@ -78,7 +79,7 @@ public class MainCmd extends SubCommand {
                 success(player, Messages.VOUCHER_GIVEN.get().formatted(target.getName()));
             } else {
                 for (String s : Main.getLanguageManager().getMainHelp())
-                    player.sendMessage(Main.parseColors(s));
+                    player.sendMessage(Chat.parseColors(s));
             }
         } else if (args.length == 4) {
             if (args[0].equalsIgnoreCase("item")) {
@@ -109,11 +110,11 @@ public class MainCmd extends SubCommand {
                 }
             } else {
                 for (String s : Main.getLanguageManager().getMainHelp())
-                    player.sendMessage(Main.parseColors(s));
+                    player.sendMessage(Chat.parseColors(s));
             }
         } else {
             for (String s : Main.getLanguageManager().getMainHelp())
-                player.sendMessage(Main.parseColors(s));
+                player.sendMessage(Chat.parseColors(s));
         }
     }
 
@@ -150,25 +151,25 @@ public class MainCmd extends SubCommand {
     @SubCommandPermission(Perms.LIST)
     public void list(CommandSender sender, String label, String[] args) {
         if (args[0].equalsIgnoreCase("horses")) {
-            sender.sendMessage(Main.parseColors(Main.getConfigFile().getString("Horses-List.Header")));
+            sender.sendMessage(Chat.parseColors(Main.getConfigFile().getString("Horses-List.Header")));
             for (ConfigHorse horse : Main.getLoadedHorses())
-                sender.sendMessage(Main.parseColors(Main.getConfigFile().getString("Horses-List.Horse"))
+                sender.sendMessage(Chat.parseColors(Main.getConfigFile().getString("Horses-List.Horse"))
                         .replaceAll("%horse%", horse.getId()));
         } else if (args[0].equalsIgnoreCase("vouchers")) {
-            sender.sendMessage(Main.parseColors(Main.getConfigFile().getString("Vouchers.List.Header")));
+            sender.sendMessage(Chat.parseColors(Main.getConfigFile().getString("Vouchers.List.Header")));
             for (String key : Objects.requireNonNull(Main.getVouchersFile().getConfigurationSection("")).getKeys(false))
-                sender.sendMessage(Main.parseColors(Main.getConfigFile().getString("Vouchers.List.Voucher"))
+                sender.sendMessage(Chat.parseColors(Main.getConfigFile().getString("Vouchers.List.Voucher"))
                         .replaceAll("%voucher%", key));
         } else if (args[0].equalsIgnoreCase("items")) {
-            sender.sendMessage(Main.parseColors(Main.getConfigFile().getString("Items-List.Header")));
+            sender.sendMessage(Chat.parseColors(Main.getConfigFile().getString("Items-List.Header")));
             for (String key : Objects.requireNonNull(Main.getItemsFile().getConfigurationSection("")).getKeys(false))
-                sender.sendMessage(Main.parseColors(Main.getConfigFile().getString("Items-List.Item"))
+                sender.sendMessage(Chat.parseColors(Main.getConfigFile().getString("Items-List.Item"))
                         .replaceAll("%item%", key)
                         .replaceAll("%type%",
                                 Objects.requireNonNull(Main.getItemsFile().getString("%s.Type".formatted(key)))));
         } else {
             for (String s : Main.getLanguageManager().getMainHelp())
-                sender.sendMessage(Main.parseColors(s));
+                sender.sendMessage(Chat.parseColors(s));
         }
     }
 
@@ -223,25 +224,25 @@ public class MainCmd extends SubCommand {
     @SubCommandPermission(Perms.HELP_MAIN)
     public void help(CommandSender sender, String label, String[] args) {
         for (String s : Main.getLanguageManager().getMainHelp())
-            sender.sendMessage(Main.parseColors(s));
+            sender.sendMessage(Chat.parseColors(s));
     }
 
     @SubCommandName("debug")
     @SubCommandPermission(Perms.DEBUG)
     public void debug(CommandSender sender, String label, String[] args) {
-        sender.sendMessage(Main.parseColors("&6------------------------------------"));
-        sender.sendMessage(Main.parseColors("&eStorage type: &f%s".formatted(Main.getStorage().getType())));
-        sender.sendMessage(Main.parseColors("&eEconomy type: &f%s")
+        sender.sendMessage(Chat.parseColors("&6------------------------------------"));
+        sender.sendMessage(Chat.parseColors("&eStorage type: &f%s".formatted(Main.getStorage().getType())));
+        sender.sendMessage(Chat.parseColors("&eEconomy type: &f%s")
                 .formatted(Main.getEconomy() == null ? "//" : Main.getEconomy().getType()));
-        sender.sendMessage(Main.parseColors("&ePlugin version: &f%s".formatted(Main.VERSION)));
-        sender.sendMessage(Main.parseColors("&eServer version: &f%s".formatted(Reflections.getVersion())));
-        sender.sendMessage(Main.parseColors("&eCache size: &f%s".formatted(Main.getCache().size())));
-        sender.sendMessage(Main.parseColors("&eSpawned horses: &f%s".formatted(Main.getSpawnedHorses().size())));
-        sender.sendMessage(Main.parseColors("&eShop enabled: &f%s".formatted(Main.isShopEnabled())));
-        sender.sendMessage(Main.parseColors("&ePlaceholderAPI Hook: &f%s".formatted(Main.isPlaceholdersEnabled())));
-        sender.sendMessage(Main.parseColors("&eWorldGuard Hook: &f%s".formatted(Main.isWorldGuardEnabled())));
-        sender.sendMessage(Main.parseColors("&eModelEngine Hook: &f%s".formatted(Main.isModelEngineEnabled())));
-        sender.sendMessage(Main.parseColors("&6------------------------------------"));
+        sender.sendMessage(Chat.parseColors("&ePlugin version: &f%s".formatted(Main.VERSION)));
+        sender.sendMessage(Chat.parseColors("&eServer version: &f%s".formatted(Reflections.getVersion())));
+        sender.sendMessage(Chat.parseColors("&eCache size: &f%s".formatted(Main.getCache().size())));
+        sender.sendMessage(Chat.parseColors("&eSpawned horses: &f%s".formatted(Main.getSpawnedHorses().size())));
+        sender.sendMessage(Chat.parseColors("&eShop enabled: &f%s".formatted(Main.isShopEnabled())));
+        sender.sendMessage(Chat.parseColors("&ePlaceholderAPI Hook: &f%s".formatted(Main.isPlaceholdersEnabled())));
+        sender.sendMessage(Chat.parseColors("&eWorldGuard Hook: &f%s".formatted(Main.isWorldGuardEnabled())));
+        sender.sendMessage(Chat.parseColors("&eModelEngine Hook: &f%s".formatted(Main.isModelEngineEnabled())));
+        sender.sendMessage(Chat.parseColors("&6------------------------------------"));
     }
 
     @SubCommandName("remove")
@@ -284,24 +285,24 @@ public class MainCmd extends SubCommand {
             return;
         }
 
-        sender.sendMessage(Main.parseColors("&6------------------------------------"));
-        sender.sendMessage(Main.parseColors("&eName: &f%s".formatted(horse.getId())));
-        sender.sendMessage(Main.parseColors("&eDisplay Name: &f%s".formatted(horse.getDisplayName())));
-        sender.sendMessage(Main.parseColors("&eConfig File: &f%s".formatted(horse.getConfig().getFileName())));
-        sender.sendMessage(Main.parseColors("&eColor: &f%s".formatted(horse.getColor().name())));
-        sender.sendMessage(Main.parseColors("&eStyle: &f%s".formatted(horse.getStyle().name())));
-        sender.sendMessage(Main.parseColors("&eSpeed: &f%s km/h".formatted(horse.getSpeed())));
-        sender.sendMessage(Main.parseColors("&eJump Strength: &f%s".formatted(horse.getJumpStrength())));
-        sender.sendMessage(Main.parseColors("&eMax Health: &f%s".formatted(horse.getMaxHealth())));
-        sender.sendMessage(Main.parseColors("&eIs buyable: &f%s".formatted(horse.isBuyable())));
-        sender.sendMessage(Main.parseColors("&ePrice: &f%s".formatted(horse.getPrice())));
-        sender.sendMessage(Main.parseColors("&eRequires permission: &f%s".formatted(horse.isPermission())));
-        sender.sendMessage(Main.parseColors("&eHas storage: &f%s".formatted(horse.isStorage())));
-        sender.sendMessage(Main.parseColors("&eIs recyclable: &f%s".formatted(horse.isRecyclable())));
-        sender.sendMessage(Main.parseColors("&eRecycle price: &f%s".formatted(horse.getRecyclePrice())));
-        sender.sendMessage(Main.parseColors("&eModelEngine model: &f%s"
+        sender.sendMessage(Chat.parseColors("&6------------------------------------"));
+        sender.sendMessage(Chat.parseColors("&eName: &f%s".formatted(horse.getId())));
+        sender.sendMessage(Chat.parseColors("&eDisplay Name: &f%s".formatted(horse.getDisplayName())));
+        sender.sendMessage(Chat.parseColors("&eConfig File: &f%s".formatted(horse.getConfig().getFileName())));
+        sender.sendMessage(Chat.parseColors("&eColor: &f%s".formatted(horse.getColor().name())));
+        sender.sendMessage(Chat.parseColors("&eStyle: &f%s".formatted(horse.getStyle().name())));
+        sender.sendMessage(Chat.parseColors("&eSpeed: &f%s km/h".formatted(horse.getSpeed())));
+        sender.sendMessage(Chat.parseColors("&eJump Strength: &f%s".formatted(horse.getJumpStrength())));
+        sender.sendMessage(Chat.parseColors("&eMax Health: &f%s".formatted(horse.getMaxHealth())));
+        sender.sendMessage(Chat.parseColors("&eIs buyable: &f%s".formatted(horse.isBuyable())));
+        sender.sendMessage(Chat.parseColors("&ePrice: &f%s".formatted(horse.getPrice())));
+        sender.sendMessage(Chat.parseColors("&eRequires permission: &f%s".formatted(horse.isPermission())));
+        sender.sendMessage(Chat.parseColors("&eHas storage: &f%s".formatted(horse.isStorage())));
+        sender.sendMessage(Chat.parseColors("&eIs recyclable: &f%s".formatted(horse.isRecyclable())));
+        sender.sendMessage(Chat.parseColors("&eRecycle price: &f%s".formatted(horse.getRecyclePrice())));
+        sender.sendMessage(Chat.parseColors("&eModelEngine model: &f%s"
                 .formatted(horse.getModel() == null ? "None" : horse.getModel())));
-        sender.sendMessage(Main.parseColors("&6------------------------------------"));
+        sender.sendMessage(Chat.parseColors("&6------------------------------------"));
     }
 
     private boolean isInt(String s) {

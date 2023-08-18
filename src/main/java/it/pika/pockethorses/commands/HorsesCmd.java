@@ -1,5 +1,6 @@
 package it.pika.pockethorses.commands;
 
+import it.pika.libs.chat.Chat;
 import it.pika.libs.command.SubCommand;
 import it.pika.pockethorses.Main;
 import it.pika.pockethorses.Perms;
@@ -79,7 +80,7 @@ public class HorsesCmd extends SubCommand {
     @SubCommandPermission(Perms.HELP_HORSES)
     public void help(CommandSender sender, String label, String[] args) {
         for (String s : Main.getLanguageManager().getHorsesHelp())
-            sender.sendMessage(Main.parseColors(s));
+            sender.sendMessage(Chat.parseColors(s));
     }
 
     @SubCommandName("buy")

@@ -68,6 +68,8 @@ dependencies {
         transitive = false
     }
 
+    implementation 'org.bstats:bstats-bukkit:3.0.2'
+
     compileOnly 'com.zaxxer:HikariCP:5.0.1'
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
     compileOnly 'me.clip:placeholderapi:2.11.3'
@@ -90,6 +92,8 @@ tasks.withType(JavaCompile).configureEach {
     if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
         options.release = targetJavaVersion
     }
+
+    options.encoding = 'UTF-8'
 }
 
 processResources {
@@ -101,18 +105,15 @@ processResources {
     }
 }
 
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8'
-}
-
 shadowJar {
     archiveBaseName.set('PocketHorses')
     archiveClassifier.set('')
-    archiveVersion.set('1.8.8')
+    archiveVersion.set('1.9.0')
 
     relocate 'fr.minuskube.inv', 'it.pika.libs.smartinvs'
     relocate 'net.wesjd.anvilgui', 'it.pika.libs.anvilgui'
     relocate 'com.tchristofferson.configupdater', 'it.pika.libs.config.updater'
     relocate 'de.tr7zw.changeme.nbtapi', 'it.pika.libs.nbt'
     relocate 'io.papermc.lib', 'it.pika.libs.paper'
+    relocate 'org.bstats', 'it.pika.libs.bstats'
 }

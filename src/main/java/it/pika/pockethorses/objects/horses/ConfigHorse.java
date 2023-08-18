@@ -31,6 +31,7 @@ public class ConfigHorse {
     private boolean recyclable;
     private double recyclePrice;
     private String model;
+    private int cooldown;
 
     public static ConfigHorse of(String name) {
         var file = new File(Main.getInstance().getDataFolder()
@@ -76,7 +77,7 @@ public class ConfigHorse {
                     config.getInt("Max-Health"), config.getBoolean("Buyable"),
                     config.getDouble("Price"), config.getBoolean("Permission"),
                     config.getBoolean("Storage"), config.getBoolean("Recyclable"),
-                    config.getDouble("Recycle-Price"), model);
+                    config.getDouble("Recycle-Price"), model, config.getInt("Cooldown"));
         } catch (NullPointerException e) {
             return null;
         }

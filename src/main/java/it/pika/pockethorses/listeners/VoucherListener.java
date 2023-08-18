@@ -1,11 +1,12 @@
 package it.pika.pockethorses.listeners;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
+import it.pika.libs.chat.Chat;
 import it.pika.pockethorses.Main;
 import it.pika.pockethorses.Perms;
 import it.pika.pockethorses.enums.Messages;
 import it.pika.pockethorses.objects.Voucher;
-import it.pika.pockethorses.utils.xseries.Titles;
+import it.pika.libs.xseries.Titles;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
@@ -58,8 +59,8 @@ public class VoucherListener implements Listener {
 
         item.setAmount(item.getAmount() - 1);
         Titles.sendTitle(player, 0, 20 * Main.getConfigFile().getInt("Vouchers.Opening.Delay"), 0,
-                Main.parseColors(Main.getConfigFile().getString("Vouchers.Opening.Title")),
-                Main.parseColors(Main.getConfigFile().getString("Vouchers.Opening.Sub-Title")));
+                Chat.parseColors(Main.getConfigFile().getString("Vouchers.Opening.Title")),
+                Chat.parseColors(Main.getConfigFile().getString("Vouchers.Opening.Sub-Title")));
         player.playSound(player.getLocation(),
                 Sound.valueOf(Main.getConfigFile().getString("Vouchers.Opening.Sound")), 1F, 1F);
 
@@ -67,8 +68,8 @@ public class VoucherListener implements Listener {
             var reward = voucher.getRewards().get(new Random().nextInt(voucher.getRewards().size()));
 
             Main.getStorage().giveHorse(player, reward);
-            Titles.sendTitle(player, 0, 40, 0, Main.parseColors(Main.getConfigFile().getString("Vouchers.Reward.Title")),
-                    Main.parseColors(Objects.requireNonNull(Main.getConfigFile()
+            Titles.sendTitle(player, 0, 40, 0, Chat.parseColors(Main.getConfigFile().getString("Vouchers.Reward.Title")),
+                    Chat.parseColors(Objects.requireNonNull(Main.getConfigFile()
                                     .getString("Vouchers.Reward.Sub-Title"))
                             .replaceAll("%reward%", reward.getDisplayName())));
             player.playSound(player.getLocation(),

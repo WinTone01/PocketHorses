@@ -1,6 +1,7 @@
 package it.pika.pockethorses.objects.items;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
+import it.pika.libs.chat.Chat;
 import it.pika.libs.item.ItemBuilder;
 import it.pika.pockethorses.Main;
 import lombok.AccessLevel;
@@ -39,8 +40,8 @@ public class Supplement {
 
             var item = new ItemBuilder()
                     .material(Material.valueOf(config.getString("%s.Item.Material".formatted(name))))
-                    .name(Main.parseColors(config.getString("%s.Item.Name".formatted(name))))
-                    .lore(Main.parseColors(config.getStringList("%s.Item.Lore".formatted(name))))
+                    .name(Chat.parseColors(config.getString("%s.Item.Name".formatted(name))))
+                    .lore(Chat.parseColors(config.getStringList("%s.Item.Lore".formatted(name))))
                     .modelData(config.getInt("%s.Item.Model-Data".formatted(name)))
                     .build();
 

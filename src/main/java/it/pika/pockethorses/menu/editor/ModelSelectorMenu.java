@@ -5,6 +5,7 @@ import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.SlotPos;
+import it.pika.libs.chat.Chat;
 import it.pika.libs.item.ItemBuilder;
 import it.pika.pockethorses.Main;
 import it.pika.pockethorses.objects.horses.EditingHorse;
@@ -40,9 +41,9 @@ public class ModelSelectorMenu implements InventoryProvider {
         for (String model : Main.getModelEngineHook().getModels()) {
             contents.add(ClickableItem.of(new ItemBuilder()
                     .material(Material.valueOf(config.getString("Editor-GUI.Model-GUI.Model-Item.Material")))
-                    .name(Main.parseColors(Objects.requireNonNull(
+                    .name(Chat.parseColors(Objects.requireNonNull(
                             config.getString("Editor-GUI.Model-GUI.Model-Item.Name")).replaceAll("%model%", model)))
-                    .lore(Main.parseColors(config.getStringList("Editor-GUI.Model-GUI.Model-Item.Lore")))
+                    .lore(Chat.parseColors(config.getStringList("Editor-GUI.Model-GUI.Model-Item.Lore")))
                     .build(), e -> {
                 horse.setModel(model);
                 new EditingHorseMenu(horse, parent.isCreating()).get().open(player);

@@ -6,13 +6,14 @@ import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.SlotPos;
+import it.pika.libs.chat.Chat;
 import it.pika.libs.config.Config;
 import it.pika.libs.item.ItemBuilder;
 import it.pika.pockethorses.Main;
 import it.pika.pockethorses.enums.Messages;
 import it.pika.pockethorses.objects.horses.ConfigHorse;
 import it.pika.pockethorses.objects.horses.EditingHorse;
-import it.pika.pockethorses.utils.xseries.XMaterial;
+import it.pika.libs.xseries.XMaterial;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.wesjd.anvilgui.AnvilGUI;
@@ -24,6 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static it.pika.libs.chat.Chat.error;
 import static it.pika.libs.chat.Chat.success;
@@ -57,12 +59,12 @@ public class EditingHorseMenu implements InventoryProvider {
                 .plugin(Main.getInstance())
                 .title("Set value")
                 .text("Set value")
-                .itemLeft(new ItemStack(XMaterial.PAPER.parseMaterial()))
+                .itemLeft(new ItemStack(Objects.requireNonNull(Objects.requireNonNull(XMaterial.PAPER.parseMaterial()))))
                 .onClick((slot, stateSnapshot) -> {
                     if (slot != AnvilGUI.Slot.OUTPUT)
                         return Collections.emptyList();
 
-                    horse.setDisplayName(Main.parseColors(stateSnapshot.getText()));
+                    horse.setDisplayName(Chat.parseColors(stateSnapshot.getText()));
                     return List.of(AnvilGUI.ResponseAction.close(), AnvilGUI.ResponseAction.run(() -> get().open(player)));
                 })
                 .open(player)));
@@ -87,7 +89,7 @@ public class EditingHorseMenu implements InventoryProvider {
                 .plugin(Main.getInstance())
                 .title("Set value")
                 .text("Set value")
-                .itemLeft(new ItemStack(XMaterial.PAPER.parseMaterial()))
+                .itemLeft(new ItemStack(Objects.requireNonNull(XMaterial.PAPER.parseMaterial())))
                 .onClick((slot, stateSnapshot) -> {
                     if (slot != AnvilGUI.Slot.OUTPUT)
                         return Collections.emptyList();
@@ -137,7 +139,7 @@ public class EditingHorseMenu implements InventoryProvider {
                 .plugin(Main.getInstance())
                 .title("Set value")
                 .text("Set value")
-                .itemLeft(new ItemStack(XMaterial.PAPER.parseMaterial()))
+                .itemLeft(new ItemStack(Objects.requireNonNull(XMaterial.PAPER.parseMaterial())))
                 .onClick((slot, stateSnapshot) -> {
                     if (slot != AnvilGUI.Slot.OUTPUT)
                         return Collections.emptyList();
@@ -160,12 +162,12 @@ public class EditingHorseMenu implements InventoryProvider {
                 .plugin(Main.getInstance())
                 .title("Set value")
                 .text("Set value")
-                .itemLeft(new ItemStack(XMaterial.PAPER.parseMaterial()))
+                .itemLeft(new ItemStack(Objects.requireNonNull(XMaterial.PAPER.parseMaterial())))
                 .onClick((slot, stateSnapshot) -> {
                     if (slot != AnvilGUI.Slot.OUTPUT)
                         return Collections.emptyList();
 
-                    if (!isInt(stateSnapshot.getText())) {
+                    if (isNotInt(stateSnapshot.getText())) {
                         error(player, Messages.INVALID_NUMBER.get());
                         return List.of(AnvilGUI.ResponseAction.close(), AnvilGUI.ResponseAction.run(() -> get().open(player)));
                     }
@@ -192,7 +194,7 @@ public class EditingHorseMenu implements InventoryProvider {
                 .plugin(Main.getInstance())
                 .title("Set value")
                 .text("Set value")
-                .itemLeft(new ItemStack(XMaterial.PAPER.parseMaterial()))
+                .itemLeft(new ItemStack(Objects.requireNonNull(XMaterial.PAPER.parseMaterial())))
                 .onClick((slot, stateSnapshot) -> {
                     if (slot != AnvilGUI.Slot.OUTPUT)
                         return Collections.emptyList();
@@ -226,7 +228,7 @@ public class EditingHorseMenu implements InventoryProvider {
                 .plugin(Main.getInstance())
                 .title("Set value")
                 .text("Set value")
-                .itemLeft(new ItemStack(XMaterial.PAPER.parseMaterial()))
+                .itemLeft(new ItemStack(Objects.requireNonNull(XMaterial.PAPER.parseMaterial())))
                 .onClick((slot, stateSnapshot) -> {
                     if (slot != AnvilGUI.Slot.OUTPUT)
                         return Collections.emptyList();
@@ -237,6 +239,29 @@ public class EditingHorseMenu implements InventoryProvider {
                     }
 
                     horse.setRecyclePrice(Double.parseDouble(stateSnapshot.getText()));
+                    return List.of(AnvilGUI.ResponseAction.close(), AnvilGUI.ResponseAction.run(() -> get().open(player)));
+                })
+                .open(player)));
+        
+        contents.set(SlotPos.of(4, 6), ClickableItem.of(new ItemBuilder()
+                .material(Material.valueOf(config.getString("Editor-GUI.Editing-GUI.Cooldown.Material")))
+                .name(parse(config.getString("Editor-GUI.Editing-GUI.Cooldown.Name")))
+                .lore(parse(config.getStringList("Editor-GUI.Editing-GUI.Cooldown.Lore")))
+                .build(), e -> new AnvilGUI.Builder()
+                .plugin(Main.getInstance())
+                .title("Set value")
+                .text("Set value")
+                .itemLeft(new ItemStack(Objects.requireNonNull(XMaterial.PAPER.parseMaterial())))
+                .onClick((slot, stateSnapshot) -> {
+                    if (slot != AnvilGUI.Slot.OUTPUT)
+                        return Collections.emptyList();
+
+                    if (isNotInt(stateSnapshot.getText())) {
+                        error(player, Messages.INVALID_NUMBER.get());
+                        return List.of(AnvilGUI.ResponseAction.close(), AnvilGUI.ResponseAction.run(() -> get().open(player)));
+                    }
+
+                    horse.setCooldown(Integer.parseInt(stateSnapshot.getText()));
                     return List.of(AnvilGUI.ResponseAction.close(), AnvilGUI.ResponseAction.run(() -> get().open(player)));
                 })
                 .open(player)));
@@ -265,7 +290,8 @@ public class EditingHorseMenu implements InventoryProvider {
                         + File.separator + "Horses" + File.separator + "%s.yml".formatted(horse.getId()));
                 if (!file.exists()) {
                     try {
-                        file.createNewFile();
+                        if (!file.createNewFile())
+                            Main.getConsole().warning("An error occurred creating horse file");
                     } catch (IOException ex) {
                         ex.printStackTrace();
                     }
@@ -286,6 +312,7 @@ public class EditingHorseMenu implements InventoryProvider {
                 horseConfig.set("Recycle-Price", horse.getRecyclePrice());
                 if (horse.getModel() != null)
                     horseConfig.set("Model", horse.getModel());
+                horseConfig.set("Cooldown", horse.getCooldown());
                 horseConfig.save();
 
                 reloadHorses();
@@ -312,6 +339,9 @@ public class EditingHorseMenu implements InventoryProvider {
             horseConfig.set("Storage", horse.isStorage());
             horseConfig.set("Recyclable", horse.isRecyclable());
             horseConfig.set("Recycle-Price", horse.getRecyclePrice());
+            if (horse.getModel() != null)
+                horseConfig.set("Model", horse.getModel());
+            horseConfig.set("Cooldown", horse.getCooldown());
             horseConfig.save();
 
             reloadHorses();
@@ -321,11 +351,10 @@ public class EditingHorseMenu implements InventoryProvider {
 
     @Override
     public void update(Player player, InventoryContents contents) {
-
     }
 
     private String parse(String s) {
-        return Main.parseColors(s)
+        return Chat.parseColors(s)
                 .replaceAll("%id%", horse.getId() != null ? horse.getId() : Messages.UNDEFINED.get())
                 .replaceAll("%displayName%", horse.getDisplayName() != null ? horse.getDisplayName() : Messages.UNDEFINED.get())
                 .replaceAll("%color%", horse.getColor() != null ? horse.getColor().name() : Messages.UNDEFINED.get())
@@ -339,7 +368,8 @@ public class EditingHorseMenu implements InventoryProvider {
                 .replaceAll("%storage%", horse.isStorage() ? Messages.ENABLED.get() : Messages.DISABLED.get())
                 .replaceAll("%recyclable%", horse.isRecyclable() ? Messages.ENABLED.get() : Messages.DISABLED.get())
                 .replaceAll("%recyclePrice%", horse.getRecyclePrice() != 0 ? String.valueOf(horse.getRecyclePrice()) : Messages.UNDEFINED.get())
-                .replaceAll("%model%", horse.getModel() != null ? horse.getModel() : Messages.UNDEFINED.get());
+                .replaceAll("%model%", horse.getModel() != null ? horse.getModel() : Messages.UNDEFINED.get())
+                .replaceAll("%cooldown%", horse.getCooldown() != 0 ? String.valueOf(horse.getCooldown()) : Messages.UNDEFINED.get());
     }
 
     private List<String> parse(List<String> list) {
@@ -360,12 +390,12 @@ public class EditingHorseMenu implements InventoryProvider {
         }
     }
 
-    private boolean isInt(String s) {
+    private boolean isNotInt(String s) {
         try {
             Integer.parseInt(s);
-            return true;
-        } catch (NumberFormatException e) {
             return false;
+        } catch (NumberFormatException e) {
+            return true;
         }
     }
 

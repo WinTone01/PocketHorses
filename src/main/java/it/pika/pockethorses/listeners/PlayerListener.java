@@ -1,5 +1,6 @@
 package it.pika.pockethorses.listeners;
 
+import it.pika.libs.chat.Chat;
 import it.pika.pockethorses.Main;
 import it.pika.pockethorses.enums.Messages;
 import it.pika.pockethorses.objects.horses.SpawnedHorse;
@@ -20,7 +21,7 @@ public class PlayerListener implements Listener {
 
         new UpdateChecker(Main.getInstance(), 111158).getVersion(version -> {
             if (!version.equals(Main.VERSION))
-                player.sendMessage(Main.parseColors(Messages.NEW_UPDATE.get()));
+                player.sendMessage(Chat.parseColors(Messages.NEW_UPDATE.get()));
         });
     }
 

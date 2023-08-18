@@ -5,6 +5,7 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
+import it.pika.libs.chat.Chat;
 import it.pika.libs.item.ItemBuilder;
 import it.pika.pockethorses.Main;
 import it.pika.pockethorses.enums.Messages;
@@ -75,7 +76,7 @@ public class ShopMenu implements InventoryProvider {
     }
 
     private String format(String s, ConfigHorse horse) {
-        return Main.parseColors(s)
+        return Chat.parseColors(s)
                 .replaceAll("%displayName%", horse.getDisplayName())
                 .replaceAll("%speed%", String.valueOf(horse.getSpeed()))
                 .replaceAll("%price%", String.valueOf(horse.getPrice()))

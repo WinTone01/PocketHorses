@@ -1,5 +1,6 @@
 package it.pika.pockethorses.enums;
 
+import it.pika.libs.chat.Chat;
 import it.pika.libs.config.Config;
 import it.pika.pockethorses.Main;
 import lombok.AllArgsConstructor;
@@ -70,7 +71,7 @@ public enum Messages {
             return "Undefined";
 
         var config = new Config(Main.getInstance(), language.getFile(), false);
-        return Main.parseColors(config.getString(path));
+        return Chat.parseColors(config.getString(path));
     }
 
 }

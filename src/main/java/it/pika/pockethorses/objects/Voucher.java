@@ -2,6 +2,7 @@ package it.pika.pockethorses.objects;
 
 import com.google.common.collect.Lists;
 import de.tr7zw.changeme.nbtapi.NBTItem;
+import it.pika.libs.chat.Chat;
 import it.pika.libs.item.ItemBuilder;
 import it.pika.pockethorses.Main;
 import it.pika.pockethorses.objects.horses.ConfigHorse;
@@ -60,8 +61,8 @@ public class Voucher {
     public ItemStack getItem() {
         var item = new ItemBuilder()
                 .material(material)
-                .name(Main.parseColors(displayName))
-                .lore(Main.parseColors(lore))
+                .name(Chat.parseColors(displayName))
+                .lore(Chat.parseColors(lore))
                 .build();
 
         var nbt = new NBTItem(item);

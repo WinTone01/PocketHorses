@@ -20,7 +20,7 @@ public class Perms {
             REMOVE = "pockethorses.remove",
             HORSE_INFO = "pockethorses.info",
             BUY = "pockethorses.buy",
-            AUTO_REMOVE = "pockethorses.autoremove";
+            AUTO_REMOVE = "pockethorses.autoRemove";
 
     public static String getHorse(String name) {
         return "pockethorses.horse.%s".formatted(name);

@@ -7,6 +7,7 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.tchristofferson.configupdater.ConfigUpdater;
 import fr.minuskube.inv.InventoryManager;
 import io.papermc.lib.PaperLib;
+import it.pika.libs.chat.Chat;
 import it.pika.libs.config.Config;
 import it.pika.libs.reflection.Reflections;
 import it.pika.pockethorses.api.events.HorsesInitializeEvent;
@@ -36,9 +37,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import me.clip.placeholderapi.PlaceholderAPI;
-import net.md_5.bungee.api.ChatColor;
 import org.black_ixx.playerpoints.PlayerPoints;
 import org.black_ixx.playerpoints.PlayerPointsAPI;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -111,7 +112,7 @@ public final class Main extends JavaPlugin {
     private static boolean modelEngineEnabled = false;
 
 
-    public static final String VERSION = "1.8.8";
+    public static final String VERSION = "1.9.0";
 
     @Override
     public void onLoad() {
@@ -268,7 +269,6 @@ public final class Main extends JavaPlugin {
             loadedHorses.add(horse);
             console.info("Loaded horse: %s".formatted(file.getName().replaceAll(".yml", "")));
         }
-        console.info(""); // For a good appearance
     }
 
     private void setupInventories() {
@@ -356,70 +356,11 @@ public final class Main extends JavaPlugin {
         }
     }
 
-    public static String parseColors(@Nullable String s) {
-        if (s == null)
-            return "null";
-
-        var parsed = new StringBuilder();
-        var colorHex = "";
-        if (s.contains("&")) {
-            for (String color : s.split("&")) {
-                if (color.length() < 1) continue;
-                if (color.substring(0, 1).matches("[A-Fa-f0-9]|k|l|m|n|o|r")) {
-                    String colorCode = color.substring(0, 1);
-                    parsed.append(ChatColor.getByChar(colorCode.charAt(0)));
-                    parsed.append(color.substring(1));
-                    continue;
-                }
-                if (color.length() < 7) continue;
-                if (color.substring(0, 7).matches("#[A-Fa-f0-9]{6}")) {
-                    if (color.substring(0, 7).matches("#[A-Fa-f0-9]{6}")) {
-                        colorHex = color.substring(0, 7);
-                        parsed.append(net.md_5.bungee.api.ChatColor.of(colorHex));
-                        parsed.append(color.substring(7));
-                        continue;
-                    }
-                }
-                parsed.append(color);
-            }
-        } else {
-            parsed.append(s);
-        }
-
-        return parsed.toString();
-    }
-
-    public static List<String> parseColors(List<String> list) {
-        List<String> newList = Lists.newArrayList();
-
-        for (String s : list)
-            newList.add(parseColors(s));
-
-        return newList;
-    }
-
-    public static String parseMessage(String s, @Nullable Horse horse, @Nullable Player player) {
-        var configHorse = horse == null ? null : ConfigHorse.of(horse.getName());
-
+    public static String parseMessage(String s, Horse horse, Player player) {
         if (placeholdersEnabled) {
-            return parseColors(PlaceholderAPI.setPlaceholders(player,
-                    s.replaceAll("%displayName%", configHorse == null ? "null" :
-                                    horse.getCustomName() == null ? configHorse.getDisplayName() : horse.getCustomName())
-                            .replaceAll("%speed%", String.valueOf(horse instanceof SpawnedHorse ? ((SpawnedHorse) horse).getSpeed()
-                                    : Objects.requireNonNull(configHorse).getSpeed()))
-                            .replaceAll("%owner%", horse.getOwner())
-                            .replaceAll("%jumpStrength%", configHorse == null ? "null"
-                                    : String.valueOf(configHorse.getJumpStrength()))
-                            .replaceAll("%player%", player == null ? "null" : player.getName())));
+            return Chat.parseColors(PlaceholderAPI.setPlaceholders(player, parse(s, player, horse)));
         } else {
-            return parseColors(s.replaceAll("%displayName%", configHorse == null ? "null" :
-                            horse.getCustomName() == null ? configHorse.getDisplayName() : horse.getCustomName())
-                    .replaceAll("%speed%", String.valueOf(horse instanceof SpawnedHorse ? ((SpawnedHorse) horse).getSpeed()
-                            : Objects.requireNonNull(configHorse).getSpeed()))
-                    .replaceAll("%owner%", horse.getOwner())
-                    .replaceAll("%jumpStrength%", configHorse == null ? "null"
-                            : String.valueOf(configHorse.getJumpStrength()))
-                    .replaceAll("%player%", player == null ? "null" : player.getName()));
+            return Chat.parseColors(parse(s, player, horse));
         }
     }
 
@@ -430,6 +371,19 @@ public final class Main extends JavaPlugin {
             newList.add(parseMessage(s, horse, player));
 
         return newList;
+    }
+
+    private static String parse(String s, @Nullable Player player, @Nullable Horse horse) {
+        var configHorse = horse == null ? null : ConfigHorse.of(horse.getName());
+
+        return s.replaceAll("%displayName%", configHorse == null ? "null" :
+                        horse.getCustomName() == null ? configHorse.getDisplayName() : horse.getCustomName())
+                .replaceAll("%speed%", String.valueOf(horse instanceof SpawnedHorse ? ((SpawnedHorse) horse).getSpeed()
+                        : Objects.requireNonNull(configHorse).getSpeed()))
+                .replaceAll("%owner%", horse.getOwner())
+                .replaceAll("%jumpStrength%", configHorse == null ? "null"
+                        : String.valueOf(configHorse.getJumpStrength()))
+                .replaceAll("%player%", player == null ? "null" : player.getName());
     }
 
     public static ConfigHorse getLoadedHorse(String name) {

@@ -1,6 +1,7 @@
 package it.pika.pockethorses.listeners;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
+import it.pika.libs.chat.Chat;
 import it.pika.pockethorses.Main;
 import it.pika.pockethorses.Perms;
 import it.pika.pockethorses.enums.Messages;
@@ -10,7 +11,7 @@ import it.pika.pockethorses.objects.horses.SpawnedHorse;
 import it.pika.pockethorses.objects.items.Care;
 import it.pika.pockethorses.objects.items.Supplement;
 import it.pika.pockethorses.utils.Serializer;
-import it.pika.pockethorses.utils.xseries.ActionBar;
+import it.pika.libs.xseries.ActionBar;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.AbstractHorse;
@@ -104,16 +105,16 @@ public class HorseListener implements Listener {
 
                     if (spawnedHorse.getCustomName() != null
                             && !spawnedHorse.getCustomName().equalsIgnoreCase("null")) {
-                        horse.setCustomName(Main.parseColors(horse.getCustomName()) +
+                        horse.setCustomName(Chat.parseColors(horse.getCustomName()) +
                                 (Main.getConfigFile().getBoolean("Options.Display-HP-In-Name") ?
-                                        " " + Main.parseColors(Objects.requireNonNull(Main.getConfigFile()
+                                        " " + Chat.parseColors(Objects.requireNonNull(Main.getConfigFile()
                                                         .getString("Options.Display-HP"))
                                                 .replaceAll("%health%", String.valueOf((int) horse.getHealth()))) : ""));
                         horse.setCustomNameVisible(true);
                     } else {
-                        horse.setCustomName(Main.parseColors(configHorse.getDisplayName()) +
+                        horse.setCustomName(Chat.parseColors(configHorse.getDisplayName()) +
                                 (Main.getConfigFile().getBoolean("Options.Display-HP-In-Name") ?
-                                        " " + Main.parseColors(Objects.requireNonNull(Main.getConfigFile()
+                                        " " + Chat.parseColors(Objects.requireNonNull(Main.getConfigFile()
                                                         .getString("Options.Display-HP"))
                                                 .replaceAll("%health%", String.valueOf((int) horse.getHealth()))) : ""));
                     }
@@ -163,7 +164,7 @@ public class HorseListener implements Listener {
             return;
 
         var title = event.getView().getTitle();
-        if (!title.equalsIgnoreCase(Main.parseColors(Main.getConfigFile().getString("Storage-GUI.Title"))))
+        if (!title.equalsIgnoreCase(Chat.parseColors(Main.getConfigFile().getString("Storage-GUI.Title"))))
             return;
 
         horse.setStoredItems(Serializer.serialize(contents));
@@ -235,16 +236,16 @@ public class HorseListener implements Listener {
             return;
 
         if (horse.getCustomName() != null && !horse.getCustomName().equalsIgnoreCase("null")) {
-            entity.setCustomName(Main.parseColors(horse.getCustomName()) +
+            entity.setCustomName(Chat.parseColors(horse.getCustomName()) +
                     (Main.getConfigFile().getBoolean("Options.Display-HP-In-Name") ?
-                            " " + Main.parseColors(Objects.requireNonNull(Main.getConfigFile()
+                            " " + Chat.parseColors(Objects.requireNonNull(Main.getConfigFile()
                                             .getString("Options.Display-HP"))
                                     .replaceAll("%health%", String.valueOf((int) entity.getHealth()))) : ""));
             entity.setCustomNameVisible(true);
         } else {
-            entity.setCustomName(Main.parseColors(configHorse.getDisplayName()) +
+            entity.setCustomName(Chat.parseColors(configHorse.getDisplayName()) +
                     (Main.getConfigFile().getBoolean("Options.Display-HP-In-Name") ?
-                            " " + Main.parseColors(Objects.requireNonNull(Main.getConfigFile()
+                            " " + Chat.parseColors(Objects.requireNonNull(Main.getConfigFile()
                                             .getString("Options.Display-HP"))
                                     .replaceAll("%health%", String.valueOf((int) entity.getHealth()))) : ""));
         }

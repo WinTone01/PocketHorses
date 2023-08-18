@@ -5,6 +5,7 @@ import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.SlotPos;
+import it.pika.libs.chat.Chat;
 import it.pika.libs.item.ItemBuilder;
 import it.pika.pockethorses.Main;
 import lombok.AllArgsConstructor;
@@ -33,20 +34,20 @@ public class ConfirmMenu implements InventoryProvider {
 
         contents.set(SlotPos.of(1, 4), ClickableItem.empty(new ItemBuilder()
                 .material(Material.valueOf(config.getString("Confirm-GUI.Are-You-Sure.Material")))
-                .name(Main.parseColors(config.getString("Confirm-GUI.Are-You-Sure.Name")))
-                .lore(Main.parseColors(config.getStringList("Confirm-GUI.Are-You-Sure.Lore")))
+                .name(Chat.parseColors(config.getString("Confirm-GUI.Are-You-Sure.Name")))
+                .lore(Chat.parseColors(config.getStringList("Confirm-GUI.Are-You-Sure.Lore")))
                 .build()));
 
         contents.set(SlotPos.of(3, 2), ClickableItem.of(new ItemBuilder()
                 .material(Material.valueOf(config.getString("Confirm-GUI.Confirm.Material")))
-                .name(Main.parseColors(config.getString("Confirm-GUI.Confirm.Name")))
-                .lore(Main.parseColors(config.getStringList("Confirm-GUI.Confirm.Lore")))
+                .name(Chat.parseColors(config.getString("Confirm-GUI.Confirm.Name")))
+                .lore(Chat.parseColors(config.getStringList("Confirm-GUI.Confirm.Lore")))
                 .build(), e -> onConfirm.run()));
 
         contents.set(SlotPos.of(3, 6), ClickableItem.of(new ItemBuilder()
                 .material(Material.valueOf(config.getString("Confirm-GUI.Cancel.Material")))
-                .name(Main.parseColors(config.getString("Confirm-GUI.Cancel.Name")))
-                .lore(Main.parseColors(config.getStringList("Confirm-GUI.Cancel.Lore")))
+                .name(Chat.parseColors(config.getString("Confirm-GUI.Cancel.Name")))
+                .lore(Chat.parseColors(config.getStringList("Confirm-GUI.Cancel.Lore")))
                 .build(), e -> onCancel.run()));
     }
 

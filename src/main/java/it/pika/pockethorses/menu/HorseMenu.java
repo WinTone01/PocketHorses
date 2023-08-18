@@ -5,6 +5,7 @@ import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.SlotPos;
+import it.pika.libs.chat.Chat;
 import it.pika.libs.item.ItemBuilder;
 import it.pika.pockethorses.Main;
 import it.pika.pockethorses.enums.Messages;
@@ -32,7 +33,7 @@ public class HorseMenu implements InventoryProvider {
     public SmartInventory get() {
         return SmartInventory.builder()
                 .id("inv")
-                .title(Main.parseColors(Main.getConfigFile().getString("Horse-GUI.Title")))
+                .title(Chat.parseColors(Main.getConfigFile().getString("Horse-GUI.Title")))
                 .size(Main.getConfigFile().getInt("Horse-GUI.Size.Rows"), 9)
                 .provider(this)
                 .manager(Main.getInventoryManager())
@@ -92,9 +93,9 @@ public class HorseMenu implements InventoryProvider {
                                 return Collections.emptyList();
 
                             var config = Main.getConfigFile();
-                            horse.getEntity().setCustomName(Main.parseColors(stateSnapshot.getText()) +
+                            horse.getEntity().setCustomName(Chat.parseColors(stateSnapshot.getText()) +
                                     (config.getBoolean("Options.Display-HP-In-Name") ?
-                                            " " + Main.parseColors(
+                                            " " + Chat.parseColors(
                                                     Objects.requireNonNull(config.getString("Options.Display-HP"))
                                                             .replaceAll("%health%", String.valueOf((int)
                                                                     ((AbstractHorse) horse.getEntity()).getHealth()))) : ""));

@@ -1,6 +1,6 @@
 package it.pika.pockethorses.hooks;
 
-import it.pika.pockethorses.Main;
+import it.pika.libs.chat.Chat;
 import it.pika.pockethorses.objects.horses.ConfigHorse;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
@@ -24,7 +24,7 @@ public class PlaceholdersHook extends PlaceholderExpansion {
 
     @Override
     public @NotNull String getVersion() {
-        return "1.8.8";
+        return "1.9.0";
     }
 
     @Override
@@ -34,13 +34,6 @@ public class PlaceholdersHook extends PlaceholderExpansion {
 
     @Override
     public String onRequest(OfflinePlayer player, String params) {
-        if (params.equalsIgnoreCase("cooldown")) {
-            if (!Main.getCooldownManager().hasCooldown(player.getUniqueId()))
-                return "No cooldown";
-
-            return String.valueOf(Main.getCooldownManager().getRemainingCooldown(player.getUniqueId()).toSeconds());
-        }
-
         var parts = params.split("_");
         var horse = ConfigHorse.of(parts[0]);
 
@@ -50,7 +43,7 @@ public class PlaceholdersHook extends PlaceholderExpansion {
         if (parts[1].equalsIgnoreCase("id"))
             return horse.getId();
         if (parts[1].equalsIgnoreCase("displayName"))
-            return Main.parseColors(horse.getDisplayName());
+            return Chat.parseColors(horse.getDisplayName());
         if (parts[1].equalsIgnoreCase("color"))
             return horse.getColor().name();
         if (parts[1].equalsIgnoreCase("style"))

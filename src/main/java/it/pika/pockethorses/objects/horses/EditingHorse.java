@@ -27,5 +27,6 @@ public class EditingHorse {
     private boolean recyclable;
     private double recyclePrice;
     private String model;
+    private int cooldown;
 
 }

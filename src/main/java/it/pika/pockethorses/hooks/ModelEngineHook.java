@@ -1,6 +1,7 @@
 package it.pika.pockethorses.hooks;
 
 import com.google.common.collect.Lists;
+import it.pika.libs.chat.Chat;
 import it.pika.pockethorses.Main;
 import it.pika.pockethorses.objects.horses.ConfigHorse;
 import it.pika.pockethorses.objects.horses.Horse;
@@ -66,21 +67,21 @@ public class ModelEngineHook implements Listener {
             horseEntity.setHealth(configHorse.getMaxHealth());
 
             if (horse.getCustomName() != null && !horse.getCustomName().equalsIgnoreCase("null")) {
-                horseEntity.setCustomName(Main.parseColors(horse.getCustomName()) +
+                horseEntity.setCustomName(Chat.parseColors(horse.getCustomName()) +
                         (config.getBoolean("Options.Display-HP-In-Name") ?
-                                " " + Main.parseColors(config.getString("Options.Display-HP")
+                                " " + Chat.parseColors(config.getString("Options.Display-HP")
                                         .replaceAll("%health%", String.valueOf((int) horseEntity.getHealth()))) : ""));
                 horseEntity.setCustomNameVisible(true);
             } else {
-                horseEntity.setCustomName(Main.parseColors(configHorse.getDisplayName()) +
+                horseEntity.setCustomName(Chat.parseColors(configHorse.getDisplayName()) +
                         (config.getBoolean("Options.Display-HP-In-Name") ?
-                                " " + Main.parseColors(config.getString("Options.Display-HP")
+                                " " + Chat.parseColors(config.getString("Options.Display-HP")
                                         .replaceAll("%health%", String.valueOf((int) horseEntity.getHealth()))) : ""));
             }
 
-            var seconds = Main.getConfigFile().getInt("Options.Horse-Cooldown");
+            var seconds = configHorse.getCooldown();
             if (seconds > 0)
-                Main.getCooldownManager().setCooldown(player.getUniqueId(), Duration.ofSeconds(seconds));
+                Main.getCooldownManager().setCooldown(player.getUniqueId(), configHorse.getId(), Duration.ofSeconds(seconds));
         });
 
         var blueprint = com.ticxo.modelengine.api.ModelEngineAPI.getBlueprint(configHorse.getModel());
