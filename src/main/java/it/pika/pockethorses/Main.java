@@ -19,6 +19,7 @@ import it.pika.pockethorses.hooks.ModelEngineHook;
 import it.pika.pockethorses.hooks.PlaceholdersHook;
 import it.pika.pockethorses.hooks.WorldGuardHook;
 import it.pika.pockethorses.hooks.economy.Economy;
+import it.pika.pockethorses.hooks.economy.impl.CoinsEngineEconomy;
 import it.pika.pockethorses.hooks.economy.impl.PlayerPointsEconomy;
 import it.pika.pockethorses.hooks.economy.impl.VaultEconomy;
 import it.pika.pockethorses.listeners.HorseListener;
@@ -112,7 +113,7 @@ public final class Main extends JavaPlugin {
     private static boolean modelEngineEnabled = false;
 
 
-    public static final String VERSION = "1.9.0";
+    public static final String VERSION = "1.9.2";
 
     @Override
     public void onLoad() {
@@ -279,7 +280,7 @@ public final class Main extends JavaPlugin {
     private boolean setupEconomy() {
         EconomyType type;
         try {
-            type = EconomyType.valueOf(Objects.requireNonNull(configFile.getString("Options.Economy-Type")).toUpperCase());
+            type = EconomyType.valueOf(Objects.requireNonNull(configFile.getString("Options.Economy.Type")).toUpperCase());
         } catch (IllegalArgumentException e) {
             console.warning("Economy type not recognized!");
             return false;
@@ -302,6 +303,13 @@ public final class Main extends JavaPlugin {
                     return false;
 
                 economy = new PlayerPointsEconomy(new PlayerPointsAPI((PlayerPoints) plugin));
+            }
+            case COINSENGINE -> {
+                var plugin = Bukkit.getPluginManager().getPlugin("CoinsEngine");
+                if (plugin == null)
+                    return false;
+
+                economy = new CoinsEngineEconomy(configFile.getString("Options.Economy.CoinsEngine-Currency"));
             }
         }
 

@@ -24,7 +24,7 @@ public class PlaceholdersHook extends PlaceholderExpansion {
 
     @Override
     public @NotNull String getVersion() {
-        return "1.9.0";
+        return "1.9.2";
     }
 
     @Override

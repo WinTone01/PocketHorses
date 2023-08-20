@@ -82,6 +82,14 @@ public class HorseMenu implements InventoryProvider {
                     .build()));
         }
 
+        contents.set(SlotPos.of(1, 7), ClickableItem.of(new ItemBuilder()
+                .material(Material.valueOf(Main.getConfigFile().getString("Horse-GUI.Glow.Material")))
+                .name(Main.parseMessage(Main.getConfigFile().getString("Horse-GUI.Glow.Name"), horse, player))
+                .build(), e -> {
+            player.closeInventory();
+            horse.getEntity().setGlowing(!horse.getEntity().isGlowing());
+        }));
+
         contents.set(SlotPos.of(3, 1), ClickableItem.of(changeName(), e ->
                 new AnvilGUI.Builder()
                         .plugin(Main.getInstance())

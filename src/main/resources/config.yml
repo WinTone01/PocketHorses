@@ -21,7 +21,9 @@ Storage:
 
 Options:
   Language: 'en' # The language used for the plugin messages
-  Economy-Type: 'Vault' # The plugin used to manage the plugin economy, can be 'Vault' or 'PlayerPoints'
+  Economy:
+    Type: 'Vault' # The plugin used to manage the plugin economy, can be 'Vault', 'PlayerPoints' or 'CoinsEngine'.
+    CoinsEngine-Currency: 'coins' # CoinsEngine currency name, you can leave blank if you don't use CoinsEngine as your economy type.
   Shop-Enabled: true # If enabled, players will be able to purchase horses through the /horses shop command
   More-Horses-At-Time: true # If enabled, players will be able to spawn more than one horse at a time
   Play-Sound-When-Buy: true # If enabled, a sound will be played after purchasing a horse (see Horse-GUI section)
@@ -98,6 +100,9 @@ Horse-GUI:
   Remove:
     Name: '&c&lRemove'
     Material: BARRIER
+  Glow:
+    Name: '&f&lMake glow'
+    Material: GLOWSTONE_DUST
 
 # Customize what is shown after the /pockethorses list command
 Horses-List:

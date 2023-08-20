@@ -76,6 +76,7 @@ dependencies {
     compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.5'
     compileOnly files('lib/Model-Engine.jar')
     compileOnly files('lib/PlayerPoints-3.2.6.jar')
+    compileOnly files('lib/CoinsEngine-2.0.6.jar')
 }
 
 def targetJavaVersion = 17
@@ -108,7 +109,7 @@ processResources {
 shadowJar {
     archiveBaseName.set('PocketHorses')
     archiveClassifier.set('')
-    archiveVersion.set('1.9.0')
+    archiveVersion.set('1.9.2')
 
     relocate 'fr.minuskube.inv', 'it.pika.libs.smartinvs'
     relocate 'net.wesjd.anvilgui', 'it.pika.libs.anvilgui'
