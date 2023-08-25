@@ -1,6 +1,7 @@
 package it.pika.pockethorses.hooks;
 
 import it.pika.libs.chat.Chat;
+import it.pika.pockethorses.Main;
 import it.pika.pockethorses.objects.horses.ConfigHorse;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
@@ -24,7 +25,7 @@ public class PlaceholdersHook extends PlaceholderExpansion {
 
     @Override
     public @NotNull String getVersion() {
-        return "1.9.2";
+        return "1.9.5";
     }
 
     @Override
@@ -34,6 +35,9 @@ public class PlaceholdersHook extends PlaceholderExpansion {
 
     @Override
     public String onRequest(OfflinePlayer player, String params) {
+        if (params.equalsIgnoreCase("horses"))
+            return String.valueOf(Main.getHorsesOf(player).size());
+
         var parts = params.split("_");
         var horse = ConfigHorse.of(parts[0]);
 

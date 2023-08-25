@@ -10,6 +10,7 @@ import lombok.Setter;
 import org.bukkit.entity.Horse;
 
 import java.io.File;
+import java.util.List;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
@@ -32,6 +33,8 @@ public class ConfigHorse {
     private double recyclePrice;
     private String model;
     private int cooldown;
+    private List<String> consoleCommandsOnMount;
+    private List<String> consoleCommandsOnDismount;
 
     public static ConfigHorse of(String name) {
         var file = new File(Main.getInstance().getDataFolder()
@@ -77,7 +80,9 @@ public class ConfigHorse {
                     config.getInt("Max-Health"), config.getBoolean("Buyable"),
                     config.getDouble("Price"), config.getBoolean("Permission"),
                     config.getBoolean("Storage"), config.getBoolean("Recyclable"),
-                    config.getDouble("Recycle-Price"), model, config.getInt("Cooldown"));
+                    config.getDouble("Recycle-Price"), model, config.getInt("Cooldown"),
+                    config.getStringList("Console-Commands-On-Mount"),
+                    config.getStringList("Console-Commands-On-Dismount"));
         } catch (NullPointerException e) {
             return null;
         }

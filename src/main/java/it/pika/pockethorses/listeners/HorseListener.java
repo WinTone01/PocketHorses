@@ -148,6 +148,11 @@ public class HorseListener implements Listener {
             spawnedHorse.getEntity().addPassenger(player);
         }
 
+        if (configHorse != null && configHorse.getConsoleCommandsOnMount() != null) {
+            for (String s : configHorse.getConsoleCommandsOnMount())
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s.replaceAll("%player%", player.getName()));
+        }
+
         ActionBar.sendActionBarWhile(Main.getInstance(), player, Main.parseMessage(Main.getConfigFile()
                         .getString("Options.Action-Bar-Message"), spawnedHorse, player),
                 () -> player.getVehicle() != null && Main.getSpawnedHorse(player.getVehicle()) != null);
@@ -256,9 +261,6 @@ public class HorseListener implements Listener {
         if (!(event.getExited() instanceof Player player))
             return;
 
-        if (!Main.getAutoRemove().contains(player.getName()))
-            return;
-
         if (!(event.getVehicle() instanceof AbstractHorse horse))
             return;
 
@@ -266,8 +268,19 @@ public class HorseListener implements Listener {
         if (spawnedHorse == null)
             return;
 
-        spawnedHorse.remove(player);
-        success(player, Messages.HORSE_REMOVED.get());
+        if (Main.getAutoRemove().contains(player.getName())) {
+            spawnedHorse.remove(player);
+            success(player, Messages.HORSE_REMOVED.get());
+        }
+
+        var configHorse = ConfigHorse.of(spawnedHorse.getName());
+        if (configHorse == null)
+            return;
+
+        if (configHorse.getConsoleCommandsOnDismount() != null) {
+            for (String s : configHorse.getConsoleCommandsOnDismount())
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s.replaceAll("%player%", player.getName()));
+        }
     }
 
 }

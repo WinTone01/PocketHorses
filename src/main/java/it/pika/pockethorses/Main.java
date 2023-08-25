@@ -5,14 +5,16 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.tchristofferson.configupdater.ConfigUpdater;
+import dev.jorel.commandapi.CommandAPI;
+import dev.jorel.commandapi.CommandAPIBukkitConfig;
 import fr.minuskube.inv.InventoryManager;
 import io.papermc.lib.PaperLib;
 import it.pika.libs.chat.Chat;
 import it.pika.libs.config.Config;
 import it.pika.libs.reflection.Reflections;
 import it.pika.pockethorses.api.events.HorsesInitializeEvent;
-import it.pika.pockethorses.commands.HorsesCmd;
-import it.pika.pockethorses.commands.MainCmd;
+import it.pika.pockethorses.commands.AdminCommands;
+import it.pika.pockethorses.commands.PlayerCommands;
 import it.pika.pockethorses.enums.EconomyType;
 import it.pika.pockethorses.enums.StorageType;
 import it.pika.pockethorses.hooks.ModelEngineHook;
@@ -43,6 +45,7 @@ import org.black_ixx.playerpoints.PlayerPointsAPI;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -113,10 +116,11 @@ public final class Main extends JavaPlugin {
     private static boolean modelEngineEnabled = false;
 
 
-    public static final String VERSION = "1.9.2";
+    public static final String VERSION = "1.9.5";
 
     @Override
     public void onLoad() {
+        CommandAPI.onLoad(new CommandAPIBukkitConfig(this));
         setupWorldGuard();
 
         if (!setupPlaceholders())
@@ -126,6 +130,7 @@ public final class Main extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        CommandAPI.onEnable();
         var stopwatch = Stopwatch.createStarted();
 
         console.info("§6  ____  _   _ ");
@@ -176,6 +181,8 @@ public final class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        CommandAPI.onDisable();
+
         if (storage != null)
             storage.close();
 
@@ -249,8 +256,8 @@ public final class Main extends JavaPlugin {
     }
 
     private void registerCommands() {
-        new MainCmd(this, "pockethorses", configFile.getStringList("Commands.PocketHorses.Aliases"));
-        new HorsesCmd(this, "horses", configFile.getStringList("Commands.Horses.Aliases"));
+        new AdminCommands().get().register();
+        new PlayerCommands().get().register();
     }
 
     public void loadHorses() {
@@ -405,7 +412,7 @@ public final class Main extends JavaPlugin {
         return null;
     }
 
-    public static List<Horse> getHorsesOf(Player player) {
+    public static List<Horse> getHorsesOf(OfflinePlayer player) {
         List<Horse> horses = Lists.newArrayList();
 
         for (Horse horse : cache) {
@@ -474,6 +481,27 @@ public final class Main extends JavaPlugin {
                 limit = i;
 
         return horses >= limit;
+    }
+
+    public static List<String> getHorseNames() {
+        List<String> list = Lists.newArrayList();
+
+        for (File file : Objects.requireNonNull(new File(instance.getDataFolder(), "Horses").listFiles())) {
+            if (!file.getName().endsWith(".yml"))
+                continue;
+
+            list.add(file.getName().replace(".yml", ""));
+        }
+
+        return list;
+    }
+
+    public static List<String> getVoucherNames() {
+        return Lists.newArrayList(Objects.requireNonNull(vouchersFile.getConfigurationSection("")).getKeys(false));
+    }
+
+    public static List<String> getItemNames() {
+        return Lists.newArrayList(Objects.requireNonNull(itemsFile.getConfigurationSection("")).getKeys(false));
     }
 
 }

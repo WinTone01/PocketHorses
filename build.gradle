@@ -68,6 +68,10 @@ dependencies {
         transitive = false
     }
 
+    implementation('dev.jorel:commandapi-bukkit-shade:9.1.0'){
+        transitive = false
+    }
+
     implementation 'org.bstats:bstats-bukkit:3.0.2'
 
     compileOnly 'com.zaxxer:HikariCP:5.0.1'
@@ -109,7 +113,7 @@ processResources {
 shadowJar {
     archiveBaseName.set('PocketHorses')
     archiveClassifier.set('')
-    archiveVersion.set('1.9.2')
+    archiveVersion.set('1.9.5')
 
     relocate 'fr.minuskube.inv', 'it.pika.libs.smartinvs'
     relocate 'net.wesjd.anvilgui', 'it.pika.libs.anvilgui'
@@ -117,4 +121,5 @@ shadowJar {
     relocate 'de.tr7zw.changeme.nbtapi', 'it.pika.libs.nbt'
     relocate 'io.papermc.lib', 'it.pika.libs.paper'
     relocate 'org.bstats', 'it.pika.libs.bstats'
+    relocate "dev.jorel.commandapi", "it.pika.libs.command"
 }
