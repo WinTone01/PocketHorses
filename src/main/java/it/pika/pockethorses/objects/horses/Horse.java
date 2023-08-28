@@ -2,12 +2,12 @@ package it.pika.pockethorses.objects.horses;
 
 import com.google.common.collect.Lists;
 import it.pika.libs.chat.Chat;
+import it.pika.libs.xseries.XMaterial;
 import it.pika.pockethorses.Main;
 import it.pika.pockethorses.Perms;
 import it.pika.pockethorses.api.events.HorseSpawnEvent;
 import it.pika.pockethorses.enums.Messages;
 import it.pika.pockethorses.utils.Serializer;
-import it.pika.libs.xseries.XMaterial;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;

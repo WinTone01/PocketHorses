@@ -2,6 +2,7 @@ package it.pika.pockethorses.listeners;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import it.pika.libs.chat.Chat;
+import it.pika.libs.xseries.ActionBar;
 import it.pika.pockethorses.Main;
 import it.pika.pockethorses.Perms;
 import it.pika.pockethorses.enums.Messages;
@@ -11,7 +12,6 @@ import it.pika.pockethorses.objects.horses.SpawnedHorse;
 import it.pika.pockethorses.objects.items.Care;
 import it.pika.pockethorses.objects.items.Supplement;
 import it.pika.pockethorses.utils.Serializer;
-import it.pika.libs.xseries.ActionBar;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.AbstractHorse;

@@ -2,11 +2,11 @@ package it.pika.pockethorses.listeners;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import it.pika.libs.chat.Chat;
+import it.pika.libs.xseries.Titles;
 import it.pika.pockethorses.Main;
 import it.pika.pockethorses.Perms;
 import it.pika.pockethorses.enums.Messages;
 import it.pika.pockethorses.objects.Voucher;
-import it.pika.libs.xseries.Titles;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;

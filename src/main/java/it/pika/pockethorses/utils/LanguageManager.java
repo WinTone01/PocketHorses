@@ -58,6 +58,8 @@ public class LanguageManager {
                 + File.separator + "Languages" + File.separator + "messages_pt.yml"), true);
         var zh = new Config(Main.getInstance(), new File(Main.getInstance().getDataFolder()
                 + File.separator + "Languages" + File.separator + "messages_zh.yml"), true);
+        var tr = new Config(Main.getInstance(), new File(Main.getInstance().getDataFolder()
+                + File.separator + "Languages" + File.separator + "messages_tr.yml"), true);
 
         ConfigUpdater.update(Main.getInstance(), "Languages/messages_cs.yml", cs.getFile());
         ConfigUpdater.update(Main.getInstance(), "Languages/messages_de.yml", de.getFile());
@@ -69,6 +71,7 @@ public class LanguageManager {
         ConfigUpdater.update(Main.getInstance(), "Languages/messages_nl.yml", nl.getFile());
         ConfigUpdater.update(Main.getInstance(), "Languages/messages_pt.yml", pt.getFile());
         ConfigUpdater.update(Main.getInstance(), "Languages/messages_zh.yml", zh.getFile());
+        ConfigUpdater.update(Main.getInstance(), "Languages/messages_tr.yml", tr.getFile());
 
         cs.reload();
         de.reload();
@@ -80,6 +83,7 @@ public class LanguageManager {
         nl.reload();
         pt.reload();
         zh.reload();
+        tr.reload();
     }
 
     public List<String> getMainHelp() {

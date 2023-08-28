@@ -9,11 +9,11 @@ import fr.minuskube.inv.content.SlotPos;
 import it.pika.libs.chat.Chat;
 import it.pika.libs.config.Config;
 import it.pika.libs.item.ItemBuilder;
+import it.pika.libs.xseries.XMaterial;
 import it.pika.pockethorses.Main;
 import it.pika.pockethorses.enums.Messages;
 import it.pika.pockethorses.objects.horses.ConfigHorse;
 import it.pika.pockethorses.objects.horses.EditingHorse;
-import it.pika.libs.xseries.XMaterial;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.wesjd.anvilgui.AnvilGUI;
@@ -242,7 +242,7 @@ public class EditingHorseMenu implements InventoryProvider {
                     return List.of(AnvilGUI.ResponseAction.close(), AnvilGUI.ResponseAction.run(() -> get().open(player)));
                 })
                 .open(player)));
-        
+
         contents.set(SlotPos.of(4, 6), ClickableItem.of(new ItemBuilder()
                 .material(Material.valueOf(config.getString("Editor-GUI.Editing-GUI.Cooldown.Material")))
                 .name(parse(config.getString("Editor-GUI.Editing-GUI.Cooldown.Name")))
